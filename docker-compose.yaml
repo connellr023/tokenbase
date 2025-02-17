@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  # Frontend: Next.js
+  frontend:
+    build:
+      context: .
+      dockerfile: ./build/package/dev.frontend.dockerfile
+    volumes:
+      - ./web:/app # Mount app to allow for hot-reloading
+      - /app/node_modules  # Don't overwrite node_modules
+    ports:
+      - "3000:3000"  # Expose Next.js app on port 3000
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-network
+
+  # Backend: Go
+  backend:
+    build:
+      context: .
+      dockerfile: ./build/package/dev.backend.dockerfile
+    volumes:
+      - ./:/app
+    ports:
+      - "8090:8090"
+    environment:
+      - GO_ENV=development
+    networks:
+      - app-network
+
+  # TinyLlama Service (LLM container)
+  tinyllama:
+    build:
+      context: .
+      dockerfile: ./build/package/dev.tinyllama.dockerfile
+    ports:
+      - "11434:11434"
+    networks:
+      - app-network
+
+  # Pocketbase Service
+  pocketbase:
+    build:
+      context: .
+      dockerfile: ./build/package/dev.pocketbase.dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+# Define the custom network
+networks:
+  app-network:
+    driver: bridge
