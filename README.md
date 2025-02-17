@@ -8,11 +8,11 @@
 ![Ollama](https://img.shields.io/badge/Ollama-f6f6f6?style=for-the-badge&logo=ollama&logoColor=black)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-> Final project for **SENG 513**!
+> A modular, AI-powered assistant platform that provides real-time chat, role-based access, and conversation tracking, designed for self-hosted or small organizational deployments.
 
 ## Structure
 
-- `buid/package/`
+- `build/package/`
   - Contains dockerfiles for all services
 - `cmd/tokenbase/`
   - Entry point for the main backend service
@@ -28,7 +28,7 @@
 - Backend service (**Go**)
 - Frontend service (**Next.js**)
 - Database service (**PocketBase**)
-- LLM service (**TinyLlama** with **Ollama**)
+- LLM service (**TinyLlama** served with **Ollama**)
 
 ## Development
 
@@ -43,3 +43,5 @@
 - Nick McCamis (30192610)
 - Erina Kibria (30176743)
 - Jacob Koep (30153351)
+
+This project was created for **SENG 513** in **2025**.
