@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Frontend: Next.js
   frontend:
@@ -18,6 +16,9 @@ services:
 
   # Backend: Go
   backend:
+    depends_on:
+      - surrealdb
+      - tinyllama
     build:
       context: .
       dockerfile: ./build/package/dev.backend.dockerfile
@@ -40,13 +41,16 @@ services:
     networks:
       - app-network
 
-  # Pocketbase Service
-  pocketbase:
+  # Database Service
+  surrealdb:
     build:
       context: .
-      dockerfile: ./build/package/dev.pocketbase.dockerfile
+      dockerfile: ./build/package/dev.surrealdb.dockerfile
+    command: start --user root --pass root
     ports:
-      - "8080:8080"
+      - "8000:8000"
+    volumes:
+      - ./schema:/docker-entrypoint-initdb.d
     networks:
       - app-network
 
