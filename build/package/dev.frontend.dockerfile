@@ -12,4 +12,4 @@ RUN npm install
 COPY ./web .
 
 # Run the Next.js dev server
-CMD ["npm", "run", "dev"]
+ENTRYPOINT ["npm", "run", "dev"]

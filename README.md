@@ -16,8 +16,10 @@
   - Contains dockerfiles for all services
 - `cmd/tokenbase/`
   - Entry point for the main backend service
+- `schema/`
+  - Contains all database schema definition scripts
 - `scripts/`
-  - Contains scripts for setting up the project (will likely be executed in Docker)
+  - Contains general scripts that can also be executed in a container
 - `test/`
   - Contains all unit tests for the main backend service
 - `internal/`

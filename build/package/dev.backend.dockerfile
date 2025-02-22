@@ -11,4 +11,4 @@ RUN go mod tidy
 COPY . .
 
 # Build and run the Go application
-CMD ["go", "run", "./cmd/tokenbase/tokenbase.go"]
+ENTRYPOINT ["go", "run", "./cmd/tokenbase/tokenbase.go"]
