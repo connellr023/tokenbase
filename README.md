@@ -18,6 +18,8 @@
   - Entry point for the main backend service
 - `scripts/`
   - Contains scripts for setting up the project (will likely be executed in Docker)
+- `test/`
+  - Contains all unit tests for the main backend service
 - `internal/`
   - Contains all business logic for the main backend service
 - `web/`
@@ -36,6 +38,16 @@
 2. Run `docker-compose up --build` to build and run the services from scratch
 3. Run `docker-compose up` to start the services after the initial build
 4. Run `docker-compose up --build <service>` to build and run a specific service from scratch
+
+## Running Backend Tests
+
+Run:
+
+```sh
+go -v test ./test/...
+```
+
+In order to run all tests in the `test` directory.
 
 ## Contributors
 
