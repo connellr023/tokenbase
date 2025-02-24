@@ -16,6 +16,9 @@ const Home = () => {
       </Head>
       <div className={`${ubuntu.className}`}>
         <main>
+          <nav>
+            <h1>TokenBase</h1>
+          </nav>
           <h1>Hello!</h1>
         </main>
       </div>
