@@ -6,35 +6,36 @@ import (
 	"github.com/surrealdb/surrealdb.go"
 )
 
-const dbDockerEndpoint = "ws://surrealdb:8000"
+const sdbDockerEndpoint = "ws://surrealdb:8000"
+const rdbDockerEndpoint = "redis:6379"
 const backendEndpoint = ":8090"
 
-const dbNamespace = "tokenbaseNS"
-const dbName = "tokenbaseDB"
+const sdbNamespace = "tokenbaseNS"
+const sdbName = "tokenbaseDB"
 
 // Hardcode these for now
-const dbUsername = "root"
-const dbPassword = "root"
+const sdbUsername = "root"
+const sdbPassword = "root"
 
 func main() {
-	// Connect to the database over the Docker network
-	fmt.Printf("Connecting to database at %s...\n", dbDockerEndpoint)
+	// Connect to SurrealDB over the Docker network
+	fmt.Printf("Connecting to SurrealDB at %s...\n", sdbDockerEndpoint)
 
-	db, err := surrealdb.New(dbDockerEndpoint)
+	sdb, err := surrealdb.New(sdbDockerEndpoint)
 
 	if err != nil {
 		panic(err)
 	}
 
 	// Set the namespace
-	if err := db.Use(dbNamespace, dbName); err != nil {
+	if err := sdb.Use(sdbNamespace, sdbName); err != nil {
 		panic(err)
 	}
 
 	// Authenticate
-	token, err := db.SignIn(&surrealdb.Auth{
-		Username: dbUsername,
-		Password: dbPassword,
+	token, err := sdb.SignIn(&surrealdb.Auth{
+		Username: sdbUsername,
+		Password: sdbPassword,
 	})
 
 	if err != nil {
@@ -42,16 +43,21 @@ func main() {
 	}
 
 	// Check token validity
-	if err := db.Authenticate(token); err != nil {
+	if err := sdb.Authenticate(token); err != nil {
 		panic(err)
 	}
 
 	// Invalidate the token later
 	defer func(token string) {
-		if err := db.Invalidate(); err != nil {
+		if err := sdb.Invalidate(); err != nil {
 			panic(err)
 		}
 	}(token)
+
+	// Connect to Redis over the Docker network
+	fmt.Printf("Connecting to Redis at %s...\n", rdbDockerEndpoint)
+
+	// TODO ...
 
 	// Start the backend server
 	fmt.Printf("Starting backend server at %s...\n", backendEndpoint)

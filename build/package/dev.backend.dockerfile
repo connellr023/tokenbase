@@ -1,5 +1,7 @@
 FROM golang:latest
 
+EXPOSE 8090
+
 # Set the working directory in the container
 WORKDIR /app
 

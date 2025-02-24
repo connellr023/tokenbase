@@ -5,9 +5,11 @@
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![SCSS](https://img.shields.io/badge/SCSS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens)
 ![Go](https://img.shields.io/badge/go-%2300ADD8.svg?style=for-the-badge&logo=go&logoColor=white)
 ![SurrealDB](https://img.shields.io/badge/SurrealDB-FF00A0?style=for-the-badge&logo=surrealdb&logoColor=white)
 ![Ollama](https://img.shields.io/badge/Ollama-f6f6f6?style=for-the-badge&logo=ollama&logoColor=black)
+![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
 ## Structure
@@ -30,6 +32,7 @@
 ## Services
 
 - Backend service (**Go**)
+- Cache service (**Redis**)
 - Frontend service (**Next.js**)
 - Database service (**SurrealDB**)
 - LLM service (**TinyLlama** served with **Ollama**)
@@ -50,12 +53,3 @@ go -v test ./test/...
 ```
 
 In order to run all tests in the `test` directory.
-
-## Contributors
-
-- Connell Reffo (10186960)
-- Nick McCamis (30192610)
-- Erina Kibria (30176743)
-- Jacob Koep (30153351)
-
-This project was created for **SENG 513** in **2025**.

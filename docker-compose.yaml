@@ -1,5 +1,5 @@
 services:
-  # Frontend: Next.js
+  # Frontend service
   frontend:
     build:
       context: .
@@ -14,10 +14,11 @@ services:
     networks:
       - app-network
 
-  # Backend: Go
+  # Backend service
   backend:
     depends_on:
       - surrealdb
+      - redis
       - tinyllama
     build:
       context: .
@@ -31,7 +32,7 @@ services:
     networks:
       - app-network
 
-  # TinyLlama Service (LLM container)
+  # TinyLlama service (LLM container)
   tinyllama:
     build:
       context: .
@@ -41,7 +42,7 @@ services:
     networks:
       - app-network
 
-  # Database Service
+  # Database service
   surrealdb:
     build:
       context: .
@@ -51,6 +52,16 @@ services:
       - "8000:8000"
     volumes:
       - ./schema:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  # Cache service
+  redis:
+    build:
+      context: .
+      dockerfile: ./build/package/dev.redis.dockerfile
+    ports:
+      - "6379:6379"
     networks:
       - app-network
 
