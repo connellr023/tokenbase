@@ -127,9 +127,9 @@ func main() {
 		})
 	})
 
+	println("Backend server started on " + constants.BackendEndpoint)
+
 	if err := http.ListenAndServe(constants.BackendEndpoint, rootRouter); err != nil {
 		panic(err)
 	}
-
-	println("Backend server started on " + constants.BackendEndpoint)
 }

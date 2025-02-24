@@ -1,26 +1,32 @@
-import Head from "next/head";
-import { Ubuntu } from "next/font/google";
+import ChatArea from "@/components/ChatArea";
+import PromptArea from "@/components/PromptArea";
+import Chat from "@/models/Chat";
+import { useState } from "react";
 
-const ubuntu = Ubuntu({
-  weight: "300",
-});
+const Index: React.FC = () => {
+  const [chats, setChats] = useState<Chat[]>([]);
 
-const Home = () => {
+  const onPromptSend = (prompt: string) => {
+    // console.log(prompt);
+    // setChats((prevChats) => [
+    //   ...prevChats,
+    //   {
+    //     id: prevChats.length + 1,
+    //     prompt,
+    //     reply: "Hello!",
+    //   },
+    // ]);
+  };
+
   return (
     <>
-      <Head>
-        <title>TokenBase</title>
-        <meta name="description" content="Project for SENG 513!" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className={`${ubuntu.className}`}>
-        <main>
-          <h1>Hello!</h1>
-        </main>
+      <h1>TokenBase</h1>
+      <div>
+        <ChatArea chats={chats} />
+        <PromptArea onSend={onPromptSend} />
       </div>
     </>
   );
 };
 
-export default Home;
+export default Index;
