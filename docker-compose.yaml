@@ -62,6 +62,8 @@ services:
       dockerfile: ./build/package/dev.redis.dockerfile
     ports:
       - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=password
     networks:
       - app-network
 
