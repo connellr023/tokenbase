@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+	"strings"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 )
@@ -16,6 +17,8 @@ type guestChatRequest struct {
 
 // Endpoint for sending a prompt on a guest chat
 // The guest chat should already exist
+// The response will be streamed to the client in chunks
+// The chat ID will be sent within the first chunk which will be used to identify that specific chat interaction
 func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
 	var req guestChatRequest
@@ -54,18 +57,40 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Random for now...
 	chatId := rand.Intn(10000)
 
+	// Keep track of the LLM reply so far
+	var replyBuilder strings.Builder
+
 	// Stream the response to the client
-	err = utils.ProcessHttpStream(w, ollamaRes.Body, func(data models.OllamaGenerateResponse) (models.ChatToken, error) {
-		chatToken := models.ChatToken{
-			ChatId: chatId,
-			Token:  data.Response,
+	{
+		hasSentChatId := false
+
+		err = utils.MapHttpStream(w, ollamaRes.Body, func(data models.OllamaGenerateResponse) models.ChatToken {
+			// Append response to the reply string
+			replyBuilder.WriteString(data.Response)
+
+			// Determine if chat ID has been sent
+			if !hasSentChatId {
+				hasSentChatId = true
+
+				return models.ChatToken{
+					ChatId: chatId,
+					Token:  data.Response,
+				}
+			} else {
+				// No need to send chat ID again
+				return models.ChatToken{
+					Token: data.Response,
+				}
+			}
+		})
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-
-		return chatToken, nil
-	})
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
 	}
+
+	// Cache chat in Redis
+	// TODO: Implement
+	// println(replyBuilder.String())
 }

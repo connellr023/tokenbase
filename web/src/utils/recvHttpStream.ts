@@ -1,4 +1,4 @@
-export const streamResponse = async <T>(
+export const recvHttpStream = async <T>(
   response: Response,
   onChunk: (chunk: T) => void
 ) => {
@@ -19,7 +19,9 @@ export const streamResponse = async <T>(
 
     // Split buffer by newline to handle multiple JSON objects
     const parts = buffer.split("\n");
-    buffer = parts.pop()!; // Keep the last partial JSON object in the buffer
+
+    // Keep the last partial JSON object in the buffer
+    buffer = parts.pop()!;
 
     for (const part of parts) {
       if (part.trim() === "") continue;

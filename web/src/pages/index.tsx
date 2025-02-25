@@ -4,7 +4,7 @@ import ChatRecord from "@/models/ChatRecord";
 import ChatToken from "@/models/ChatToken";
 import { backendEndpoint } from "@/utils/constants";
 import { useState } from "react";
-import { streamResponse } from "@/utils/streamResponse";
+import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type GuestChatRequest = {
   guestSessionId: number;
@@ -13,6 +13,9 @@ type GuestChatRequest = {
 
 const Index: React.FC = () => {
   const [chats, setChats] = useState<ChatRecord[]>([]);
+  const [streamingChat, setStreamingChat] = useState<ChatRecord | undefined>(
+    undefined
+  );
 
   const onPromptSend = async (prompt: string) => {
     // Construct the request
@@ -37,43 +40,38 @@ const Index: React.FC = () => {
     }
 
     // Initialize a new chat entry
-    let chatId: number | undefined = undefined;
-
-    const newChat: ChatRecord = {
-      prompt: req.prompt,
+    let newChat: ChatRecord = {
+      prompt: prompt,
       reply: "",
     };
 
-    // Add the new chat entry to the state
-    setChats((prevChats) => [...prevChats, newChat]);
-
     // Stream the response
-    await streamResponse(res, (chunk: ChatToken) => {
-      // Update the chat entry with the new token
-      setChats((prevChats) =>
-        prevChats.map((chat) => {
-          if (chat.chatId === newChat.chatId || chat.chatId === chatId) {
-            // Receive chat ID from the first chunk
-            chatId = chunk.chatId;
+    await recvHttpStream(res, (chunk: ChatToken) => {
+      // Check if this chunk contains the chat ID
+      if (chunk.chatId) {
+        newChat.chatId = chunk.chatId;
+      }
 
-            return {
-              ...chat,
-              chatId: chunk.chatId,
-              reply: chat.reply + chunk.token,
-            };
-          }
+      // Construct the new chat entry
+      newChat = {
+        ...newChat,
+        reply: newChat.reply + chunk.token,
+      };
 
-          return chat;
-        })
-      );
+      // Trigger a re-render
+      setStreamingChat(newChat);
     });
+
+    // Stream is finished, so add the chat to the list
+    setStreamingChat(undefined);
+    setChats((prev) => [...prev, newChat]);
   };
 
   return (
     <>
       <h1>TokenBase</h1>
       <div>
-        <ChatArea chats={chats} />
+        <ChatArea chats={chats} streamingChat={streamingChat} />
         <PromptArea onSend={onPromptSend} />
       </div>
     </>

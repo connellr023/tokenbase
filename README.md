@@ -42,7 +42,9 @@
 1. Clone the repository
 2. Run `docker-compose up --build` to build and run the services from scratch
 3. Run `docker-compose up` to start the services after the initial build
-4. Run `docker-compose up --build <service>` to build and run a specific service from scratch
+4. Run `docker-compose up <service> --build -d` to build and run a specific service from scratch
+5. Run `docker-compose down` to stop the services
+6. Run `docker-compose down -v` to stop the services and remove all volumes
 
 ## Running Backend Tests
 

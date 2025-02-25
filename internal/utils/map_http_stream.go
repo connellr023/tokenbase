@@ -17,13 +17,13 @@ import (
 // Parameters:
 // - w: The response writer
 // - r: The request body reader
-// - process: The function that processes the incoming data and returns the outgoing data
+// - mapFunc: The function that processes the incoming data and returns the outgoing data
 //
 // Returns:
 // - An error if the response could not be streamed
-func ProcessHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, process func(U) (V, error)) error {
+func MapHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, mapFunc func(U) V) error {
 	// Set headers for streaming response
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "text/plain")
 	w.Header().Set("Transfer-Encoding", "chunked")
 
 	flusher, ok := w.(http.Flusher)
@@ -43,11 +43,7 @@ func ProcessHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, process
 		}
 
 		// Stream the response to the client
-		res, err := process(data)
-
-		if err != nil {
-			return err
-		}
+		res := mapFunc(data)
 
 		// Serialize response
 		resJson, err := json.Marshal(res)
