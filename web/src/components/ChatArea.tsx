@@ -1,19 +1,19 @@
-import Message from "@/models/Message";
+import ChatRecord from "@/models/ChatRecord";
 
 type ChatAreaProps = {
-  messages: Message[];
+  messages: ChatRecord[];
 };
 
 const ChatArea: React.FC<ChatAreaProps> = ({ messages }) => {
   return (
     <div>
       {messages.map((message) => (
-        <div key={message.id}>
+        <div key={message.chatId}>
           <p>
-            <strong>Prompt:</strong> {message.prompt}
+            <b>Prompt:</b> {message.prompt}
           </p>
           <p>
-            <strong>Reply:</strong> {message.reply}
+            <b>Reply:</b> {message.reply}
           </p>
         </div>
       ))}

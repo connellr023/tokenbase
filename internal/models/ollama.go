@@ -1,4 +1,4 @@
-package utils
+package models
 
 type OllamaGenerateRequest struct {
 	Model  string `json:"model"`

@@ -1,0 +1,41 @@
+name: Code Formatting Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check-formatting:
+    name: Check Code Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ---- TypeScript & Markdown (Prettier) ----
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Check formatting with Prettier (TS, TSX, MD)
+        run: prettier --check "**/*.{ts,tsx,md}"
+
+      # ---- Golang (gofmt) ----
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Check formatting with gofmt
+        run: |
+          if [ -n "$(gofmt -l .)" ]; then
+            echo "Go files are not formatted. Run 'gofmt -w .' to fix."
+            exit 1
+          fi

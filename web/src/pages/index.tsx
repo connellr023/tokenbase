@@ -1,26 +1,28 @@
 import ChatArea from "@/components/ChatArea";
 import PromptArea from "@/components/PromptArea";
-import Message from "@/models/Message";
-import {
-  PostPromptTempChatRequest,
-  PostPromptTempChatResponse,
-} from "@/models/PostPromptTempChat";
+import ChatRecord from "@/models/ChatRecord";
+import ChatToken from "@/models/ChatToken";
 import { backendEndpoint } from "@/utils/constants";
 import { useState } from "react";
 import { streamResponse } from "@/utils/streamResponse";
 
+type GuestChatRequest = {
+  guestSessionId: number;
+  prompt: string;
+};
+
 const Index: React.FC = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [chats, setChats] = useState<ChatRecord[]>([]);
 
   const onPromptSend = async (prompt: string) => {
     // Construct the request
-    const req: PostPromptTempChatRequest = {
-      chatId: "nothingfornow",
+    const req: GuestChatRequest = {
+      guestSessionId: -1, // For now, we don't have a session id
       prompt,
     };
 
     // Send the prompt to the backend
-    const res = await fetch(backendEndpoint + "api/chat/temp/prompt", {
+    const res = await fetch(backendEndpoint + "api/chat/guest/prompt", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -35,24 +37,34 @@ const Index: React.FC = () => {
     }
 
     // Initialize a new chat entry
-    const newMessage: Message = {
-      id: Date.now().toString(),
+    let chatId: number | undefined = undefined;
+
+    const newChat: ChatRecord = {
       prompt: req.prompt,
       reply: "",
     };
 
     // Add the new chat entry to the state
-    setMessages((prevChats) => [...prevChats, newMessage]);
+    setChats((prevChats) => [...prevChats, newChat]);
 
     // Stream the response
-    await streamResponse(res, (chunk: PostPromptTempChatResponse) => {
+    await streamResponse(res, (chunk: ChatToken) => {
       // Update the chat entry with the new token
-      setMessages((prevMessages) =>
-        prevMessages.map((message) =>
-          message.id === newMessage.id
-            ? { ...message, reply: message.reply + chunk.token }
-            : message
-        )
+      setChats((prevChats) =>
+        prevChats.map((chat) => {
+          if (chat.chatId === newChat.chatId || chat.chatId === chatId) {
+            // Receive chat ID from the first chunk
+            chatId = chunk.chatId;
+
+            return {
+              ...chat,
+              chatId: chunk.chatId,
+              reply: chat.reply + chunk.token,
+            };
+          }
+
+          return chat;
+        })
       );
     });
   };
@@ -61,7 +73,7 @@ const Index: React.FC = () => {
     <>
       <h1>TokenBase</h1>
       <div>
-        <ChatArea messages={messages} />
+        <ChatArea messages={chats} />
         <PromptArea onSend={onPromptSend} />
       </div>
     </>

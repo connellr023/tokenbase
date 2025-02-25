@@ -117,14 +117,14 @@ func main() {
 
 		// Chat sub-routes
 		r.Route("/chat", func(r chi.Router) {
-			// Temporary chat sub-routes
-			r.Route("/temp", func(r chi.Router) {
-				r.Post("/new", inj.PostNewTempChat)
-				r.Post("/prompt", inj.PostPromptTempChat)
+			// Guest chat sub-routes
+			r.Route("/guest", func(r chi.Router) {
+				r.Post("/new", inj.PostNewGuestChat)
+				r.Post("/prompt", inj.PostGuestChat)
 			})
 
-			// Saved chat sub-routes
-			r.Route("/saved", func(r chi.Router) {
+			// User chat sub-routes
+			r.Route("/user", func(r chi.Router) {
 				// TODO...
 			})
 		})

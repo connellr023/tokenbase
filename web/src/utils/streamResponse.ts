@@ -29,8 +29,6 @@ export const streamResponse = async <T>(
         const parsedChunk: T = JSON.parse(part);
         onChunk(parsedChunk);
       } catch (_) {
-        console.error("Failed to parse JSON chunk:");
-        console.error(part);
         continue;
       }
     }
