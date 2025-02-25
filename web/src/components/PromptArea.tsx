@@ -7,6 +7,11 @@ type PromptAreaProps = {
 const PromptArea: React.FC<PromptAreaProps> = ({ onSend }) => {
   const [prompt, setPrompt] = useState("");
 
+  const handleSend = () => {
+    onSend(prompt);
+    setPrompt("");
+  };
+
   return (
     <div>
       <input
@@ -14,7 +19,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({ onSend }) => {
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
       />
-      <button onClick={() => onSend(prompt)}>Send</button>
+      <button onClick={handleSend}>Send</button>
     </div>
   );
 };

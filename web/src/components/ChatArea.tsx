@@ -1,16 +1,20 @@
-import Chat from "@/models/Chat";
+import Message from "@/models/Message";
 
 type ChatAreaProps = {
-  chats: Chat[];
+  messages: Message[];
 };
 
-const ChatArea: React.FC<ChatAreaProps> = ({ chats }) => {
+const ChatArea: React.FC<ChatAreaProps> = ({ messages }) => {
   return (
     <div>
-      {chats.map((chat) => (
-        <div key={chat.id}>
-          <p>{chat.prompt}</p>
-          <p>{chat.reply}</p>
+      {messages.map((message) => (
+        <div key={message.id}>
+          <p>
+            <strong>Prompt:</strong> {message.prompt}
+          </p>
+          <p>
+            <strong>Reply:</strong> {message.reply}
+          </p>
         </div>
       ))}
     </div>

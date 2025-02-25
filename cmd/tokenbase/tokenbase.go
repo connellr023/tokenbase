@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 	"net/http"
-	"tokenbase/internal/constants"
 	"tokenbase/internal/controllers"
+	"tokenbase/internal/middlewares"
+	"tokenbase/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/redis/go-redis/v9"
@@ -18,21 +19,21 @@ import (
 // - A function to invalidate the authentication token
 // - An error if authentication fails
 func AuthSurrealDb() (*surrealdb.DB, func(), error) {
-	sdb, err := surrealdb.New(constants.SdbDockerEndpoint)
+	sdb, err := surrealdb.New(utils.SdbDockerEndpoint)
 
 	if err != nil {
 		return nil, nil, err
 	}
 
 	// Set the namespace
-	if err := sdb.Use(constants.SdbNamespace, constants.SdbName); err != nil {
+	if err := sdb.Use(utils.SdbNamespace, utils.SdbName); err != nil {
 		return nil, nil, err
 	}
 
 	// Authenticate
 	token, err := sdb.SignIn(&surrealdb.Auth{
-		Username: constants.SdbUsername,
-		Password: constants.SdbPassword,
+		Username: utils.SdbUsername,
+		Password: utils.SdbPassword,
 	})
 
 	if err != nil {
@@ -62,9 +63,9 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 // - An error if authentication fails
 func AuthRedis() (*redis.Client, context.Context, error) {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     constants.RdbDockerEndpoint,
-		Password: constants.RdbPassword,
-		DB:       constants.RdbDatabase,
+		Addr:     utils.RdbDockerEndpoint,
+		Password: utils.RdbPassword,
+		DB:       utils.RdbDatabase,
 	})
 
 	ctx := context.Background()
@@ -107,7 +108,9 @@ func main() {
 
 	// Start the backend server
 	println("Starting backend server...")
+
 	rootRouter := chi.NewRouter()
+	middlewares.UseCorsMiddleware(rootRouter)
 
 	rootRouter.Route("/api", func(r chi.Router) {
 		r.Get("/hello", inj.GetHelloWorld)
@@ -127,9 +130,9 @@ func main() {
 		})
 	})
 
-	println("Backend server started on " + constants.BackendEndpoint)
+	println("Backend server started on " + utils.BackendEndpoint)
 
-	if err := http.ListenAndServe(constants.BackendEndpoint, rootRouter); err != nil {
+	if err := http.ListenAndServe(utils.BackendEndpoint, rootRouter); err != nil {
 		panic(err)
 	}
 }

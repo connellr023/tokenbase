@@ -1,6 +1,10 @@
-package constants
+package utils
 
 const BackendEndpoint = ":8090"
+
+// Ollama connection details
+const TinyLlamaDockerEndpoint = "http://tinyllama:11434/api/generate"
+const TinyLlamaModelName = "tinyllama"
 
 // SurrealDB connection details
 const SdbDockerEndpoint = "ws://surrealdb:8000"
