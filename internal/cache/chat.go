@@ -5,7 +5,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"time"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
@@ -47,18 +46,26 @@ func NewGuestSession(rdb *redis.Client, initialExpiry time.Duration) (string, er
 		}
 
 		id := hex.EncodeToString(bytes)
+		key := FmtGuestSessionKey(id)
 
 		// Check if the key already exists
-		set, err := rdb.SetNX(ctx, FmtGuestSessionKey(id), "", initialExpiry).Result()
+		set, err := rdb.HSetNX(ctx, key, "initialized", true).Result()
 
 		if err != nil {
 			return "", err
 		}
 
-		// The key was set successfully
-		if set {
-			return id, nil
+		// Try again if the key already exists
+		if !set {
+			continue
 		}
+
+		// Set the expiry for the guest session
+		if err := rdb.Expire(ctx, key, initialExpiry).Err(); err != nil {
+			return "", err
+		}
+
+		return id, nil
 	}
 }
 
@@ -85,7 +92,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 
 	// Ensure the key exists
 	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
-		return -1, nil, ErrGuestSessionNotFound
+		return -1, nil, ErrSessionNotFound
 	}
 
 	// Get the chat ID of the new chat
@@ -108,7 +115,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 		var record models.ChatRecord
 
 		if err := json.Unmarshal([]byte(v), &record); err != nil {
-			return -1, nil, err
+			continue
 		}
 
 		chatRecords = append(chatRecords, record)
@@ -131,18 +138,28 @@ func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) err
 	pipe := rdb.TxPipeline()
 	expireCmd := pipe.Expire(ctx, key, utils.GuestSessionExpiry) // Refresh the expiry
 
+	// Serialize the chat record to JSON
+	recordJson, err := json.Marshal(record)
+
+	if err != nil {
+		return err
+	}
+
+	hsetCmd := pipe.HSet(ctx, key, record.ChatId, recordJson)
+
+	// Execute the pipeline
 	if _, err := pipe.Exec(ctx); err != nil {
 		return err
 	}
 
 	// Ensure expiration was set
 	if expireSuccess, err := expireCmd.Result(); err != nil || !expireSuccess {
-		return errors.New("failed to refresh expiry for guest session")
+		return ErrFailedToRefreshExpiry
 	}
 
-	// Store chat record in hash map
-	if err := rdb.HSet(ctx, key, record.ChatId, record).Err(); err != nil {
-		return err
+	// Ensure the chat record was saved
+	if hsetCmd.Err() != nil {
+		return hsetCmd.Err()
 	}
 
 	return nil

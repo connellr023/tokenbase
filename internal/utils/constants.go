@@ -9,17 +9,23 @@ const GlobalChatIdCounterKey = "global_chat_id_counter"
 const GuestSessionExpiry = 20 * time.Minute
 
 // Ollama connection details
-const TinyLlamaDockerEndpoint = "http://tinyllama:11434/api/generate"
-const TinyLlamaModelName = "tinyllama"
+const (
+	TinyLlamaDockerEndpoint = "http://tinyllama:11434/api/generate"
+	TinyLlamaModelName      = "tinyllama"
+)
 
 // SurrealDB connection details
-const SdbDockerEndpoint = "ws://surrealdb:8000"
-const SdbNamespace = "tokenbaseNS"
-const SdbName = "tokenbaseDB"
-const SdbUsername = "root" // Hardcoded for now
-const SdbPassword = "root" // Hardcoded for now
+const (
+	SdbDockerEndpoint = "ws://surrealdb:8000"
+	SdbNamespace      = "tokenbaseNS"
+	SdbName           = "tokenbaseDB"
+	SdbUsername       = "root" // Hardcoded for now
+	SdbPassword       = "root" // Hardcoded for now
+)
 
 // Redis connection details
-const RdbDockerEndpoint = "redis:6379"
-const RdbDatabase = 0
-const RdbPassword = "password" // Hardcoded for now
+const (
+	RdbDockerEndpoint = "redis:6379"
+	RdbDatabase       = 0
+	RdbPassword       = "password" // Hardcoded for now
+)

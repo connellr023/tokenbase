@@ -3,9 +3,10 @@ import PromptArea from "@/components/PromptArea";
 import ChatRecord from "@/models/ChatRecord";
 import ChatToken from "@/models/ChatToken";
 import { backendEndpoint } from "@/utils/constants";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import ChatError from "@/models/ChatError";
+import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 
 type GuestChatRequest = {
   guestSessionId: string;
@@ -13,15 +14,29 @@ type GuestChatRequest = {
 };
 
 const Index: React.FC = () => {
+  const guestSessionId = useRef<string | null>(null);
   const [chats, setChats] = useState<ChatRecord[]>([]);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | undefined>(
     undefined
   );
 
   const onPromptSend = async (prompt: string) => {
+    // Obtain a new guest session ID if we don't have one
+    if (!guestSessionId.current) {
+      const id = await reqNewGuestSession();
+
+      // Alert for now...
+      if (!id) {
+        alert("Failed to obtain a guest session ID");
+        return;
+      }
+
+      guestSessionId.current = id;
+    }
+
     // Construct the request
     const req: GuestChatRequest = {
-      guestSessionId: "", // For now, we don't have a session id
+      guestSessionId: guestSessionId.current ?? "",
       prompt,
     };
 
@@ -49,6 +64,7 @@ const Index: React.FC = () => {
     // Stream the response
     await recvHttpStream(res, (chunk: ChatToken & ChatError) => {
       // Check if this chunk is an error
+      // Alert for now...
       if (chunk.error) {
         alert("Error from backend: " + chunk.error);
         return;
