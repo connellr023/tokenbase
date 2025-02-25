@@ -3,15 +3,15 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"math/rand"
 	"net/http"
 	"strings"
+	"tokenbase/internal/cache"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 )
 
 type guestChatRequest struct {
-	GuestSessionId int    `json:"guestSessionId"`
+	GuestSessionId string `json:"guestSessionId"`
 	Prompt         string `json:"prompt"`
 }
 
@@ -27,6 +27,20 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
+
+	// Check context of conversation
+	chatId, chatRecords, err := cache.GetChatContext(i.Rdb, req.GuestSessionId)
+
+	if err == cache.ErrGuestSessionNotFound {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	} else if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Re-feed the chat records back into the LLM for context
+	_ = chatRecords
 
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaGenerateRequest{
@@ -53,11 +67,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	defer ollamaRes.Body.Close()
 
-	// Generate chat ID
-	// Random for now...
-	chatId := rand.Intn(10000)
-
-	// Keep track of the LLM reply so far
+	// Keep track of the LLM's reply so far
 	var replyBuilder strings.Builder
 
 	// Stream the response to the client
@@ -76,21 +86,29 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 					ChatId: chatId,
 					Token:  data.Response,
 				}
-			} else {
-				// No need to send chat ID again
-				return models.ChatToken{
-					Token: data.Response,
-				}
+			}
+
+			// No need to send chat ID again
+			return models.ChatToken{
+				Token: data.Response,
 			}
 		})
 
 		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
+			utils.WriteChatError(w, err)
 			return
 		}
 	}
 
 	// Cache chat in Redis
-	// TODO: Implement
-	// println(replyBuilder.String())
+	record := models.ChatRecord{
+		ChatId: chatId,
+		Prompt: req.Prompt,
+		Reply:  replyBuilder.String(),
+	}
+
+	if err := cache.SaveChatRecord(i.Rdb, req.GuestSessionId, record); err != nil {
+		utils.WriteChatError(w, err)
+		return
+	}
 }

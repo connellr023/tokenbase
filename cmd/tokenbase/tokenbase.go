@@ -59,9 +59,8 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 //
 // Returns:
 // - A Redis client
-// - A default context to use with Redis commands
 // - An error if authentication fails
-func AuthRedis() (*redis.Client, context.Context, error) {
+func AuthRedis() (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     utils.RdbDockerEndpoint,
 		Password: utils.RdbPassword,
@@ -72,10 +71,10 @@ func AuthRedis() (*redis.Client, context.Context, error) {
 	_, err := rdb.Ping(ctx).Result()
 
 	if err != nil {
-		return nil, ctx, err
+		return nil, err
 	}
 
-	return rdb, ctx, nil
+	return rdb, nil
 }
 
 func main() {
@@ -91,7 +90,7 @@ func main() {
 
 	// Connect to Redis over the Docker network
 	println("Connecting to Redis...")
-	client, ctx, err := AuthRedis()
+	client, err := AuthRedis()
 
 	if err != nil {
 		panic(err)
@@ -100,10 +99,7 @@ func main() {
 	// Create the controller injections
 	inj := controllers.Injection{
 		Sdb: sdb,
-		Rdb: controllers.RedisConnection{
-			Client: client,
-			Ctx:    ctx,
-		},
+		Rdb: client,
 	}
 
 	// Start the backend server

@@ -5,9 +5,10 @@ import ChatToken from "@/models/ChatToken";
 import { backendEndpoint } from "@/utils/constants";
 import { useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
+import ChatError from "@/models/ChatError";
 
 type GuestChatRequest = {
-  guestSessionId: number;
+  guestSessionId: string;
   prompt: string;
 };
 
@@ -20,7 +21,7 @@ const Index: React.FC = () => {
   const onPromptSend = async (prompt: string) => {
     // Construct the request
     const req: GuestChatRequest = {
-      guestSessionId: -1, // For now, we don't have a session id
+      guestSessionId: "", // For now, we don't have a session id
       prompt,
     };
 
@@ -46,7 +47,13 @@ const Index: React.FC = () => {
     };
 
     // Stream the response
-    await recvHttpStream(res, (chunk: ChatToken) => {
+    await recvHttpStream(res, (chunk: ChatToken & ChatError) => {
+      // Check if this chunk is an error
+      if (chunk.error) {
+        alert("Error from backend: " + chunk.error);
+        return;
+      }
+
       // Check if this chunk contains the chat ID
       if (chunk.chatId) {
         newChat.chatId = chunk.chatId;
