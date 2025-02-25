@@ -73,7 +73,7 @@ const Index: React.FC = () => {
     <>
       <h1>TokenBase</h1>
       <div>
-        <ChatArea messages={chats} />
+        <ChatArea chats={chats} />
         <PromptArea onSend={onPromptSend} />
       </div>
     </>
