@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 	"tokenbase/internal/cache"
-	"tokenbase/internal/utils"
 )
 
 type newGuestChatResponse struct {
@@ -15,7 +14,7 @@ type newGuestChatResponse struct {
 // Guest chats will only live in Redis
 func (i *Injection) PostNewGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Generate guest session ID
-	id, err := cache.NewGuestSession(i.Rdb, utils.GuestSessionExpiry)
+	id, err := cache.NewGuestSession(i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

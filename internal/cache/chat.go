@@ -8,13 +8,15 @@ import (
 	"slices"
 	"time"
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
 
-// Maintain a limit on how many chats to store in the context cache
-const maxChatRecords = 5
+const (
+	maxChatRecords         = 8
+	globalChatIdCounterKey = "global_chat_id_counter"
+	guestSessionExpiry     = 20 * time.Minute
+)
 
 func FmtGuestSessionKey(sessionId string) string {
 	return "guest_session:" + sessionId
@@ -29,12 +31,11 @@ func FmtUserSessionKey(userId string) string {
 //
 // Parameters:
 // - rdb: Redis client
-// - initialExpiry: Initial expiry duration for the guest session
 //
 // Returns:
 // - The unique guest session ID
 // - Any error that occurred
-func NewGuestSession(rdb *redis.Client, initialExpiry time.Duration) (string, error) {
+func NewGuestSession(rdb *redis.Client) (string, error) {
 	ctx := context.Background()
 
 	for {
@@ -61,8 +62,8 @@ func NewGuestSession(rdb *redis.Client, initialExpiry time.Duration) (string, er
 
 		// Initialize the list with a placeholder
 		pipe := rdb.TxPipeline()
-		pipe.LPush(ctx, key, "[]")           // Ensures list exists
-		pipe.Expire(ctx, key, initialExpiry) // Set expiration
+		pipe.LPush(ctx, key, "[]")                // Ensures list exists
+		pipe.Expire(ctx, key, guestSessionExpiry) // Set expiration
 
 		if _, err := pipe.Exec(ctx); err != nil {
 			return "", err
@@ -90,7 +91,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 	existsCmd := pipe.Exists(ctx, key)
 
 	// Get the next chat ID
-	incrCmd := pipe.Incr(ctx, utils.GlobalChatIdCounterKey)
+	incrCmd := pipe.Incr(ctx, globalChatIdCounterKey)
 
 	// Fetch last maxChatRecords messages
 	lrangeCmd := pipe.LRange(ctx, key, 0, -1)
@@ -134,6 +135,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 }
 
 // Save a chat record for a guest/user
+// Will remove oldest records if the maximum is exceeded
 //
 // Parameters:
 // - rdb: Redis client
@@ -160,7 +162,7 @@ func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) err
 	pipe.LTrim(ctx, key, 0, maxChatRecords-1)
 
 	// Refresh expiry for session
-	pipe.Expire(ctx, key, utils.GuestSessionExpiry)
+	pipe.Expire(ctx, key, guestSessionExpiry)
 
 	// Execute pipeline
 	_, err = pipe.Exec(ctx)

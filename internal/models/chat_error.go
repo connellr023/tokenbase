@@ -10,7 +10,7 @@ func NewChatError(err error) ChatError {
 	return ChatError{Error: err.Error()}
 }
 
-func (e ChatError) Json() []byte {
+func (e ChatError) ToJson() []byte {
 	json, _ := json.Marshal(e)
 	return json
 }

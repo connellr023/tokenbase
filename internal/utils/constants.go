@@ -1,17 +1,12 @@
 package utils
 
-import "time"
-
 const BackendEndpoint = ":8090"
-
-const GlobalChatIdCounterKey = "global_chat_id_counter"
-
-const GuestSessionExpiry = 20 * time.Minute
 
 // Ollama connection details
 const (
-	TinyLlamaDockerEndpoint = "http://tinyllama:11434/api/generate"
-	TinyLlamaModelName      = "tinyllama"
+	TinyLlamaDockerChatEndpoint = "http://tinyllama:11434/api/chat"
+	TinyLlamaModelName          = "tinyllama"
+	TinyLlamaKeepAliveSecs      = 60
 )
 
 // SurrealDB connection details

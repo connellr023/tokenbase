@@ -11,7 +11,7 @@ import (
 // w - The response writer
 // err - The error to write
 func WriteChatError(w http.ResponseWriter, err error) {
-	json := models.NewChatError(err).Json()
+	json := models.NewChatError(err).ToJson()
 
 	w.Write(json)
 	w.Write([]byte("\n"))

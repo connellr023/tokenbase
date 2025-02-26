@@ -30,7 +30,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(req.GuestSessionId)
-	chatId, chatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
+	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
 	if err == cache.ErrSessionNotFound {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -40,14 +40,12 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Re-feed the chat records back into the LLM for context
-	llmCtx := utils.FmtLlmContext(chatRecords, req.Prompt)
-
 	// Construct request to Ollama API
-	ollamaReq := models.OllamaGenerateRequest{
-		Model:  utils.TinyLlamaModelName,
-		Prompt: llmCtx,
-		Stream: true,
+	ollamaReq := models.OllamaChatRequest{
+		Model:     utils.TinyLlamaModelName,
+		KeepAlive: utils.TinyLlamaKeepAliveSecs,
+		Messages:  models.BuildOllamaMessages(prevChatRecords, req.Prompt),
+		Stream:    true,
 	}
 
 	// Serialize request to Ollama API
@@ -59,7 +57,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send request to Ollama API
-	ollamaRes, err := http.Post(utils.TinyLlamaDockerEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
+	ollamaRes, err := http.Post(utils.TinyLlamaDockerChatEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -75,9 +73,9 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	{
 		hasSentChatId := false
 
-		err = utils.MapHttpStream(w, ollamaRes.Body, func(data models.OllamaGenerateResponse) models.ChatToken {
+		err = utils.MapHttpStream(w, ollamaRes.Body, func(data models.OllamaChatResponse) models.ChatToken {
 			// Append response to the reply string
-			replyBuilder.WriteString(data.Response)
+			replyBuilder.WriteString(data.Message.Content)
 
 			// Determine if chat ID has been sent
 			if !hasSentChatId {
@@ -85,13 +83,13 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 				return models.ChatToken{
 					ChatId: chatId,
-					Token:  data.Response,
+					Token:  data.Message.Content,
 				}
 			}
 
 			// No need to send chat ID again
 			return models.ChatToken{
-				Token: data.Response,
+				Token: data.Message.Content,
 			}
 		})
 
