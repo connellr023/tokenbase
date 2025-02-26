@@ -5,12 +5,16 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
+	"slices"
 	"time"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
+
+// Maintain a limit on how many chats to store in the context cache
+const maxChatRecords = 5
 
 func FmtGuestSessionKey(sessionId string) string {
 	return "guest_session:" + sessionId
@@ -33,35 +37,34 @@ func FmtUserSessionKey(userId string) string {
 func NewGuestSession(rdb *redis.Client, initialExpiry time.Duration) (string, error) {
 	ctx := context.Background()
 
-	// Loop until a unique guest session ID is generated
 	for {
 		bytes := make([]byte, 8)
 
-		{
-			_, err := rand.Read(bytes)
-
-			if err != nil {
-				return "", err
-			}
+		if _, err := rand.Read(bytes); err != nil {
+			return "", err
 		}
 
 		id := hex.EncodeToString(bytes)
 		key := FmtGuestSessionKey(id)
 
-		// Check if the key already exists
-		set, err := rdb.HSetNX(ctx, key, "initialized", true).Result()
+		// Check if session exists
+		exists, err := rdb.Exists(ctx, key).Result()
 
 		if err != nil {
 			return "", err
 		}
 
-		// Try again if the key already exists
-		if !set {
+		// Try again if session already exists
+		if exists > 0 {
 			continue
 		}
 
-		// Set the expiry for the guest session
-		if err := rdb.Expire(ctx, key, initialExpiry).Err(); err != nil {
+		// Initialize the list with a placeholder
+		pipe := rdb.TxPipeline()
+		pipe.LPush(ctx, key, "[]")           // Ensures list exists
+		pipe.Expire(ctx, key, initialExpiry) // Set expiration
+
+		if _, err := pipe.Exec(ctx); err != nil {
 			return "", err
 		}
 
@@ -82,28 +85,34 @@ func NewGuestSession(rdb *redis.Client, initialExpiry time.Duration) (string, er
 func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
+
+	// Check if session exists
 	existsCmd := pipe.Exists(ctx, key)
+
+	// Get the next chat ID
 	incrCmd := pipe.Incr(ctx, utils.GlobalChatIdCounterKey)
-	hgetallCmd := pipe.HGetAll(ctx, key)
+
+	// Fetch last maxChatRecords messages
+	lrangeCmd := pipe.LRange(ctx, key, 0, -1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
 		return -1, nil, err
 	}
 
-	// Ensure the key exists
+	// Ensure session exists
 	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
 		return -1, nil, ErrSessionNotFound
 	}
 
-	// Get the chat ID of the new chat
+	// Get the next chat ID
 	chatId, err := incrCmd.Result()
 
 	if err != nil {
 		return -1, nil, err
 	}
 
-	// Get all previous chat records
-	data, err := hgetallCmd.Result()
+	// Deserialize chat records
+	data, err := lrangeCmd.Result()
 
 	if err != nil {
 		return -1, nil, err
@@ -111,16 +120,16 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 
 	chatRecords := make([]models.ChatRecord, 0, len(data))
 
-	for _, v := range data {
+	for _, jsonRecord := range data {
 		var record models.ChatRecord
 
-		if err := json.Unmarshal([]byte(v), &record); err != nil {
-			continue
+		if err := json.Unmarshal([]byte(jsonRecord), &record); err == nil {
+			chatRecords = append(chatRecords, record)
 		}
-
-		chatRecords = append(chatRecords, record)
 	}
 
+	// Reverse chat history to maintain order (oldest first)
+	slices.Reverse(chatRecords)
 	return chatId, chatRecords, nil
 }
 
@@ -136,7 +145,6 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) error {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
-	expireCmd := pipe.Expire(ctx, key, utils.GuestSessionExpiry) // Refresh the expiry
 
 	// Serialize the chat record to JSON
 	recordJson, err := json.Marshal(record)
@@ -145,22 +153,16 @@ func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) err
 		return err
 	}
 
-	hsetCmd := pipe.HSet(ctx, key, record.ChatId, recordJson)
+	// Push new chat record to the list (newest first)
+	pipe.LPush(ctx, key, recordJson)
 
-	// Execute the pipeline
-	if _, err := pipe.Exec(ctx); err != nil {
-		return err
-	}
+	// Trim the list to maintain only the latest records
+	pipe.LTrim(ctx, key, 0, maxChatRecords-1)
 
-	// Ensure expiration was set
-	if expireSuccess, err := expireCmd.Result(); err != nil || !expireSuccess {
-		return ErrFailedToRefreshExpiry
-	}
+	// Refresh expiry for session
+	pipe.Expire(ctx, key, utils.GuestSessionExpiry)
 
-	// Ensure the chat record was saved
-	if hsetCmd.Err() != nil {
-		return hsetCmd.Err()
-	}
-
-	return nil
+	// Execute pipeline
+	_, err = pipe.Exec(ctx)
+	return err
 }
