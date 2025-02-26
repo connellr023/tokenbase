@@ -25,11 +25,11 @@ jobs:
 
       - name: Check formatting with Prettier
         id: prettier-check
-        run: prettier --check "**/*.{ts,tsx,md,mjs}"
+        run: prettier --check "**/*.{ts,tsx,md,mjs,css,scss}"
 
       - name: Fix formatting with Prettier
         if: steps.prettier-check.outcome == 'failure'
-        run: prettier --write "**/*.{ts,tsx,md,mjs}"
+        run: prettier --write "**/*.{ts,tsx,md,mjs,css,scss}"
 
       # ---- Golang (gofmt) ----
       - name: Setup Go
