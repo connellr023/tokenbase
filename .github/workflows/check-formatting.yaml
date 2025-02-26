@@ -1,5 +1,4 @@
-name: Code Formatting Check
-
+name: Check Formatting
 on:
   push:
     branches:
@@ -24,8 +23,13 @@ jobs:
       - name: Install Prettier
         run: npm install -g prettier
 
-      - name: Check formatting with Prettier (TS, TSX, MD)
-        run: prettier --check "**/*.{ts,tsx,md}"
+      - name: Check formatting with Prettier
+        id: prettier-check
+        run: prettier --check "**/*.{ts,tsx,md,mjs}"
+
+      - name: Fix formatting with Prettier
+        if: steps.prettier-check.outcome == 'failure'
+        run: prettier --write "**/*.{ts,tsx,md,mjs}"
 
       # ---- Golang (gofmt) ----
       - name: Setup Go
@@ -34,8 +38,13 @@ jobs:
           go-version: "1.21"
 
       - name: Check formatting with gofmt
+        id: gofmt-check
         run: |
           if [ -n "$(gofmt -l .)" ]; then
             echo "Go files are not formatted. Run 'gofmt -w .' to fix."
             exit 1
           fi
+
+      - name: Fix formatting with gofmt
+        if: steps.gofmt-check.outcome == 'failure'
+        run: gofmt -w .

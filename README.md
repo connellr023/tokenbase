@@ -12,6 +12,13 @@
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
+## Code Formatting
+
+The following code formatters **must** be used to contribute to this repository or a workflow will fail:
+
+- [Prettier](https://prettier.io/) for all frontend code
+- [Go fmt](https://golang.org/cmd/gofmt/) for all backend code
+
 ## Structure
 
 - `build/package/`
