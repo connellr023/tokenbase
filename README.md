@@ -14,10 +14,12 @@
 
 ## Code Formatting
 
-The following code formatters **must** be used to contribute to this repository or a workflow will fail:
+The following code formatters are required for this project:
 
 - [Prettier](https://prettier.io/) for all frontend code
 - [Go fmt](https://golang.org/cmd/gofmt/) for all backend code
+
+If these formatters are not used, the CI pipeline will create a commit with the properly formatted code.
 
 ## Structure
 

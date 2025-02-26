@@ -17,7 +17,7 @@ const Index: React.FC = () => {
   const guestSessionId = useRef<string | null>(null);
   const [chats, setChats] = useState<ChatRecord[]>([]);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | undefined>(
-    undefined
+    undefined,
   );
 
   const onPromptSend = async (prompt: string) => {

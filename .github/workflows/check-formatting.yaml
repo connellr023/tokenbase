@@ -1,4 +1,5 @@
-name: Check Formatting
+name: Check and Fix Formatting
+
 on:
   push:
     branches:
@@ -6,15 +7,15 @@ on:
   pull_request:
 
 jobs:
-  check-formatting:
-    name: Check Code Formatting
+  check-and-fix-formatting:
+    name: Check and Fix Code Formatting
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---- TypeScript & Markdown (Prettier) ----
+      # ---- TypeScript, JavaScript, CSS, SCSS, Markdown (Prettier) ----
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,13 +24,9 @@ jobs:
       - name: Install Prettier
         run: npm install -g prettier
 
-      - name: Check formatting with Prettier
-        id: prettier-check
-        run: prettier --check "**/*.{ts,tsx,md,mjs,css,scss}"
-
-      - name: Fix formatting with Prettier
-        if: steps.prettier-check.outcome == 'failure'
-        run: prettier --write "**/*.{ts,tsx,md,mjs,css,scss}"
+      - name: Fix formatting for TypeScript, JavaScript, CSS, SCSS, and Markdown with Prettier
+        id: prettier-fix
+        run: prettier --write "**/*.{ts,tsx,mjs,md,css,scss}"
 
       # ---- Golang (gofmt) ----
       - name: Setup Go
@@ -37,14 +34,18 @@ jobs:
         with:
           go-version: "1.21"
 
-      - name: Check formatting with gofmt
-        id: gofmt-check
+      - name: Fix formatting for Go files with gofmt
+        id: gofmt-fix
         run: |
-          if [ -n "$(gofmt -l .)" ]; then
-            echo "Go files are not formatted. Run 'gofmt -w .' to fix."
-            exit 1
-          fi
+          gofmt -w .
+          git diff --exit-code || (echo "Go files have been fixed"; exit 1)
 
-      - name: Fix formatting with gofmt
-        if: steps.gofmt-check.outcome == 'failure'
-        run: gofmt -w .
+      # ---- Commit and push the changes (if any) ----
+      - name: Commit and push changes (if any)
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: "github-actions[bot]"
+          author_email: "github-actions[bot]@users.noreply.github.com"
+          message: "fix: apply code formatting fixes"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
