@@ -12,7 +12,23 @@
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
-## Code Formatting
+## Contributing
+
+![Backend CI](https://github.com/connellr023/tokenbase/actions/workflows/backend-ci.yaml/badge.svg)
+![Frontend CI](https://github.com/connellr023/tokenbase/actions/workflows/frontend-ci.yaml/badge.svg)
+![Formatter CI](https://github.com/connellr023/tokenbase/actions/workflows/formatter-ci.yaml/badge.svg)
+
+### Pull Requests
+
+Before merging a pull request, the following checks must pass:
+
+- `Backend CI`
+- `Frontend CI`
+- `Formatter CI`
+
+If all checks pass, ensure `Squash and Merge` is selected and then merge the pull request.
+
+### Code Formatting
 
 The following code formatters are required for this project:
 
