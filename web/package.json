@@ -12,7 +12,8 @@
     "next": "15.1.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sass": "^1.85.0"
+    "sass": "^1.85.0",
+    "web": "file:"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
