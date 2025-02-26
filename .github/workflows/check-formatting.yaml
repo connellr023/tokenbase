@@ -1,0 +1,51 @@
+name: Check and Fix Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  check-and-fix-formatting:
+    name: Check and Fix Code Formatting
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ---- TypeScript, JavaScript, CSS, SCSS, Markdown (Prettier) ----
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Prettier
+        run: npm install -g prettier
+
+      - name: Fix formatting for TypeScript, JavaScript, CSS, SCSS, and Markdown with Prettier
+        id: prettier-fix
+        run: prettier --write "**/*.{ts,tsx,mjs,md,css,scss}"
+
+      # ---- Golang (gofmt) ----
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.21"
+
+      - name: Fix formatting for Go files with gofmt
+        id: gofmt-fix
+        run: |
+          gofmt -w .
+          git diff --exit-code || (echo "Go files have been fixed"; exit 1)
+
+      # ---- Commit and push the changes (if any) ----
+      - name: Commit and push changes (if any)
+        uses: EndBug/add-and-commit@v7
+        with:
+          author_name: "github-actions[bot]"
+          author_email: "github-actions[bot]@users.noreply.github.com"
+          message: "fix: apply code formatting fixes"
+        env:
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}

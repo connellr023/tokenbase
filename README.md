@@ -12,6 +12,15 @@
 ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 
+## Code Formatting
+
+The following code formatters are required for this project:
+
+- [Prettier](https://prettier.io/) for all frontend code
+- [Go fmt](https://golang.org/cmd/gofmt/) for all backend code
+
+If these formatters are not used, the CI pipeline will create a commit with the properly formatted code.
+
 ## Structure
 
 - `build/package/`
@@ -42,7 +51,9 @@
 1. Clone the repository
 2. Run `docker-compose up --build` to build and run the services from scratch
 3. Run `docker-compose up` to start the services after the initial build
-4. Run `docker-compose up --build <service>` to build and run a specific service from scratch
+4. Run `docker-compose up <service> --build -d` to build and run a specific service from scratch
+5. Run `docker-compose down` to stop the services
+6. Run `docker-compose down -v` to stop the services and remove all volumes
 
 ## Running Backend Tests
 
