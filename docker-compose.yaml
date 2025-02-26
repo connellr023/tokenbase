@@ -39,6 +39,9 @@ services:
       dockerfile: ./build/package/dev.tinyllama.dockerfile
     ports:
       - "11434:11434"
+    environment:
+      - OLLAMA_KEEP_ALIVE=6m
+      - OLLAMA_MAX_LOADED_MODELS=1
     networks:
       - app-network
 

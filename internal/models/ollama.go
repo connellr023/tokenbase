@@ -8,9 +8,9 @@ type OllamaChatMessage struct {
 
 type OllamaChatRequest struct {
 	Model     string              `json:"model"`
-	KeepAlive int                 `json:"keep_alive"`
+	KeepAlive int                 `json:"keep_alive,omitempty"`
 	Messages  []OllamaChatMessage `json:"messages"`
-	Stream    bool                `json:"stream"`
+	Stream    bool                `json:"stream,omitempty"`
 }
 
 type OllamaChatResponse struct {

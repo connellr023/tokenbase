@@ -6,7 +6,6 @@ const BackendEndpoint = ":8090"
 const (
 	TinyLlamaDockerChatEndpoint = "http://tinyllama:11434/api/chat"
 	TinyLlamaModelName          = "tinyllama"
-	TinyLlamaKeepAliveSecs      = 60
 )
 
 // SurrealDB connection details
