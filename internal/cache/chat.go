@@ -5,17 +5,17 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"slices"
 	"time"
 	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
 
 const (
-	maxChatRecords         = 8
+	dummySortedSetMember   = "__placeholder__"
 	globalChatIdCounterKey = "global_chat_id_counter"
-	guestSessionExpiry     = 20 * time.Minute
+	cacheSessionExpiry     = 20 * time.Minute
 )
 
 func FmtGuestSessionKey(sessionId string) string {
@@ -48,28 +48,22 @@ func NewGuestSession(rdb *redis.Client) (string, error) {
 		id := hex.EncodeToString(bytes)
 		key := FmtGuestSessionKey(id)
 
-		// Check if session exists
-		exists, err := rdb.Exists(ctx, key).Result()
-
-		if err != nil {
-			return "", err
-		}
-
-		// Try again if session already exists
-		if exists > 0 {
-			continue
-		}
-
-		// Initialize the list with a placeholder
+		// Check if session exists and create a new sorted set
 		pipe := rdb.TxPipeline()
-		pipe.LPush(ctx, key, "[]")                // Ensures list exists
-		pipe.Expire(ctx, key, guestSessionExpiry) // Set expiration
+		zaddnxCmd := pipe.ZAddNX(ctx, key, redis.Z{Score: -1, Member: dummySortedSetMember})
+		pipe.Expire(ctx, key, cacheSessionExpiry)
 
+		// Execute pipeline
 		if _, err := pipe.Exec(ctx); err != nil {
 			return "", err
 		}
 
-		return id, nil
+		// Check if the session was created
+		if created, err := zaddnxCmd.Result(); err != nil {
+			return "", err
+		} else if created > 0 {
+			return id, nil
+		}
 	}
 }
 
@@ -93,8 +87,9 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 	// Get the next chat ID
 	incrCmd := pipe.Incr(ctx, globalChatIdCounterKey)
 
-	// Fetch last maxChatRecords messages
-	lrangeCmd := pipe.LRange(ctx, key, 0, -1)
+	// Fetch all messages from highest chat ID to lowest
+	// Keep the number of messages to a maximum
+	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, utils.MaxChatsInAContext-1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
 		return -1, nil, err
@@ -113,15 +108,15 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 	}
 
 	// Deserialize chat records
-	data, err := lrangeCmd.Result()
+	serializedRecords, err := zrevrangeCmd.Result()
 
 	if err != nil {
 		return -1, nil, err
 	}
 
-	chatRecords := make([]models.ChatRecord, 0, len(data))
+	chatRecords := make([]models.ChatRecord, 0, len(serializedRecords))
 
-	for _, jsonRecord := range data {
+	for _, jsonRecord := range serializedRecords {
 		var record models.ChatRecord
 
 		if err := json.Unmarshal([]byte(jsonRecord), &record); err == nil {
@@ -129,8 +124,6 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 		}
 	}
 
-	// Reverse chat history to maintain order (oldest first)
-	slices.Reverse(chatRecords)
 	return chatId, chatRecords, nil
 }
 
@@ -155,14 +148,16 @@ func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) err
 		return err
 	}
 
-	// Push new chat record to the list (newest first)
-	pipe.LPush(ctx, key, recordJson)
+	recordScore := float64(record.ChatId)
 
-	// Trim the list to maintain only the latest records
-	pipe.LTrim(ctx, key, 0, maxChatRecords-1)
+	// Add the chat record to the sorted set
+	pipe.ZAdd(ctx, key, redis.Z{Score: recordScore, Member: recordJson})
 
-	// Refresh expiry for session
-	pipe.Expire(ctx, key, guestSessionExpiry)
+	// Trim the sorted set to the maximum number of records
+	pipe.ZRemRangeByRank(ctx, key, 0, -utils.MaxChatsPerConversation-1)
+
+	// Refresh the session expiry
+	pipe.Expire(ctx, key, cacheSessionExpiry)
 
 	// Execute pipeline
 	_, err = pipe.Exec(ctx)

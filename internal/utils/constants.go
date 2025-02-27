@@ -2,6 +2,12 @@ package utils
 
 const BackendEndpoint = ":8090"
 
+// Chat context details
+const (
+	MaxChatsPerConversation = 60
+	MaxChatsInAContext      = 8
+)
+
 // Ollama connection details
 const (
 	TinyLlamaDockerChatEndpoint = "http://tinyllama:11434/api/chat"
