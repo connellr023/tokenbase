@@ -37,7 +37,7 @@ jobs:
       - name: Fix formatting for Go files with gofmt
         id: gofmt-fix
         run: |
-          gofmt -w .
+          find . -name '*.go' -exec gofmt -w {} +
           git diff --exit-code || (echo "Go files have been fixed"; exit 1)
 
       # ---- Commit and push the changes (if any) ----
