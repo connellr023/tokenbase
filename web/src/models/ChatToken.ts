@@ -1,5 +1,4 @@
-type ChatToken = {
-  chatId: number;
+type ChatToken = {chatId: number;
   token: string;
 };
 
