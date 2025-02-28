@@ -65,4 +65,4 @@ jobs:
           author_email: "github-actions[bot]@users.noreply.github.com"
           message: "fix: apply code formatting fixes"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.TOKEN }}
