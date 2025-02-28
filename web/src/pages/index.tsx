@@ -1,11 +1,12 @@
+import styles from "@/styles/Index.module.scss";
 import ChatArea from "@/components/ChatArea";
 import PromptArea from "@/components/PromptArea";
 import ChatRecord from "@/models/ChatRecord";
 import ChatToken from "@/models/ChatToken";
+import ChatError from "@/models/ChatError";
 import { backendEndpoint } from "@/utils/constants";
 import { useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
-import ChatError from "@/models/ChatError";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 
 type GuestChatRequest = {
@@ -16,8 +17,9 @@ type GuestChatRequest = {
 const Index: React.FC = () => {
   const guestSessionId = useRef<string | null>(null);
   const [chats, setChats] = useState<ChatRecord[]>([]);
+  const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | undefined>(
-    undefined,
+    undefined
   );
 
   const onPromptSend = async (prompt: string) => {
@@ -39,6 +41,9 @@ const Index: React.FC = () => {
       guestSessionId: guestSessionId.current ?? "",
       prompt,
     };
+
+    // Set loading indicator
+    setLoading(true);
 
     // Send the prompt to the backend
     const res = await fetch(backendEndpoint + "api/chat/guest/prompt", {
@@ -83,6 +88,7 @@ const Index: React.FC = () => {
 
       // Trigger a re-render
       setStreamingChat(newChat);
+      setLoading(false);
     });
 
     // Stream is finished, so add the chat to the list
@@ -92,9 +98,13 @@ const Index: React.FC = () => {
 
   return (
     <>
-      <h1>TokenBase</h1>
-      <div>
-        <ChatArea chats={chats} streamingChat={streamingChat} />
+      <div className={styles.container}>
+        <h2>Welcome</h2>
+        <ChatArea
+          chats={chats}
+          isLoading={isLoading}
+          streamingChat={streamingChat}
+        />
         <PromptArea onSend={onPromptSend} />
       </div>
     </>

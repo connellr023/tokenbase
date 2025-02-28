@@ -3,6 +3,7 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strings"
 	"tokenbase/internal/cache"
@@ -32,7 +33,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	guestSessionKey := cache.FmtGuestSessionKey(req.GuestSessionId)
 	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
-	if err == cache.ErrSessionNotFound {
+	if errors.Is(err, cache.ErrSessionNotFound) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
