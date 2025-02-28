@@ -28,6 +28,15 @@ jobs:
         id: prettier-fix
         run: prettier --write "**/*.{ts,tsx,mjs,md,css,scss}"
 
+      - name: Check for changes after Prettier
+        id: check_prettier_changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_ENV
+          else
+            echo "changes=false" >> $GITHUB_ENV
+          fi
+
       # ---- Golang (gofmt) ----
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -36,16 +45,24 @@ jobs:
 
       - name: Fix formatting for Go files with gofmt
         id: gofmt-fix
+        run: find . -name '*.go' -exec gofmt -w {} +
+
+      - name: Check for changes after gofmt
+        id: check_gofmt_changes
         run: |
-          gofmt -w .
-          git diff --exit-code || (echo "Go files have been fixed"; exit 1)
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "changes=true" >> $GITHUB_ENV
+          else
+            echo "changes=false" >> $GITHUB_ENV
+          fi
 
       # ---- Commit and push the changes (if any) ----
       - name: Commit and push changes (if any)
+        if: env.changes == 'true'
         uses: EndBug/add-and-commit@v7
         with:
           author_name: "github-actions[bot]"
           author_email: "github-actions[bot]@users.noreply.github.com"
           message: "fix: apply code formatting fixes"
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
