@@ -29,8 +29,13 @@ jobs:
         run: prettier --write "**/*.{ts,tsx,mjs,md,css,scss}"
 
       - name: Check for changes after Prettier
-        run: git status --porcelain
         id: check_prettier_changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::set-output name=changes::true"
+          else
+            echo "::set-output name=changes::false"
+          fi
 
       # ---- Golang (gofmt) ----
       - name: Setup Go
@@ -43,12 +48,17 @@ jobs:
         run: find . -name '*.go' -exec gofmt -w {} +
 
       - name: Check for changes after gofmt
-        run: git status --porcelain
         id: check_gofmt_changes
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::set-output name=changes::true"
+          else
+            echo "::set-output name=changes::false"
+          fi
 
       # ---- Commit and push the changes (if any) ----
       - name: Commit and push changes (if any)
-        if: steps.check_prettier_changes.outputs.changes || steps.check_gofmt_changes.outputs.changes
+        if: steps.check_prettier_changes.outputs.changes == 'true' || steps.check_gofmt_changes.outputs.changes == 'true'
         uses: EndBug/add-and-commit@v7
         with:
           author_name: "github-actions[bot]"
