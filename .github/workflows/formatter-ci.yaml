@@ -32,9 +32,9 @@ jobs:
         id: check_prettier_changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            echo "::set-output name=changes::true"
+            echo "changes=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=changes::false"
+            echo "changes=false" >> $GITHUB_ENV
           fi
 
       # ---- Golang (gofmt) ----
@@ -51,18 +51,18 @@ jobs:
         id: check_gofmt_changes
         run: |
           if [ -n "$(git status --porcelain)" ]; then
-            echo "::set-output name=changes::true"
+            echo "changes=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=changes::false"
+            echo "changes=false" >> $GITHUB_ENV
           fi
 
       # ---- Commit and push the changes (if any) ----
       - name: Commit and push changes (if any)
-        if: steps.check_prettier_changes.outputs.changes == 'true' || steps.check_gofmt_changes.outputs.changes == 'true'
+        if: env.changes == 'true'
         uses: EndBug/add-and-commit@v7
         with:
           author_name: "github-actions[bot]"
           author_email: "github-actions[bot]@users.noreply.github.com"
           message: "fix: apply code formatting fixes"
         env:
-          GITHUB_TOKEN: ${{ secrets.TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
