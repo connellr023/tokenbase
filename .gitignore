@@ -43,3 +43,6 @@ web/build
 # Editor
 **/.vscode
 **/.idea
+
+# Accidental package file being committed
+./package-lock.json
