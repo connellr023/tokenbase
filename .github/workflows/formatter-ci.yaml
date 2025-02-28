@@ -28,6 +28,10 @@ jobs:
         id: prettier-fix
         run: prettier --write "**/*.{ts,tsx,mjs,md,css,scss}"
 
+      - name: Check for changes after Prettier
+        run: git status --porcelain
+        id: check_prettier_changes
+
       # ---- Golang (gofmt) ----
       - name: Setup Go
         uses: actions/setup-go@v5
@@ -36,12 +40,15 @@ jobs:
 
       - name: Fix formatting for Go files with gofmt
         id: gofmt-fix
-        run: |
-          find . -name '*.go' -exec gofmt -w {} +
-          git diff --exit-code || (echo "Go files have been fixed"; exit 1)
+        run: find . -name '*.go' -exec gofmt -w {} +
+
+      - name: Check for changes after gofmt
+        run: git status --porcelain
+        id: check_gofmt_changes
 
       # ---- Commit and push the changes (if any) ----
       - name: Commit and push changes (if any)
+        if: steps.check_prettier_changes.outputs.changes || steps.check_gofmt_changes.outputs.changes
         uses: EndBug/add-and-commit@v7
         with:
           author_name: "github-actions[bot]"
