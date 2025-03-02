@@ -1,12 +1,21 @@
+@import "variables.scss";
+
 body {
-  background-color: #212121;
+  background-color: $bg-color-1;
   color: white;
-  margin: 0%;
+  margin: 0;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
+input,
+textarea,
+button {
+  outline: none;
+  border: none;
+}
+
+textarea {
+  resize: none;
+  font-family: inherit;
 }
 
 nav {
@@ -19,10 +28,20 @@ nav {
   top: 0;
 }
 
-@media screen and (min-width: 320px) {
-  main {
-    padding-top: 50px;
+.fade-in {
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
+
+  animation: ease fadeIn 0.35s;
+}
+
+@media screen and (min-width: 320px) {
   nav {
     height: 50px;
   }

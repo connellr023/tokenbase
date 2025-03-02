@@ -1,0 +1,19 @@
+div.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 25lvh;
+  width: 100%;
+
+  div.chatContainer {
+    margin-bottom: 1rem;
+    width: 100%;
+
+    & > div {
+      $side-margin: 2rem;
+
+      margin-left: $side-margin;
+      margin-right: $side-margin;
+    }
+  }
+}

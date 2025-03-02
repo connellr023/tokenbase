@@ -1,0 +1,42 @@
+@import "../variables.scss";
+
+div.container {
+  $side-margin: 4rem;
+
+  position: fixed;
+  bottom: 1rem;
+  padding: 0.5rem;
+  border: $border-width-1 solid $outline-color-1;
+  border-radius: $border-radius-1;
+  background-color: $bg-color-2;
+  width: calc(100% - 2 * $side-margin);
+  display: flex;
+  flex-direction: column;
+
+  textarea {
+    color: $txt-color-1;
+    background: none;
+    font-size: 1rem;
+    overflow: hidden;
+
+    &::placeholder {
+      color: $transparent-color-white;
+    }
+  }
+
+  button {
+    $size: 0.5rem;
+
+    cursor: pointer;
+    padding: $size calc(1.4 * $size);
+    border-radius: calc($border-radius-1 - $size);
+    font-size: calc(2 * $size);
+    color: $bg-color-2;
+    background-color: $button-color-1;
+
+    &:hover {
+      background-color: $button-color-2;
+      transition: $transition-1;
+    }
+  }
+}

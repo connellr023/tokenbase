@@ -1,9 +1,10 @@
+import styles from "@/styles/components/ChatContainer.module.scss";
 import React, { useState } from "react";
-import ChatArea from "@/components/ChatArea";
 import PromptArea from "@/components/PromptArea";
-import ChatRecord from "@/models/ChatRecord";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
+import Chat from "@/components/Chat";
+import LoadingIndicator from "@/components/LoadingIndicator";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type ChatContainerProps = {
@@ -12,16 +13,20 @@ type ChatContainerProps = {
   onSend: () => Promise<void>;
 };
 
+type ChatState = {
+  chatId?: number;
+  prompt: string;
+  replyTokens: string[];
+};
+
 const ChatContainer: React.FC<ChatContainerProps> = ({
   endpoint,
   constructRequest,
   onSend,
 }) => {
-  const [chats, setChats] = useState<ChatRecord[]>([]);
+  const [chats, setChats] = useState<ChatState[]>([]);
   const [isLoading, setLoading] = useState(false);
-  const [streamingChat, setStreamingChat] = useState<ChatRecord | undefined>(
-    undefined,
-  );
+  const [streamingChat, setStreamingChat] = useState<ChatState | null>(null);
 
   const onPromptSend = async (prompt: string) => {
     // Call the provided callback
@@ -30,8 +35,15 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     // Construct the request using the provided callback
     const req = constructRequest(prompt);
 
-    // Set loading indicator
+    // Initialize a new chat entry
+    let newChat: ChatState = {
+      prompt: prompt,
+      replyTokens: [],
+    };
+
+    // Set loading state and show the new chat entry prompt
     setLoading(true);
+    setStreamingChat(newChat);
 
     // Send the prompt to the backend
     const res = await fetch(endpoint, {
@@ -47,12 +59,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       alert("Failed to send prompt");
       return;
     }
-
-    // Initialize a new chat entry
-    let newChat: ChatRecord = {
-      prompt: prompt,
-      reply: "",
-    };
 
     // Stream the response
     await recvHttpStream(res, (chunk: ChatToken & ChatError) => {
@@ -71,7 +77,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Construct the new chat entry
       newChat = {
         ...newChat,
-        reply: newChat.reply + chunk.token,
+        replyTokens: [...newChat.replyTokens, chunk.token],
       };
 
       // Trigger a re-render
@@ -79,17 +85,42 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       setLoading(false);
     });
 
-    // Stream is finished, so add the chat to the list
-    setStreamingChat(undefined);
-    setChats((prev) => [...prev, newChat]);
+    // Delay to let animation finish
+    setTimeout(() => {
+      // Stream is finished, so add the chat to the list
+      setStreamingChat(null);
+      setChats((prev) => [...prev, newChat]);
+    }, 200);
   };
 
   return (
-    <>
-      <ChatArea chats={chats} streamingChat={streamingChat} />
-      {isLoading && <div>Loading...</div>}
+    <div className={styles.container}>
+      <div className={styles.chatContainer}>
+        <div>
+          {/* Render all finished chats */}
+          {chats.map((chat) => (
+            <Chat
+              key={chat.chatId}
+              prompt={chat.prompt}
+              replyTokens={chat.replyTokens}
+              shouldFadeIn={false}
+            />
+          ))}
+
+          {/* If a chat reply is being streamed back, render it here */}
+          {streamingChat && (
+            <Chat
+              key={streamingChat.chatId ?? -1}
+              prompt={streamingChat.prompt}
+              replyTokens={streamingChat.replyTokens}
+              shouldFadeIn={true}
+            />
+          )}
+        </div>
+      </div>
+      {isLoading && <LoadingIndicator />}
       <PromptArea onSend={onPromptSend} />
-    </>
+    </div>
   );
 };
 

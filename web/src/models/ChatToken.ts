@@ -1,3 +1,6 @@
-type ChatToken = { chatId: number; token: string };
+type ChatToken = {
+  chatId: number;
+  token: string;
+};
 
 export default ChatToken;

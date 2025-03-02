@@ -1,4 +1,4 @@
-import styles from "@/styles/Home.module.scss";
+import styles from "@/styles/components/Home.module.scss";
 import ChatContainer from "@/components/ChatContainer";
 import { backendEndpoint } from "@/utils/constants";
 import { useRef } from "react";
@@ -33,7 +33,6 @@ const Home: React.FC = () => {
   return (
     <>
       <div className={styles.container}>
-        <h2>Welcome</h2>
         <ChatContainer
           endpoint={guestPromptEndpoint}
           constructRequest={constructGuestRequest}

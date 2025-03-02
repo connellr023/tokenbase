@@ -1,18 +1,24 @@
-import ChatRecord from "@/models/ChatRecord";
+import styles from "@/styles/components/Chat.module.scss";
 
 type ChatProps = {
-  model: ChatRecord;
+  prompt: string;
+  replyTokens: string[];
+  shouldFadeIn: boolean;
 };
 
-const Chat: React.FC<ChatProps> = ({ model: { prompt, reply } }) => {
+const Chat: React.FC<ChatProps> = ({ prompt, replyTokens, shouldFadeIn }) => {
   return (
-    <div>
-      <p>
-        <b>Prompt:</b> {prompt}
-      </p>
-      <p>
-        <b>Reply:</b> {reply}
-      </p>
+    <div className={styles.container}>
+      <p className={styles.prompt}>{prompt}</p>
+      {replyTokens.length > 0 && (
+        <p className={styles.reply}>
+          {replyTokens.map((token, index) => (
+            <span key={index} className={shouldFadeIn ? "fade-in" : ""}>
+              {token}
+            </span>
+          ))}
+        </p>
+      )}
     </div>
   );
 };
