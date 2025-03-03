@@ -1,6 +1,7 @@
 import styles from "@/styles/components/Chat.module.scss";
 import { faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "./IconButton";
+import TypesetRenderer from "./TypesetRenderer";
 
 type ChatProps = {
   chatId: number;
@@ -17,15 +18,13 @@ const Chat: React.FC<ChatProps> = ({
 }) => {
   return (
     <div className={styles.container}>
-      <p className={styles.prompt}>{prompt}</p>
+      <div className={styles.promptContainer}>
+        <TypesetRenderer content={prompt} />
+      </div>
       {replyTokens.length > 0 && (
-        <p className={styles.reply}>
-          {replyTokens.map((token, index) => (
-            <span key={index} className={!isComplete ? "fade-in" : ""}>
-              {token}
-            </span>
-          ))}
-        </p>
+        <div className={styles.replyContainer}>
+          <TypesetRenderer content={replyTokens.join("")} />
+        </div>
       )}
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>

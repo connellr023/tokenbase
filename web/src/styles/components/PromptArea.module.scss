@@ -20,13 +20,13 @@ div.container {
   }
 
   & > div {
-    $side-margin: 1.5rem;
+    $side-margin: 1.2rem;
 
     width: calc(100% - (2 * $side-margin));
     padding: 0.6rem;
     border-radius: $border-radius-1;
     background-color: $bg-color-2;
-    max-width: 50rem;
+    max-width: 60rem;
     display: flex;
     flex-direction: column;
 

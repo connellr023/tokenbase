@@ -148,7 +148,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
         {error ? (
           <ErrorMessage error={error} />
         ) : (
-          isLoading && <LoadingIndicator />
+          isLoading && (
+            <div className={styles.loadingIndicatorContainer}>
+              {<LoadingIndicator />}
+            </div>
+          )
         )}
       </div>
       <PromptArea

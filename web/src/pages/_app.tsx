@@ -1,11 +1,7 @@
 import "@/styles/globals.scss";
 import Head from "next/head";
+import { ubuntu } from "@/utils/fonts";
 import type { AppProps } from "next/app";
-import { Ubuntu } from "next/font/google";
-
-const ubuntu = Ubuntu({
-  weight: "500",
-});
 
 const App = ({ Component, pageProps }: AppProps) => {
   return (

@@ -9,6 +9,10 @@ div.container {
   overflow-y: auto;
   padding-bottom: 25rem;
 
+  div.loadingIndicatorContainer {
+    margin-top: 2rem;
+  }
+
   div.chatContainer {
     margin-bottom: 1rem;
     width: 100%;

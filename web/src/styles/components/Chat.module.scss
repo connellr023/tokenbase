@@ -4,12 +4,37 @@ div.container {
   display: flex;
   flex-direction: column;
 
+  code {
+    font-size: 1rem;
+  }
+
+  pre {
+    border-radius: 0.5rem;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+
+    & > span {
+      $side-pad: 0.6rem;
+
+      padding: 0.45rem $side-pad 0.35rem $side-pad;
+      background-color: $bg-color-4;
+      color: $txt-color-1;
+    }
+
+    & > div {
+      padding: 0.7rem;
+    }
+  }
+
   p {
     margin: 0;
     white-space: pre-wrap;
   }
 
-  p.prompt {
+  div.promptContainer {
     $margin: 1rem;
 
     color: $txt-color-2;
@@ -20,15 +45,27 @@ div.container {
     border-radius: $border-radius-1 * 0.8;
     background-color: $bg-color-2;
     padding: 0.8rem;
+    max-width: 75%;
+    word-wrap: break-word;
+
+    pre > div {
+      background-color: $bg-color-1;
+      color: $txt-color-1;
+    }
   }
 
-  p.reply {
+  div.replyContainer {
     margin-top: 1rem;
     text-align: left;
+
+    pre > div {
+      background-color: $bg-color-2;
+      color: $txt-color-2;
+    }
   }
 
   div.chatOptions {
-    margin-top: 0.8rem;
+    margin-top: 0.4rem;
     display: flex;
     flex-direction: row;
     gap: 0.4rem;
