@@ -51,7 +51,8 @@ const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
         </button>
       </div>
       <p>
-        Note, <b>tokenbase</b> does <i>not</i> produce perfect answers.
+        Note, the <b>LLM</b> used by <b>tokenbase</b> does <i>not</i> produce
+        perfect answers.
       </p>
     </div>
   );

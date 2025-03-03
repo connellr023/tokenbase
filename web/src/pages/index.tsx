@@ -13,10 +13,8 @@ const Home: React.FC = () => {
     if (!guestSessionId.current) {
       const id = await reqNewGuestSession();
 
-      // Alert for now...
       if (!id) {
-        alert("Failed to create guest session");
-        return;
+        return "Failed to create guest session";
       }
 
       guestSessionId.current = id;

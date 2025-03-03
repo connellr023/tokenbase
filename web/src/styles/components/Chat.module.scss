@@ -1,4 +1,4 @@
-@import "../variables.scss";
+@use "../variables.scss" as *;
 
 div.container {
   display: flex;
@@ -25,5 +25,12 @@ div.container {
   p.reply {
     margin-top: 1rem;
     text-align: left;
+  }
+
+  div.chatOptions {
+    margin-top: 0.8rem;
+    display: flex;
+    flex-direction: row;
+    gap: 0.4rem;
   }
 }

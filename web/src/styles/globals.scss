@@ -1,4 +1,4 @@
-@import "variables.scss";
+@use "variables.scss" as *;
 
 body {
   background-color: $bg-color-1;
@@ -29,16 +29,16 @@ nav {
 }
 
 .fade-in {
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
   animation: ease fadeIn 0.35s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media screen and (min-width: 320px) {

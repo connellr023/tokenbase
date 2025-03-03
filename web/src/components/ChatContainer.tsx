@@ -1,16 +1,17 @@
 import styles from "@/styles/components/ChatContainer.module.scss";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import PromptArea from "@/components/PromptArea";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
 import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
+import ErrorMessage from "./ErrorMessage";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type ChatContainerProps = {
   endpoint: string;
   constructRequest: (prompt: string) => any;
-  onSend: () => Promise<void>;
+  onSend: () => Promise<string | undefined>;
 };
 
 type ChatState = {
@@ -27,19 +28,28 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [chats, setChats] = useState<ChatState[]>([]);
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatState | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const onPromptSend = async (prompt: string) => {
+    // Clear any previous error
+    setError(null);
+
     // Scroll to the bottom of the chat
-    window.scrollTo({
+    scrollTo({
       top: document.body.scrollHeight,
       behavior: "smooth",
     });
 
-    // Call the provided callback
-    await onSend();
+    {
+      // Call the provided callback
+      const err = await onSend();
 
-    // Construct the request using the provided callback
-    const req = constructRequest(prompt);
+      if (err) {
+        setError(err);
+        setLoading(false);
+        return;
+      }
+    }
 
     // Initialize a new chat entry
     let newChat: ChatState = {
@@ -51,6 +61,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setLoading(true);
     setStreamingChat(newChat);
 
+    // Construct the request using the provided callback
+    const req = constructRequest(prompt);
+
     // Send the prompt to the backend
     const res = await fetch(endpoint, {
       method: "POST",
@@ -60,9 +73,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       body: JSON.stringify(req),
     });
 
-    // Alert for now...
     if (!res.ok) {
-      alert("Failed to send prompt");
+      setError("Failed to send prompt to backend");
       setLoading(false);
       return;
     }
@@ -72,7 +84,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Check if this chunk is an error
       // Alert for now...
       if (chunk.error) {
-        alert("Error from backend: " + chunk.error);
+        setError(chunk.error);
         setLoading(false);
         return;
       }
@@ -110,9 +122,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             chats.map((chat) => (
               <Chat
                 key={chat.chatId}
+                chatId={chat.chatId ?? -1}
                 prompt={chat.prompt}
                 replyTokens={chat.replyTokens}
-                shouldFadeIn={false}
+                isComplete={true}
               />
             ))
           ) : (
@@ -125,17 +138,22 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           {streamingChat && (
             <Chat
               key={streamingChat.chatId ?? -1}
+              chatId={streamingChat.chatId ?? -1}
               prompt={streamingChat.prompt}
               replyTokens={streamingChat.replyTokens}
-              shouldFadeIn={true}
+              isComplete={false}
             />
           )}
         </div>
+        {error ? (
+          <ErrorMessage error={error} />
+        ) : (
+          isLoading && <LoadingIndicator />
+        )}
       </div>
-      {isLoading && <LoadingIndicator />}
       <PromptArea
         onSend={onPromptSend}
-        isDisabled={isLoading || streamingChat != null}
+        isDisabled={isLoading || streamingChat != null || error != null}
       />
     </div>
   );

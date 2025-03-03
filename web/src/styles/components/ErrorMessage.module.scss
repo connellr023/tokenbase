@@ -1,0 +1,11 @@
+@use "../variables.scss" as *;
+
+div.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $error-color-1;
+  padding: 1.3rem;
+  border-radius: $border-radius-1;
+  gap: 1rem;
+}
