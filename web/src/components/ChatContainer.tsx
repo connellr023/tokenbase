@@ -1,5 +1,5 @@
 import styles from "@/styles/components/ChatContainer.module.scss";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import PromptArea from "@/components/PromptArea";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
@@ -29,6 +29,12 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [streamingChat, setStreamingChat] = useState<ChatState | null>(null);
 
   const onPromptSend = async (prompt: string) => {
+    // Scroll to the bottom of the chat
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+
     // Call the provided callback
     await onSend();
 
@@ -57,6 +63,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     // Alert for now...
     if (!res.ok) {
       alert("Failed to send prompt");
+      setLoading(false);
       return;
     }
 
@@ -66,6 +73,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Alert for now...
       if (chunk.error) {
         alert("Error from backend: " + chunk.error);
+        setLoading(false);
         return;
       }
 
@@ -98,14 +106,20 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <div className={styles.chatContainer}>
         <div>
           {/* Render all finished chats */}
-          {chats.map((chat) => (
-            <Chat
-              key={chat.chatId}
-              prompt={chat.prompt}
-              replyTokens={chat.replyTokens}
-              shouldFadeIn={false}
-            />
-          ))}
+          {chats.length > 0 || streamingChat ? (
+            chats.map((chat) => (
+              <Chat
+                key={chat.chatId}
+                prompt={chat.prompt}
+                replyTokens={chat.replyTokens}
+                shouldFadeIn={false}
+              />
+            ))
+          ) : (
+            <div className={styles.emptyChat}>
+              <h2>What's Up?</h2>
+            </div>
+          )}
 
           {/* If a chat reply is being streamed back, render it here */}
           {streamingChat && (
@@ -119,7 +133,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
         </div>
       </div>
       {isLoading && <LoadingIndicator />}
-      <PromptArea onSend={onPromptSend} />
+      <PromptArea
+        onSend={onPromptSend}
+        isDisabled={isLoading || streamingChat != null}
+      />
     </div>
   );
 };

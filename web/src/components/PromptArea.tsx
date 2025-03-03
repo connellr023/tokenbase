@@ -4,10 +4,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
 
 type PromptAreaProps = {
+  isDisabled?: boolean;
   onSend: (prompt: string) => void;
 };
 
-const PromptArea: React.FC<PromptAreaProps> = ({ onSend }) => {
+const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -33,17 +34,25 @@ const PromptArea: React.FC<PromptAreaProps> = ({ onSend }) => {
 
   return (
     <div className={styles.container}>
-      <textarea
-        ref={textareaRef}
-        value={prompt}
-        onChange={handleInput}
-        placeholder="Ask Anything..."
-        rows={1}
-        spellCheck={false}
-      />
-      <button onClick={handleSend}>
-        <FontAwesomeIcon icon={faArrowUp} />
-      </button>
+      <div>
+        <textarea
+          ref={textareaRef}
+          value={prompt}
+          onChange={handleInput}
+          placeholder="Ask Anything..."
+          rows={1}
+          spellCheck={false}
+        />
+        <button
+          onClick={handleSend}
+          disabled={isDisabled || prompt.length === 0}
+        >
+          <FontAwesomeIcon icon={faArrowUp} />
+        </button>
+      </div>
+      <p>
+        Note, <b>tokenbase</b> does <i>not</i> produce perfect answers.
+      </p>
     </div>
   );
 };

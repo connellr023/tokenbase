@@ -1,42 +1,70 @@
 @import "../variables.scss";
 
 div.container {
-  $side-margin: 4rem;
-
   position: fixed;
-  bottom: 1rem;
-  padding: 0.5rem;
-  border: $border-width-1 solid $outline-color-1;
-  border-radius: $border-radius-1;
-  background-color: $bg-color-2;
-  width: calc(100% - 2 * $side-margin);
+  bottom: 0;
+  width: 100%;
+  background-color: $bg-color-1;
   display: flex;
+  align-items: center;
   flex-direction: column;
+  text-align: center;
 
-  textarea {
-    color: $txt-color-1;
-    background: none;
-    font-size: 1rem;
-    overflow: hidden;
+  & > p {
+    $side-padding: 0.7rem;
 
-    &::placeholder {
-      color: $transparent-color-white;
-    }
+    margin-left: $side-padding;
+    margin-right: $side-padding;
+    font-size: 0.9rem;
+    color: $transparent-color-white;
   }
 
-  button {
-    $size: 0.5rem;
+  & > div {
+    $side-margin: 1.5rem;
 
-    cursor: pointer;
-    padding: $size calc(1.4 * $size);
-    border-radius: calc($border-radius-1 - $size);
-    font-size: calc(2 * $size);
-    color: $bg-color-2;
-    background-color: $button-color-1;
+    width: calc(100% - (2 * $side-margin));
+    padding: 0.6rem;
+    border-radius: $border-radius-1;
+    background-color: $bg-color-2;
+    max-width: 50rem;
+    display: flex;
+    flex-direction: column;
 
-    &:hover {
-      background-color: $button-color-2;
+    textarea {
+      $pad: 0.5rem;
+
+      padding-top: $pad;
+      padding-bottom: $pad;
+      color: $txt-color-2;
+      background: none;
+      font-size: 1rem;
+      overflow: hidden;
+
+      &::placeholder {
+        color: $transparent-color-black;
+      }
+    }
+
+    button {
+      $size: 0.5rem;
+
+      cursor: pointer;
+      padding: $size calc(1.4 * $size);
+      border-radius: calc($border-radius-1 - $size);
+      font-size: calc(2 * $size);
+      color: $bg-color-2;
+      background-color: $button-color-1;
       transition: $transition-1;
+
+      &:hover {
+        background-color: $button-color-2;
+      }
+
+      &[disabled] {
+        cursor: not-allowed;
+        background-color: $bg-color-3;
+        color: $bg-color-2;
+      }
     }
   }
 }

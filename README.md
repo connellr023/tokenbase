@@ -1,6 +1,5 @@
 <div align="center">
-  <img alt="Logo" src="web/public/logo_transparent.svg" width="110px" />
-  <h1>Tokenbase</h1>
+  <h1>tokenbase</h1>
 </div>
 
 > A modular, AI-powered assistant platform that provides real-time chat, role-based access, and conversation tracking, designed for self-hosted or small organizational deployments.

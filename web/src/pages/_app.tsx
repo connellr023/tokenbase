@@ -4,7 +4,7 @@ import type { AppProps } from "next/app";
 import { Ubuntu } from "next/font/google";
 
 const ubuntu = Ubuntu({
-  weight: "300",
+  weight: "500",
 });
 
 const App = ({ Component, pageProps }: AppProps) => {

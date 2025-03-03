@@ -1,18 +1,16 @@
-$bg-color-1: #050505;
-$bg-color-2: #1a1a1a;
-
-$outline-color-1: #2a2a2a;
+$bg-color-1: #090909;
+$bg-color-2: #d8d8d8;
+$bg-color-3: #b6b6b6;
 
 $txt-color-1: #f6f6f6;
-$txt-color-2: #eeeeee;
+$txt-color-2: #0c0c0c;
 
 $transparent-color-white: rgba(255, 255, 255, 0.5);
-$transparent-color-black: rgba(0, 0, 0, 0.5);
+$transparent-color-black: rgba(43, 15, 15, 0.8);
 
-$border-radius-1: 0.8rem;
-$border-width-1: 2px;
+$border-radius-1: 1.4rem;
 
-$button-color-1: #f8f8f8;
-$button-color-2: darken($button-color-1, 25%);
+$button-color-1: $bg-color-1;
+$button-color-2: lighten($button-color-1, 5%);
 
 $transition-1: ease 0.2s;

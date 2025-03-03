@@ -1,9 +1,13 @@
+@import "../variables.scss";
+
 div.container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-bottom: 25lvh;
   width: 100%;
+  max-width: 55rem;
+  overflow-y: auto;
+  padding-bottom: 25rem;
 
   div.chatContainer {
     margin-bottom: 1rem;
@@ -14,6 +18,17 @@ div.container {
 
       margin-left: $side-margin;
       margin-right: $side-margin;
+
+      div.emptyChat {
+        user-select: none;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 2rem;
+        width: 100%;
+        color: $transparent-color-white;
+      }
     }
   }
 }

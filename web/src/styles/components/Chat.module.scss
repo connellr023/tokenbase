@@ -6,22 +6,24 @@ div.container {
 
   p {
     margin: 0;
+    white-space: pre-wrap;
   }
 
   p.prompt {
     $margin: 1rem;
 
+    color: $txt-color-2;
     margin-top: $margin;
     margin-bottom: $margin;
     display: inline-block;
     align-self: flex-end;
-    border: $border-width-1 solid $outline-color-1;
-    border-radius: $border-radius-1;
+    border-radius: $border-radius-1 * 0.8;
     background-color: $bg-color-2;
-    padding: 0.5rem;
+    padding: 0.8rem;
   }
 
   p.reply {
+    margin-top: 1rem;
     text-align: left;
   }
 }
