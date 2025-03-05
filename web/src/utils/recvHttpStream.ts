@@ -1,6 +1,6 @@
 export const recvHttpStream = async <T>(
   response: Response,
-  onChunk: (chunk: T) => void,
+  onChunk: (chunk: T) => void
 ) => {
   const reader = response.body!.getReader();
   const decoder = new TextDecoder();
@@ -30,7 +30,7 @@ export const recvHttpStream = async <T>(
       try {
         const parsedChunk: T = JSON.parse(part);
         onChunk(parsedChunk);
-      } catch (_) {
+      } catch {
         continue;
       }
     }

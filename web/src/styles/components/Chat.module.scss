@@ -58,6 +58,10 @@ div.container {
     margin-top: 1rem;
     text-align: left;
 
+    p {
+      display: inline;
+    }
+
     pre > div {
       background-color: $bg-color-2;
       color: $txt-color-2;

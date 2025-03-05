@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import PromptArea from "@/components/PromptArea";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
+import ChatRecord from "@/models/ChatRecord";
 import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
@@ -10,14 +11,8 @@ import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type ChatContainerProps = {
   endpoint: string;
-  constructRequest: (prompt: string) => any;
+  constructRequest: (prompt: string) => object;
   onSend: () => Promise<string | undefined>;
-};
-
-type ChatState = {
-  chatId?: number;
-  prompt: string;
-  replyTokens: string[];
 };
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -25,9 +20,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   constructRequest,
   onSend,
 }) => {
-  const [chats, setChats] = useState<ChatState[]>([]);
+  const [chats, setChats] = useState<ChatRecord[]>([]);
   const [isLoading, setLoading] = useState(false);
-  const [streamingChat, setStreamingChat] = useState<ChatState | null>(null);
+  const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const onPromptSend = async (prompt: string) => {
@@ -52,9 +47,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     }
 
     // Initialize a new chat entry
-    let newChat: ChatState = {
+    let newChat: ChatRecord = {
       prompt: prompt,
-      replyTokens: [],
+      reply: "",
     };
 
     // Set loading state and show the new chat entry prompt
@@ -97,7 +92,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Construct the new chat entry
       newChat = {
         ...newChat,
-        replyTokens: [...newChat.replyTokens, chunk.token],
+        reply: newChat.reply + chunk.token,
       };
 
       // Trigger a re-render
@@ -124,13 +119,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                 key={chat.chatId}
                 chatId={chat.chatId ?? -1}
                 prompt={chat.prompt}
-                replyTokens={chat.replyTokens}
+                reply={chat.reply}
                 isComplete={true}
               />
             ))
           ) : (
             <div className={styles.emptyChat}>
-              <h2>What's Up?</h2>
+              <h2>What&apos;s Up?</h2>
             </div>
           )}
 
@@ -140,7 +135,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
               key={streamingChat.chatId ?? -1}
               chatId={streamingChat.chatId ?? -1}
               prompt={streamingChat.prompt}
-              replyTokens={streamingChat.replyTokens}
+              reply={streamingChat.reply}
               isComplete={false}
             />
           )}

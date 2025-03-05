@@ -46,3 +46,5 @@ web/build
 
 # Accidental package file being committed
 ./package-lock.json
+
+**/dist/

@@ -2,28 +2,25 @@ import styles from "@/styles/components/Chat.module.scss";
 import { faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
+import TypeCursor from "./TypeCursor";
 
 type ChatProps = {
   chatId: number;
   prompt: string;
-  replyTokens: string[];
+  reply: string;
   isComplete: boolean;
 };
 
-const Chat: React.FC<ChatProps> = ({
-  chatId,
-  prompt,
-  replyTokens,
-  isComplete,
-}) => {
+const Chat: React.FC<ChatProps> = ({ chatId, prompt, reply, isComplete }) => {
   return (
     <div className={styles.container}>
       <div className={styles.promptContainer}>
-        <TypesetRenderer content={prompt} />
+        <TypesetRenderer>{prompt}</TypesetRenderer>
       </div>
-      {replyTokens.length > 0 && (
+      {reply.length > 0 && (
         <div className={styles.replyContainer}>
-          <TypesetRenderer content={replyTokens.join("")} />
+          <TypesetRenderer>{reply}</TypesetRenderer>
+          {!isComplete && <TypeCursor />}
         </div>
       )}
       {isComplete && (

@@ -1,4 +1,14 @@
 services:
+  # Frontend service
+  frontend:
+    build:
+      context: .
+      dockerfile: ./build/package/prod/frontend.prod.dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
   # Backend service
   backend:
     depends_on:
@@ -7,13 +17,13 @@ services:
       - tinyllama
     build:
       context: .
-      dockerfile: ./build/package/dev/backend.dev.dockerfile
+      dockerfile: ./build/package/prod/backend.prod.dockerfile
     volumes:
       - ./:/app
     ports:
       - "8090:8090"
     environment:
-      - GO_ENV=development
+      - GO_ENV=production
     networks:
       - app-network
 

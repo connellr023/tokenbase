@@ -57,9 +57,9 @@ If these formatters are not used, the CI pipeline will create a commit with the 
 
 - Backend service (**Go**)
 - Cache service (**Redis**)
-- Frontend service (**Next.js**)
 - Database service (**SurrealDB**)
 - LLM service (**TinyLlama** served with **Ollama**)
+- Frontend service (**Next.js**) (_Production Only_)
 
 ## Development
 

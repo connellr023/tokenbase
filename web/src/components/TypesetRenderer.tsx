@@ -6,22 +6,22 @@ import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 type TypesetRendererProps = {
-  content: string;
+  children?: string;
 };
 
 const parseClassName = (className: string) => {
   const split = className.split("-");
 
   if (split.length === 1) {
-    return "Plain Text";
+    return "plaintext";
   }
 
   return split[1];
 };
 
-const TypesetRenderer: React.FC<TypesetRendererProps> = ({ content }) => {
+const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
   const renderers: Components = {
-    code({ node, inline, className, children, ...props }: any) {
+    code({ className, children, ...props }) {
       const lang = parseClassName(className || "");
 
       return (
@@ -38,11 +38,9 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ content }) => {
   };
 
   return (
-    <ReactMarkdown
-      children={content}
-      remarkPlugins={[remarkGfm]}
-      components={renderers}
-    />
+    <ReactMarkdown remarkPlugins={[remarkGfm]} components={renderers}>
+      {children}
+    </ReactMarkdown>
   );
 };
 
