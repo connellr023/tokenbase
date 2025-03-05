@@ -32,6 +32,13 @@ services:
     build:
       context: .
       dockerfile: ./build/package/tinyllama.dockerfile
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     ports:
       - "11434:11434"
     environment:
