@@ -8,6 +8,7 @@ import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
 import { recvHttpStream } from "@/utils/recvHttpStream";
+import TypesetRenderer from "./TypesetRenderer";
 
 type ChatContainerProps = {
   endpoint: string;
@@ -125,7 +126,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             ))
           ) : (
             <div className={styles.emptyChat}>
-              <h2>What&apos;s Up?</h2>
+              <TypesetRenderer>
+                {
+                  "Enter a prompt to get started. Write **Markdown** or $\\textbf{LaTeX}$ for formatting."
+                }
+              </TypesetRenderer>
             </div>
           )}
 

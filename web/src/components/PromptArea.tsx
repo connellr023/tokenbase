@@ -2,6 +2,7 @@ import styles from "@/styles/components/PromptArea.module.scss";
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { ubuntu500 } from "@/utils/fonts";
 
 type PromptAreaProps = {
   isDisabled?: boolean;
@@ -13,7 +14,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const handleSend = () => {
-    onSend(prompt);
+    onSend(prompt.trim());
     setPrompt("");
     resetHeight();
   };
@@ -36,6 +37,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
     <div className={styles.container}>
       <div>
         <textarea
+          className={ubuntu500.className}
           ref={textareaRef}
           value={prompt}
           onChange={handleInput}
@@ -45,7 +47,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
         />
         <button
           onClick={handleSend}
-          disabled={isDisabled || prompt.length === 0}
+          disabled={isDisabled || prompt.trim().length === 0}
         >
           <FontAwesomeIcon icon={faArrowUp} />
         </button>

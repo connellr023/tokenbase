@@ -9,7 +9,7 @@ div.container {
   }
 
   pre {
-    border-radius: 0.5rem;
+    border-radius: $border-radius-1 * 0.6;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-x: auto;

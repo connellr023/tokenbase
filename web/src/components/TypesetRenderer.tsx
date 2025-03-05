@@ -1,15 +1,15 @@
-// import "katex/dist/katex.min.css";
-// import katex from "katex";
-import { ubuntu, ubuntuMono } from "@/utils/fonts";
-import React from "react";
+import "katex/dist/katex.min.css";
+import { ubuntu500, ubuntuMono400 } from "@/utils/fonts";
 import ReactMarkdown, { Components } from "react-markdown";
+import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
 
 type TypesetRendererProps = {
   children?: string;
 };
 
-const parseClassName = (className: string) => {
+const extractLanguageName = (className: string) => {
   const split = className.split("-");
 
   if (split.length === 1) {
@@ -22,13 +22,16 @@ const parseClassName = (className: string) => {
 const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
   const renderers: Components = {
     code({ className, children, ...props }) {
-      const lang = parseClassName(className || "");
+      const lang = extractLanguageName(className || "");
 
       return (
         <>
-          <span className={ubuntu.className}>{lang}</span>
+          <span className={ubuntu500.className}>{lang}</span>
           <div>
-            <code className={`${className} ${ubuntuMono.className}`} {...props}>
+            <code
+              className={`${className} ${ubuntuMono400.className}`}
+              {...props}
+            >
               {children}
             </code>
           </div>
@@ -38,7 +41,11 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
   };
 
   return (
-    <ReactMarkdown remarkPlugins={[remarkGfm]} components={renderers}>
+    <ReactMarkdown
+      remarkPlugins={[remarkGfm, remarkMath]}
+      rehypePlugins={[rehypeKatex]}
+      components={renderers}
+    >
       {children}
     </ReactMarkdown>
   );

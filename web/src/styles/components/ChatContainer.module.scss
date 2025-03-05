@@ -24,6 +24,7 @@ div.container {
       margin-right: $side-margin;
 
       div.emptyChat {
+        font-size: 1.2rem;
         user-select: none;
         text-align: center;
         display: flex;
@@ -32,6 +33,10 @@ div.container {
         margin-top: 2rem;
         width: 100%;
         color: $transparent-color-white;
+
+        p {
+          max-width: 60%;
+        }
       }
     }
   }

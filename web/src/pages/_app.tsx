@@ -1,6 +1,6 @@
 import "@/styles/globals.scss";
 import Head from "next/head";
-import { ubuntu } from "@/utils/fonts";
+import { ubuntu400 } from "@/utils/fonts";
 import type { AppProps } from "next/app";
 
 const App = ({ Component, pageProps }: AppProps) => {
@@ -15,7 +15,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* <link rel="icon" href="/logo_transparent.svg" /> */}
       </Head>
-      <main className={ubuntu.className}>
+      <main className={ubuntu400.className}>
         <Component {...pageProps} />
       </main>
     </>
