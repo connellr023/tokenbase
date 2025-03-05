@@ -1,5 +1,5 @@
 import "katex/dist/katex.min.css";
-import { ubuntu500, ubuntuMono400 } from "@/utils/fonts";
+import { merriweather500, firaMono400 } from "@/utils/fonts";
 import ReactMarkdown, { Components } from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
@@ -13,7 +13,7 @@ const extractLanguageName = (className: string) => {
   const split = className.split("-");
 
   if (split.length === 1) {
-    return "plaintext";
+    return null;
   }
 
   return split[1];
@@ -24,18 +24,26 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
     code({ className, children, ...props }) {
       const lang = extractLanguageName(className || "");
 
+      if (!lang) {
+        return (
+          <code className={`${className} ${firaMono400.className}`} {...props}>
+            {children}
+          </code>
+        );
+      }
+
       return (
-        <>
-          <span className={ubuntu500.className}>{lang}</span>
+        <div>
+          <span className={merriweather500.className}>{lang}</span>
           <div>
             <code
-              className={`${className} ${ubuntuMono400.className}`}
+              className={`${className} ${firaMono400.className}`}
               {...props}
             >
               {children}
             </code>
           </div>
-        </>
+        </div>
       );
     },
   };

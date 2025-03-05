@@ -1,4 +1,5 @@
 @use "../variables.scss" as *;
+@use "sass:color";
 
 div.container {
   position: fixed;
@@ -28,7 +29,13 @@ div.container {
     background-color: $bg-color-2;
     max-width: 60rem;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    gap: 0.6rem;
+    transition: $transition-1;
+
+    &:hover {
+      background-color: color.adjust($bg-color-2, $lightness: -4%);
+    }
 
     textarea {
       $pad: 0.5rem;
@@ -39,6 +46,7 @@ div.container {
       background: none;
       font-size: 1rem;
       overflow: hidden;
+      width: 100%;
 
       &::placeholder {
         color: $transparent-color-black;
@@ -46,15 +54,17 @@ div.container {
     }
 
     button {
-      $size: 0.5rem;
+      $size: 0.65rem;
 
       cursor: pointer;
-      padding: $size calc(1.4 * $size);
-      border-radius: calc($border-radius-1 - $size);
+      padding: $size (1.4 * $size);
+      border-radius: $size * 1000;
       font-size: calc(2 * $size);
       color: $bg-color-2;
       background-color: $button-color-1;
       transition: $transition-1;
+      max-height: $size * 4.5;
+      margin-top: auto;
 
       &:hover {
         background-color: $button-color-2;
@@ -64,6 +74,10 @@ div.container {
         cursor: not-allowed;
         background-color: $bg-color-3;
         color: $bg-color-2;
+
+        &:hover {
+          background-color: color.adjust($bg-color-3, $lightness: -4%);
+        }
       }
     }
   }

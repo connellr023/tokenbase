@@ -8,7 +8,7 @@ div.container {
     font-size: 1rem;
   }
 
-  pre {
+  pre > div {
     border-radius: $border-radius-1 * 0.6;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -19,7 +19,7 @@ div.container {
     & > span {
       $side-pad: 0.6rem;
 
-      padding: 0.45rem $side-pad 0.35rem $side-pad;
+      padding: 0.42rem $side-pad 0.5rem $side-pad;
       background-color: $bg-color-4;
       color: $txt-color-1;
     }
@@ -47,8 +47,13 @@ div.container {
     padding: 0.8rem;
     max-width: 75%;
     word-wrap: break-word;
+    overflow-x: auto;
 
-    pre > div {
+    a {
+      color: $bg-color-4;
+    }
+
+    pre > div > div {
       background-color: $bg-color-1;
       color: $txt-color-1;
     }
@@ -58,13 +63,39 @@ div.container {
     margin-top: 1rem;
     text-align: left;
 
+    a {
+      color: $bg-color-3;
+    }
+
     p {
       display: inline;
     }
 
-    pre > div {
+    pre > div > div {
       background-color: $bg-color-2;
       color: $txt-color-2;
+    }
+
+    table {
+      border-radius: $border-radius-1;
+      border-collapse: collapse;
+      width: 100%;
+      margin: 0.6rem 0;
+      overflow: hidden;
+
+      $pad: 0.85rem;
+
+      th {
+        background-color: $bg-color-4;
+        color: $txt-color-1;
+        padding: $pad;
+      }
+
+      td {
+        background-color: $bg-color-2;
+        color: $txt-color-2;
+        padding: $pad;
+      }
     }
   }
 

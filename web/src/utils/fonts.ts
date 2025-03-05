@@ -1,16 +1,16 @@
-import { Ubuntu, Ubuntu_Mono } from "next/font/google";
+import { Fira_Mono, Merriweather } from "next/font/google";
 
-export const ubuntu400 = Ubuntu({
+export const merriweather400 = Merriweather({
   weight: "400",
   subsets: ["latin"],
 });
 
-export const ubuntu500 = Ubuntu({
-  weight: "500",
+export const merriweather500 = Merriweather({
+  weight: "700",
   subsets: ["latin"],
 });
 
-export const ubuntuMono400 = Ubuntu_Mono({
+export const firaMono400 = Fira_Mono({
   weight: "400",
   subsets: ["latin"],
 });
