@@ -109,7 +109,7 @@ func main() {
 	middlewares.UseCorsMiddleware(rootRouter)
 
 	rootRouter.Route("/api", func(r chi.Router) {
-		r.Get("/hello", inj.GetHelloWorld)
+		middlewares.UseBearerExtractorMiddleware(r)
 
 		// Chat sub-routes
 		r.Route("/chat", func(r chi.Router) {

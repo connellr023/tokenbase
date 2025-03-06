@@ -23,8 +23,13 @@ const Home: React.FC = () => {
 
   const constructGuestRequest = (prompt: string) => {
     return {
-      guestSessionId: guestSessionId.current ?? "",
-      prompt,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${guestSessionId.current ?? ""}`,
+      },
+      body: JSON.stringify({
+        prompt,
+      }),
     };
   };
 

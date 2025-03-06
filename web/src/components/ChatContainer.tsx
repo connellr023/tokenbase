@@ -10,9 +10,14 @@ import ErrorMessage from "./ErrorMessage";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import TypesetRenderer from "./TypesetRenderer";
 
+type HttpChatRequest = {
+  headers?: HeadersInit;
+  body?: string;
+};
+
 type ChatContainerProps = {
   endpoint: string;
-  constructRequest: (prompt: string) => object;
+  constructRequest: (prompt: string) => HttpChatRequest;
   onSend: () => Promise<string | undefined>;
 };
 
@@ -58,15 +63,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setStreamingChat(newChat);
 
     // Construct the request using the provided callback
-    const req = constructRequest(prompt);
+    const { headers, body } = constructRequest(prompt);
 
     // Send the prompt to the backend
     const res = await fetch(endpoint, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(req),
+      headers,
+      body,
     });
 
     if (!res.ok) {

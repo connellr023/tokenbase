@@ -7,13 +7,13 @@ import (
 	"net/http"
 	"strings"
 	"tokenbase/internal/cache"
+	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 )
 
 type guestChatRequest struct {
-	GuestSessionId string `json:"guestSessionId"`
-	Prompt         string `json:"prompt"`
+	Prompt string `json:"prompt"`
 }
 
 // Endpoint for sending a prompt on a guest chat
@@ -21,6 +21,14 @@ type guestChatRequest struct {
 // The response will be streamed to the client in chunks
 // The chat ID will be sent within the first chunk which will be used to identify that specific chat interaction
 func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
+	// Extract token (guest session ID) from request
+	token, ok := middlewares.GetBearerFromContext(r.Context())
+
+	if !ok {
+		http.Error(w, "bearer token not found", http.StatusUnauthorized)
+		return
+	}
+
 	// Parse request body
 	var req guestChatRequest
 
@@ -30,7 +38,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Check context of conversation
-	guestSessionKey := cache.FmtGuestSessionKey(req.GuestSessionId)
+	guestSessionKey := cache.FmtGuestSessionKey(token)
 	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
 	if errors.Is(err, cache.ErrSessionNotFound) {

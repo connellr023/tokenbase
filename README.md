@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>tokenbase</h1>
+  <h1><i>tokenbase</i></h1>
 </div>
 
 > A modular, AI-powered assistant platform that provides real-time chat, role-based access, and conversation tracking, designed for self-hosted or small organizational deployments.
@@ -25,7 +25,7 @@ Before merging a pull request, the following checks must pass:
 - ![Frontend CI](https://github.com/connellr023/tokenbase/actions/workflows/frontend-ci.yaml/badge.svg)
 - ![Formatter CI](https://github.com/connellr023/tokenbase/actions/workflows/formatter-ci.yaml/badge.svg)
 
-If all checks pass, ensure `Squash and Merge` is selected and then merge the pull request.
+If all checks pass, ensure **Squash and Merge** is selected and then merge the pull request.
 
 ### Code Formatting
 
@@ -63,12 +63,81 @@ If these formatters are not used, the CI pipeline will create a commit with the 
 
 ## Development
 
-1. Clone the repository
-2. Run `docker-compose up --build` to build and run the services from scratch
-3. Run `docker-compose up` to start the services after the initial build
-4. Run `docker-compose up <service> --build -d` to build and run a specific service from scratch
-5. Run `docker-compose down` to stop the services
-6. Run `docker-compose down -v` to stop the services and remove all volumes
+### With an NVIDIA GPU
+
+First, install the **NVIDIA Container Toolkit** by following the instructions [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+
+Then, run:
+
+```sh
+docker-compose up --build
+```
+
+or
+
+```sh
+docker-compose up
+```
+
+To restart a specific service, run:
+
+```sh
+docker-compose restart <service>
+```
+
+To rebuild a specific service, run:
+
+```sh
+docker-compose up --build -d <service>
+```
+
+To stop all services, run:
+
+```sh
+docker-compose down
+```
+
+### Without an NVIDIA GPU
+
+You will have to run the LLM off of the CPU. To do this, use the other `docker-compose` file:
+
+```sh
+docker-compose -f docker-compose-cpu.yaml up --build
+```
+
+To restart a specific service, run:
+
+```sh
+docker-compose -f docker-compose-cpu.yaml restart <service>
+```
+
+To stop all services, run:
+
+```sh
+docker-compose -f docker-compose-cpu.yaml down
+```
+
+### Starting the frontend service
+
+Ensure all dependencies are installed by running in the `web` directory:
+
+```sh
+npm i
+```
+
+To start the frontend service, goto the `web` directory and run:
+
+```sh
+npm run dev
+```
+
+## Production
+
+To run the optimized production environment, use the production `docker-compose` file:
+
+```sh
+docker-compose -f docker-compose-prod.yaml up --build
+```
 
 ## Running Backend Tests
 

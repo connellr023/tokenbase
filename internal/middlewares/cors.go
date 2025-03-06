@@ -5,7 +5,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-func UseCorsMiddleware(router *chi.Mux) {
+func UseCorsMiddleware(router chi.Router) {
 	corsCfg := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"},
 		AllowedMethods:   []string{"GET", "POST", "DELETE", "OPTIONS"},
