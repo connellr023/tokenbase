@@ -1,7 +1,7 @@
 export const recvHttpStream = async <T>(
   response: Response,
   signal: AbortSignal | null,
-  onChunk: (chunk: T) => void
+  onChunk: (chunk: T) => void,
 ) => {
   const reader = response.body!.getReader();
   const decoder = new TextDecoder();
