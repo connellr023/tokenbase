@@ -16,14 +16,18 @@ type HttpChatRequest = {
 };
 
 type ChatContainerProps = {
-  endpoint: string;
-  constructRequest: (prompt: string) => HttpChatRequest;
+  promptEndpoint: string;
+  deleteEndpoint: string;
+  constructPromptRequest: (prompt: string) => HttpChatRequest;
+  constructDeleteRequest: (chatId: number) => HttpChatRequest;
   onSend: () => Promise<string | undefined>;
 };
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
-  endpoint,
-  constructRequest,
+  promptEndpoint,
+  deleteEndpoint,
+  constructPromptRequest,
+  constructDeleteRequest,
   onSend,
 }) => {
   const [chats, setChats] = useState<ChatRecord[]>([]);
@@ -64,7 +68,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setStreamingChat(newChat);
 
     // Construct the request using the provided callback
-    const { headers, body } = constructRequest(prompt);
+    const { headers, body } = constructPromptRequest(prompt);
 
     // Create an abort controller to cancel the request
     const controller = new AbortController();
@@ -72,7 +76,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
     try {
       // Send the prompt to the backend
-      const res = await fetch(endpoint, {
+      const res = await fetch(promptEndpoint, {
         method: "POST",
         headers,
         body,
@@ -86,10 +90,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       }
 
       // Stream the response
-      await recvHttpStream(
+      await recvHttpStream<ChatToken & ChatError>(
         res,
         controller.signal,
-        (chunk: ChatToken & ChatError) => {
+        (chunk) => {
           // Check if this chunk is an error
           // Alert for now...
           if (chunk.error) {
@@ -112,7 +116,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -120,18 +124,48 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       }
 
       setLoading(false);
-      return;
+    } finally {
+      // Clear the abort callback
+      abortPrompt.current = null;
     }
-
-    // Clear the abort callback
-    abortPrompt.current = null;
 
     // Delay to let animation finish
     setTimeout(() => {
       // Stream is finished, so add the chat to the list
       setStreamingChat(null);
-      setChats((prev) => [...prev, newChat]);
+
+      // Add the chat to the list if it has a chat ID
+      if (newChat.chatId) {
+        setChats((prev) => [...prev, newChat]);
+      }
     }, 200);
+  };
+
+  const onChatDelete = async (chatId: number) => {
+    // Clear any previous error
+    setError(null);
+
+    // Construct the request using the provided callback
+    const { headers, body } = constructDeleteRequest(chatId);
+
+    try {
+      // Send the delete request to the backend
+      const res = await fetch(deleteEndpoint, {
+        method: "DELETE",
+        headers,
+        body,
+      });
+
+      if (!res.ok) {
+        setError("Failed to delete chat from backend");
+        return;
+      }
+
+      // Remove the chat from the list
+      setChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
+    } catch {
+      setError("Failed to send delete request to backend");
+    }
   };
 
   return (
@@ -147,6 +181,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                   prompt={chat.prompt}
                   reply={chat.reply}
                   isComplete={true}
+                  onDelete={onChatDelete}
                 />
               ))
             : !error && (

@@ -6,13 +6,13 @@ import (
 	"tokenbase/internal/cache"
 )
 
-type newGuestChatResponse struct {
+type postGuestSessionResponse struct {
 	GuestSessionId string `json:"guestSessionId"`
 }
 
-// Endpoint requesting a new guest chat be created
-// Guest chats will only live in Redis
-func (i *Injection) PostNewGuestChat(w http.ResponseWriter, r *http.Request) {
+// Endpoint requesting a new guest session be created
+// Guest sessions will only live in Redis
+func (i *Injection) PostGuestSession(w http.ResponseWriter, r *http.Request) {
 	// Generate guest session ID
 	id, err := cache.NewGuestSession(i.Rdb)
 
@@ -22,7 +22,7 @@ func (i *Injection) PostNewGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Respond with the guest session ID
-	res := newGuestChatResponse{
+	res := postGuestSessionResponse{
 		GuestSessionId: id,
 	}
 

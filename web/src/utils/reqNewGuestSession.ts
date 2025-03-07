@@ -4,8 +4,10 @@ type NewGuestSessionResponse = {
   guestSessionId: string;
 };
 
+const newGuestSessionEndpoint = backendEndpoint + "api/guest/new";
+
 export const reqNewGuestSession = async () => {
-  const result = await fetch(backendEndpoint + "api/chat/guest/new", {
+  const result = await fetch(newGuestSessionEndpoint, {
     method: "POST",
   });
 

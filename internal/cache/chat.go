@@ -2,70 +2,12 @@ package cache
 
 import (
 	"context"
-	"crypto/rand"
-	"encoding/hex"
 	"encoding/json"
-	"time"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
-
-const (
-	dummySortedSetMember   = "__placeholder__"
-	globalChatIdCounterKey = "global_chat_id_counter"
-	cacheSessionExpiry     = 20 * time.Minute
-)
-
-func FmtGuestSessionKey(sessionId string) string {
-	return "guest_session:" + sessionId
-}
-
-func FmtUserSessionKey(userId string) string {
-	return "user_session:" + userId
-}
-
-// Create a new guest session with a unique ID
-// The session will expire after a certain duration
-//
-// Parameters:
-// - rdb: Redis client
-//
-// Returns:
-// - The unique guest session ID
-// - Any error that occurred
-func NewGuestSession(rdb *redis.Client) (string, error) {
-	ctx := context.Background()
-
-	for {
-		bytes := make([]byte, 8)
-
-		if _, err := rand.Read(bytes); err != nil {
-			return "", err
-		}
-
-		id := hex.EncodeToString(bytes)
-		key := FmtGuestSessionKey(id)
-
-		// Check if session exists and create a new sorted set
-		pipe := rdb.TxPipeline()
-		zaddnxCmd := pipe.ZAddNX(ctx, key, redis.Z{Score: -1, Member: dummySortedSetMember})
-		pipe.Expire(ctx, key, cacheSessionExpiry)
-
-		// Execute pipeline
-		if _, err := pipe.Exec(ctx); err != nil {
-			return "", err
-		}
-
-		// Check if the session was created
-		if created, err := zaddnxCmd.Result(); err != nil {
-			return "", err
-		} else if created > 0 {
-			return id, nil
-		}
-	}
-}
 
 // Get the next chat ID and all previous chat records for a guest/user
 //
@@ -161,5 +103,26 @@ func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) err
 
 	// Execute pipeline
 	_, err = pipe.Exec(ctx)
+	return err
+}
+
+// Delete a chat record for a guest/user
+//
+// Parameters:
+// - rdb: Redis client
+// - key: The key for the guest/user session
+// - chatId: The chat ID to delete
+//
+// Returns:
+// - Any error that occurred
+func DeleteChatRecord(rdb *redis.Client, key string, chatId int64) error {
+	ctx := context.Background()
+	pipe := rdb.TxPipeline()
+
+	// Remove the chat record from the sorted set
+	pipe.ZRem(ctx, key, chatId)
+
+	// Execute pipeline
+	_, err := pipe.Exec(ctx)
 	return err
 }

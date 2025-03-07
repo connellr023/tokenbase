@@ -9,9 +9,16 @@ type ChatProps = {
   prompt: string;
   reply: string;
   isComplete: boolean;
+  onDelete?: (chatId: number) => void;
 };
 
-const Chat: React.FC<ChatProps> = ({ chatId, prompt, reply, isComplete }) => {
+const Chat: React.FC<ChatProps> = ({
+  chatId,
+  prompt,
+  reply,
+  isComplete,
+  onDelete,
+}) => {
   return (
     <div className={styles.container}>
       <div className={styles.promptContainer}>
@@ -26,10 +33,7 @@ const Chat: React.FC<ChatProps> = ({ chatId, prompt, reply, isComplete }) => {
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>
           <IconButton icon={faCopy} onClick={() => console.log("copy")} />
-          <IconButton
-            icon={faTrash}
-            onClick={() => console.log("delete", chatId)}
-          />
+          <IconButton icon={faTrash} onClick={() => onDelete?.(chatId)} />
         </div>
       )}
     </div>

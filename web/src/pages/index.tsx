@@ -4,7 +4,8 @@ import { backendEndpoint } from "@/utils/constants";
 import { useRef } from "react";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 
-const guestPromptEndpoint = backendEndpoint + "api/chat/guest/prompt";
+const guestPromptEndpoint = backendEndpoint + "api/guest/chat/prompt";
+const guestDeleteChatEndpoint = backendEndpoint + "api/guest/chat/delete";
 
 const Home: React.FC = () => {
   const guestSessionId = useRef<string | null>(null);
@@ -25,7 +26,7 @@ const Home: React.FC = () => {
     }
   };
 
-  const constructGuestRequest = (prompt: string) => {
+  const constructGuestPromptRequest = (prompt: string) => {
     return {
       headers: {
         "Content-Type": "application/json",
@@ -37,12 +38,26 @@ const Home: React.FC = () => {
     };
   };
 
+  const constructGuestDeleteChatRequest = (chatId: number) => {
+    return {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${guestSessionId.current ?? ""}`,
+      },
+      body: JSON.stringify({
+        chatId,
+      }),
+    };
+  };
+
   return (
     <>
       <div className={styles.container}>
         <ChatContainer
-          endpoint={guestPromptEndpoint}
-          constructRequest={constructGuestRequest}
+          promptEndpoint={guestPromptEndpoint}
+          deleteEndpoint={guestDeleteChatEndpoint}
+          constructPromptRequest={constructGuestPromptRequest}
+          constructDeleteRequest={constructGuestDeleteChatRequest}
           onSend={setGuestSession}
         />
       </div>

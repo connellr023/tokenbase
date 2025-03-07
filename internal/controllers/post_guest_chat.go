@@ -12,7 +12,7 @@ import (
 	"tokenbase/internal/utils"
 )
 
-type guestChatRequest struct {
+type postGuestChatRequest struct {
 	Prompt string `json:"prompt"`
 }
 
@@ -25,12 +25,12 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	token, ok := middlewares.GetBearerFromContext(r.Context())
 
 	if !ok {
-		http.Error(w, "bearer token not found", http.StatusUnauthorized)
+		http.Error(w, ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
 		return
 	}
 
 	// Parse request body
-	var req guestChatRequest
+	var req postGuestChatRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -105,6 +105,12 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 			utils.WriteChatError(w, err)
 			return
 		}
+	}
+
+	// Check if the chat was cancelled before any reply was sent
+	if replyBuilder.Len() == 0 {
+		// Do not bother saving the chat record
+		return
 	}
 
 	// Cache chat in Redis
