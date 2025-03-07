@@ -81,7 +81,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	{
 		hasSentChatId := false
 
-		err = utils.MapHttpStream(w, ollamaRes.Body, func(data models.OllamaChatResponse) models.ChatToken {
+		err = utils.MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
 			// Append response to the reply string
 			replyBuilder.WriteString(data.Message.Content)
 
@@ -101,7 +101,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 			}
 		})
 
-		if err != nil {
+		if err != nil && !errors.Is(err, utils.ErrStreamAborted) {
 			utils.WriteChatError(w, err)
 			return
 		}

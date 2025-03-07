@@ -1,15 +1,22 @@
 import styles from "@/styles/components/PromptArea.module.scss";
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowUp, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { merriweather500 } from "@/utils/fonts";
 
 type PromptAreaProps = {
-  isDisabled?: boolean;
+  isDisabled: boolean;
+  canCancel: boolean;
   onSend: (prompt: string) => void;
+  onCancel: () => void;
 };
 
-const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
+const PromptArea: React.FC<PromptAreaProps> = ({
+  isDisabled,
+  canCancel,
+  onSend,
+  onCancel,
+}) => {
   const [prompt, setPrompt] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -45,12 +52,18 @@ const PromptArea: React.FC<PromptAreaProps> = ({ isDisabled, onSend }) => {
           rows={1}
           spellCheck={false}
         />
-        <button
-          onClick={handleSend}
-          disabled={isDisabled || prompt.trim().length === 0}
-        >
-          <FontAwesomeIcon icon={faArrowUp} />
-        </button>
+        {canCancel ? (
+          <button onClick={onCancel}>
+            <FontAwesomeIcon icon={faSquare} />
+          </button>
+        ) : (
+          <button
+            onClick={handleSend}
+            disabled={isDisabled || prompt.trim().length === 0}
+          >
+            <FontAwesomeIcon icon={faArrowUp} />
+          </button>
+        )}
       </div>
       <p>
         Note, the <b>LLM</b> used by <b>tokenbase</b> does <i>not</i> produce

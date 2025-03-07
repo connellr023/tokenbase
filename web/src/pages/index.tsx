@@ -11,13 +11,17 @@ const Home: React.FC = () => {
 
   const setGuestSession = async () => {
     if (!guestSessionId.current) {
-      const id = await reqNewGuestSession();
+      try {
+        const id = await reqNewGuestSession();
 
-      if (!id) {
-        return "Failed to create guest session";
+        if (!id) {
+          return "Failed to create guest session";
+        }
+
+        guestSessionId.current = id;
+      } catch {
+        return "Failed to request for guest session";
       }
-
-      guestSessionId.current = id;
     }
   };
 

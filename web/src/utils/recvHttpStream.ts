@@ -1,6 +1,7 @@
 export const recvHttpStream = async <T>(
   response: Response,
-  onChunk: (chunk: T) => void,
+  signal: AbortSignal | null,
+  onChunk: (chunk: T) => void
 ) => {
   const reader = response.body!.getReader();
   const decoder = new TextDecoder();
@@ -33,6 +34,12 @@ export const recvHttpStream = async <T>(
       } catch {
         continue;
       }
+    }
+
+    // Check if the request has been aborted
+    if (signal?.aborted) {
+      reader.cancel();
+      break;
     }
   }
 };

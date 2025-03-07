@@ -54,16 +54,20 @@ div.container {
     }
 
     button {
-      $size: 0.65rem;
+      $size: 2.8rem;
 
       cursor: pointer;
-      padding: $size (1.4 * $size);
-      border-radius: $size * 1000;
-      font-size: calc(2 * $size);
+      width: $size;
+      height: $size;
+      border-radius: 1000 * $size;
+      padding: 0 1.3rem;
+      font-size: 1.5rem;
       color: $bg-color-2;
       background-color: $button-color-1;
       transition: $transition-1;
-      max-height: $size * 4.5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-top: auto;
 
       &:hover {

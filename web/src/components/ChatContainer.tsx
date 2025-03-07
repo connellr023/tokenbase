@@ -1,5 +1,5 @@
 import styles from "@/styles/components/ChatContainer.module.scss";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import PromptArea from "@/components/PromptArea";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
@@ -7,8 +7,8 @@ import ChatRecord from "@/models/ChatRecord";
 import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
-import { recvHttpStream } from "@/utils/recvHttpStream";
 import TypesetRenderer from "./TypesetRenderer";
+import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type HttpChatRequest = {
   headers?: HeadersInit;
@@ -30,6 +30,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const abortPrompt = useRef<(() => void) | null>(null);
 
   const onPromptSend = async (prompt: string) => {
     // Clear any previous error
@@ -65,44 +66,65 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     // Construct the request using the provided callback
     const { headers, body } = constructRequest(prompt);
 
-    // Send the prompt to the backend
-    const res = await fetch(endpoint, {
-      method: "POST",
-      headers,
-      body,
-    });
+    // Create an abort controller to cancel the request
+    const controller = new AbortController();
+    abortPrompt.current = () => controller.abort();
 
-    if (!res.ok) {
-      setError("Failed to send prompt to backend");
-      setLoading(false);
-      return;
-    }
+    try {
+      // Send the prompt to the backend
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body,
+        signal: controller.signal,
+      });
 
-    // Stream the response
-    await recvHttpStream(res, (chunk: ChatToken & ChatError) => {
-      // Check if this chunk is an error
-      // Alert for now...
-      if (chunk.error) {
-        setError(chunk.error);
+      if (!res.ok) {
+        setError("Failed to send prompt to backend");
         setLoading(false);
         return;
       }
 
-      // Check if this chunk contains the chat ID
-      if (chunk.chatId) {
-        newChat.chatId = chunk.chatId;
+      // Stream the response
+      await recvHttpStream(
+        res,
+        controller.signal,
+        (chunk: ChatToken & ChatError) => {
+          // Check if this chunk is an error
+          // Alert for now...
+          if (chunk.error) {
+            setError(chunk.error);
+            setLoading(false);
+            return;
+          }
+
+          // Check if this chunk contains the chat ID
+          if (chunk.chatId) {
+            newChat.chatId = chunk.chatId;
+          }
+
+          // Construct the new chat entry
+          newChat = {
+            ...newChat,
+            reply: newChat.reply + chunk.token,
+          };
+
+          // Trigger a re-render
+          setStreamingChat(newChat);
+          setLoading(false);
+        }
+      );
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        setError("Failed to receive response from backend");
       }
 
-      // Construct the new chat entry
-      newChat = {
-        ...newChat,
-        reply: newChat.reply + chunk.token,
-      };
-
-      // Trigger a re-render
-      setStreamingChat(newChat);
       setLoading(false);
-    });
+      return;
+    }
+
+    // Clear the abort callback
+    abortPrompt.current = null;
 
     // Delay to let animation finish
     setTimeout(() => {
@@ -117,25 +139,25 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <div className={styles.chatContainer}>
         <div>
           {/* Render all finished chats */}
-          {chats.length > 0 || streamingChat ? (
-            chats.map((chat) => (
-              <Chat
-                key={chat.chatId}
-                chatId={chat.chatId ?? -1}
-                prompt={chat.prompt}
-                reply={chat.reply}
-                isComplete={true}
-              />
-            ))
-          ) : (
-            <div className={styles.emptyChat}>
-              <TypesetRenderer>
-                {
-                  "Enter a prompt to get started. Write **Markdown** or $\\textbf{LaTeX}$ for formatting."
-                }
-              </TypesetRenderer>
-            </div>
-          )}
+          {chats.length > 0 || streamingChat
+            ? chats.map((chat) => (
+                <Chat
+                  key={chat.chatId}
+                  chatId={chat.chatId ?? -1}
+                  prompt={chat.prompt}
+                  reply={chat.reply}
+                  isComplete={true}
+                />
+              ))
+            : !error && (
+                <div className={styles.emptyChat}>
+                  <TypesetRenderer>
+                    {
+                      "Enter a prompt to get started. Write **Markdown** or $\\textbf{LaTeX}$ for formatting."
+                    }
+                  </TypesetRenderer>
+                </div>
+              )}
 
           {/* If a chat reply is being streamed back, render it here */}
           {streamingChat && (
@@ -160,7 +182,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       </div>
       <PromptArea
         onSend={onPromptSend}
-        isDisabled={isLoading || streamingChat != null || error != null}
+        isDisabled={error != null}
+        canCancel={(isLoading || streamingChat != null) && !error}
+        onCancel={() => abortPrompt.current?.()}
       />
     </div>
   );
