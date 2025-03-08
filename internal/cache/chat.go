@@ -3,6 +3,7 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 
@@ -119,10 +120,19 @@ func DeleteChatRecord(rdb *redis.Client, key string, chatId int64) error {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
-	// Remove the chat record from the sorted set
-	pipe.ZRem(ctx, key, chatId)
+	// Remove the chat record from the sorted set by chat ID
+	score := fmt.Sprint(chatId)
+	zremrangebyrankCmd := pipe.ZRemRangeByScore(ctx, key, score, score)
 
 	// Execute pipeline
-	_, err := pipe.Exec(ctx)
-	return err
+	if _, err := pipe.Exec(ctx); err != nil {
+		return err
+	}
+
+	// Ensure a chat record was deleted
+	if count, err := zremrangebyrankCmd.Result(); err != nil || count == 0 {
+		return ErrChatRecordNotFound
+	}
+
+	return nil
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type deleteGuestChatRequest struct {
-	ChatId int64 `json:"chat_id"`
+	ChatId int64 `json:"chatId"`
 }
 
 func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
@@ -29,9 +29,9 @@ func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Delete chat record
-	guestSessionId := cache.FmtGuestSessionKey(token)
+	guestSessionKey := cache.FmtGuestSessionKey(token)
 
-	if err := cache.DeleteChatRecord(i.Rdb, guestSessionId, req.ChatId); err != nil {
+	if err := cache.DeleteChatRecord(i.Rdb, guestSessionKey, req.ChatId); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
