@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"tokenbase/internal/cache"
 	"tokenbase/internal/controllers"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/utils"
@@ -93,6 +94,11 @@ func main() {
 	client, err := AuthRedis()
 
 	if err != nil {
+		panic(err)
+	}
+
+	// Set system prompt like this (FOR NOW)
+	if err := cache.SetSystemPrompt(client, utils.DefaultSystemPrompt); err != nil {
 		panic(err)
 	}
 

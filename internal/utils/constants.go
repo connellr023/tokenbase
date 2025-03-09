@@ -6,6 +6,7 @@ const BackendEndpoint = ":8090"
 const (
 	MaxChatsPerConversation = 60
 	MaxChatsInAContext      = 8
+	DefaultSystemPrompt     = "You are an AI assistant named Alice. You are here to help me with my tasks."
 )
 
 // Ollama connection details

@@ -39,7 +39,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(token)
-	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
+	chatId, systemPrompt, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
 	if errors.Is(err, cache.ErrSessionNotFound) {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -52,7 +52,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
 		Model:    utils.TinyLlamaModelName,
-		Messages: models.BuildOllamaMessages(req.Prompt, prevChatRecords...),
+		Messages: models.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
 		Stream:   true,
 	}
 
