@@ -36,6 +36,14 @@ div.container {
 
         p {
           max-width: 60%;
+
+          @media screen and (max-width: $breakpoint-xl) {
+            max-width: 35%;
+          }
+
+          @media screen and (max-width: $breakpoint-sm) {
+            max-width: 100%;
+          }
         }
       }
     }

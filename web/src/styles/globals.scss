@@ -1,5 +1,29 @@
 @use "variables.scss" as *;
 
+html {
+  font-size: 14px;
+
+  @media screen and (min-width: $breakpoint-xs) {
+    font-size: 14px;
+  }
+
+  @media screen and (min-width: $breakpoint-sm) {
+    font-size: 15px;
+  }
+
+  @media screen and (min-width: $breakpoint-md) {
+    font-size: 16px;
+  }
+
+  @media screen and (min-width: $breakpoint-lg) {
+    font-size: 17px;
+  }
+
+  @media screen and (min-width: $breakpoint-xl) {
+    font-size: 18px;
+  }
+}
+
 body {
   background-color: $bg-color-1;
   color: white;
@@ -26,16 +50,6 @@ textarea {
   font-family: inherit;
 }
 
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  background-color: #017f7c;
-  position: fixed;
-  top: 0;
-}
-
 .fade-in {
   animation: ease fadeIn 0.35s;
 }
@@ -47,22 +61,4 @@ nav {
   to {
     opacity: 1;
   }
-}
-
-@media screen and (min-width: 320px) {
-  nav {
-    height: 50px;
-  }
-}
-
-@media screen and (min-width: 480px) {
-}
-
-@media screen and (min-width: 768px) {
-}
-
-@media screen and (min-width: 992px) {
-}
-
-@media screen and (min-width: 1200px) {
 }

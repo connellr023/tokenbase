@@ -52,7 +52,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
 		Model:    utils.TinyLlamaModelName,
-		Messages: models.BuildOllamaMessages(prevChatRecords, req.Prompt),
+		Messages: models.BuildOllamaMessages(req.Prompt, prevChatRecords...),
 		Stream:   true,
 	}
 

@@ -1,0 +1,18 @@
+@use "../variables.scss" as *;
+
+nav.container {
+  background-color: $bg-color-1;
+  padding: 0.7rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.7rem;
+  height: auto;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+
+  @media screen and (max-width: $breakpoint-xs) {
+    justify-content: center;
+  }
+}

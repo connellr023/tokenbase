@@ -1,5 +1,11 @@
 @use "sass:color";
 
+$breakpoint-xs: 320px;
+$breakpoint-sm: 480px;
+$breakpoint-md: 768px;
+$breakpoint-lg: 992px;
+$breakpoint-xl: 1200px;
+
 $bg-color-1: #0c0c0c;
 $bg-color-2: #d8d8d8;
 $bg-color-3: #b6b6b6;

@@ -1,0 +1,24 @@
+@use "../variables.scss" as *;
+
+button.main {
+  cursor: pointer;
+  padding: 0.65rem;
+  border-radius: $border-radius-1 * 0.6;
+  background-color: $bg-color-2;
+  transition: $transition-2;
+  font-size: 0.85rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+
+  & > span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &:hover {
+    background-color: $bg-color-3;
+  }
+}

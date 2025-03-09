@@ -13,6 +13,10 @@ type ChatRecord struct {
 	Reply  string `json:"reply"`
 }
 
+// Converts a chat record to a pair of Ollama compatible chat messages
+//
+// Returns:
+// - A pair of Ollama compatible chat messages
 func (c *ChatRecord) ToOllamaMessages() (OllamaChatMessage, OllamaChatMessage) {
 	userMessage := OllamaChatMessage{
 		Role:    userRoleName,
@@ -27,7 +31,16 @@ func (c *ChatRecord) ToOllamaMessages() (OllamaChatMessage, OllamaChatMessage) {
 	return userMessage, assistantMessage
 }
 
-func BuildOllamaMessages(records []ChatRecord, newPrompt string) []OllamaChatMessage {
+// Creates a list of Ollama compatible chat messages from a list of chat records
+// Additionally, it appends a new prompt to the end of the list
+//
+// Parameters:
+// - newPrompt: The new prompt to append to the end of the list
+// - records: A list of chat records to convert to Ollama messages
+//
+// Returns:
+// - A list of Ollama compatible chat messages
+func BuildOllamaMessages(newPrompt string, records ...ChatRecord) []OllamaChatMessage {
 	n := (len(records) * 2) + 1
 	messages := make([]OllamaChatMessage, 0, n)
 

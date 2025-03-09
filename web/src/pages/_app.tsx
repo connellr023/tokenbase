@@ -2,8 +2,9 @@ import "@/styles/globals.scss";
 import Head from "next/head";
 import { merriweather400 } from "@/utils/fonts";
 import type { AppProps } from "next/app";
+import NavBar from "@/components/NavBar";
 
-const App = ({ Component, pageProps }: AppProps) => {
+const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
@@ -15,6 +16,7 @@ const App = ({ Component, pageProps }: AppProps) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* <link rel="icon" href="/logo_transparent.svg" /> */}
       </Head>
+      <NavBar />
       <main className={merriweather400.className}>
         <Component {...pageProps} />
       </main>

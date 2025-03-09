@@ -116,7 +116,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -188,7 +188,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                 <div className={styles.emptyChat}>
                   <TypesetRenderer>
                     {
-                      "Enter a prompt to get started. Write **Markdown** or $\\textbf{LaTeX}$ for formatting."
+                      "Enter a prompt to get started. Write **Markdown** and $\\LaTeX$ for formatting."
                     }
                   </TypesetRenderer>
                 </div>
