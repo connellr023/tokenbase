@@ -18,10 +18,9 @@ import (
 //
 // Returns:
 // - The next chat ID
-// - The system prompt
 // - All previous chat records
 // - Any error that occurred
-func GetChatContext(rdb *redis.Client, key string) (int64, string, []models.ChatRecord, error) {
+func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
@@ -31,41 +30,31 @@ func GetChatContext(rdb *redis.Client, key string) (int64, string, []models.Chat
 	// Get the next chat ID
 	incrCmd := pipe.Incr(ctx, globalChatIdCounterKey)
 
-	// Get the system prompt
-	getCmd := pipe.Get(ctx, globalSystemPromptKey)
-
 	// Fetch all messages from highest chat ID to lowest
 	// Keep the number of messages to a maximum
 	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, utils.MaxChatsInAContext-1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
-		return -1, "", nil, err
+		return -1, nil, err
 	}
 
 	// Ensure session exists
 	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
-		return -1, "", nil, ErrSessionNotFound
+		return -1, nil, ErrSessionNotFound
 	}
 
 	// Get the next chat ID
 	chatId, err := incrCmd.Result()
 
 	if err != nil {
-		return -1, "", nil, err
-	}
-
-	// Get the system prompt
-	systemPrompt, err := getCmd.Result()
-
-	if err != nil {
-		return -1, "", nil, err
+		return -1, nil, err
 	}
 
 	// Deserialize chat records
 	serializedRecords, err := zrevrangeCmd.Result()
 
 	if err != nil {
-		return -1, "", nil, err
+		return -1, nil, err
 	}
 
 	chatRecords := make([]models.ChatRecord, 0, len(serializedRecords))
@@ -78,7 +67,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, string, []models.Chat
 		}
 	}
 
-	return chatId, systemPrompt, chatRecords, nil
+	return chatId, chatRecords, nil
 }
 
 // Save a chat record for a guest/user

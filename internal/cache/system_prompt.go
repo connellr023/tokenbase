@@ -19,3 +19,16 @@ func SetSystemPrompt(rdb *redis.Client, systemPrompt string) error {
 	ctx := context.Background()
 	return rdb.Set(ctx, globalSystemPromptKey, systemPrompt, 0).Err()
 }
+
+// Gets the global system prompt
+//
+// Parameters:
+// - rdb: Redis client
+//
+// Returns:
+// - The system prompt
+// - Any error that occurred
+func GetSystemPrompt(rdb *redis.Client) (string, error) {
+	ctx := context.Background()
+	return rdb.Get(ctx, globalSystemPromptKey).Result()
+}

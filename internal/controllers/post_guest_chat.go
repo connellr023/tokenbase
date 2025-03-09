@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"tokenbase/internal/cache"
+	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
@@ -39,7 +40,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(token)
-	chatId, systemPrompt, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
+	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
 	if errors.Is(err, cache.ErrSessionNotFound) {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -47,6 +48,25 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	// Get the system prompt
+	systemPrompt, err := cache.GetSystemPrompt(i.Rdb)
+
+	if err != nil {
+		// Try to get the system prompt from the database
+		systemPrompt, err = db.GetSystemPrompt(i.Sdb)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		// Cache the system prompt
+		if err := cache.SetSystemPrompt(i.Rdb, systemPrompt); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// Construct request to Ollama API
