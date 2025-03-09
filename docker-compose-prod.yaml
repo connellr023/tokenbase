@@ -48,7 +48,6 @@ services:
     build:
       context: .
       dockerfile: ./build/package/surrealdb.dockerfile
-    command: start --user root --pass root
     ports:
       - "8000:8000"
     volumes:
