@@ -1,0 +1,12 @@
+@use "../variables.scss" as *;
+
+input.main {
+  padding: 0.7rem;
+  color: $txt-color-2;
+  background-color: $bg-color-2;
+  border-radius: $border-radius-1 * 0.6;
+
+  &::placeholder {
+    color: $transparent-color-black;
+  }
+}

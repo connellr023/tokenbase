@@ -1,0 +1,19 @@
+div.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+h1.modalTitle {
+  margin: 0;
+}
+
+div.modalButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.3rem;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 13rem;
+}

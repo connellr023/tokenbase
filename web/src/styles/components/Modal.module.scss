@@ -1,0 +1,30 @@
+@use "../variables.scss" as *;
+
+div.container {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  background-color: $transparent-color-black;
+
+  &.visible {
+    display: flex;
+  }
+
+  div.window {
+    padding: 1.4rem;
+    background-color: $bg-color-1;
+    border-radius: $border-radius-1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+  }
+}

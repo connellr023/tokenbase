@@ -1,5 +1,4 @@
 import styles from "@/styles/components/ChatContainer.module.scss";
-import React, { useRef, useState } from "react";
 import PromptArea from "@/components/PromptArea";
 import ChatToken from "@/models/ChatToken";
 import ChatError from "@/models/ChatError";
@@ -8,10 +7,13 @@ import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
 import TypesetRenderer from "./TypesetRenderer";
-import { recvHttpStream } from "@/utils/recvHttpStream";
 import StandardButton from "./StandardButton";
+import Result from "@/utils/result";
+import { useEffect, useRef, useState } from "react";
+import { recvHttpStream } from "@/utils/recvHttpStream";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 
-type HttpChatRequest = {
+type HttpChatReq = {
   headers?: HeadersInit;
   body?: string;
 };
@@ -20,9 +22,8 @@ type ChatContainerProps = {
   promptEndpoint: string;
   deleteEndpoint: string;
   suggestions: string[];
-  constructPromptRequest: (prompt: string) => HttpChatRequest;
-  constructDeleteRequest: (chatId: number) => HttpChatRequest;
-  onSend: () => Promise<string | undefined>;
+  constructPromptRequest: (prompt: string) => Promise<Result<HttpChatReq>>;
+  constructDeleteRequest: (chatId: number) => Promise<Result<HttpChatReq>>;
 };
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -31,9 +32,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   suggestions,
   constructPromptRequest,
   constructDeleteRequest,
-  onSend,
 }) => {
-  const [chats, setChats] = useState<ChatRecord[]>([]);
+  const { chats, setChats } = useChatRecordsContext();
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -42,23 +42,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const onPromptSend = async (prompt: string) => {
     // Clear any previous error
     setError(null);
-
-    // Scroll to the bottom of the chat
-    scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
-
-    {
-      // Call the provided callback
-      const err = await onSend();
-
-      if (err) {
-        setError(err);
-        setLoading(false);
-        return;
-      }
-    }
 
     // Initialize a new chat entry
     let newChat: ChatRecord = {
@@ -71,7 +54,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setStreamingChat(newChat);
 
     // Construct the request using the provided callback
-    const { headers, body } = constructPromptRequest(prompt);
+    const { ok, error } = await constructPromptRequest(prompt);
+
+    if (error) {
+      setError(error);
+      setLoading(false);
+      return;
+    }
 
     // Create an abort controller to cancel the request
     const controller = new AbortController();
@@ -81,9 +70,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Send the prompt to the backend
       const res = await fetch(promptEndpoint, {
         method: "POST",
-        headers,
-        body,
         signal: controller.signal,
+        ...ok,
       });
 
       if (!res.ok) {
@@ -148,14 +136,18 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     setError(null);
 
     // Construct the request using the provided callback
-    const { headers, body } = constructDeleteRequest(chatId);
+    const { ok, error } = await constructDeleteRequest(chatId);
+
+    if (error) {
+      setError(error);
+      return;
+    }
 
     try {
       // Send the delete request to the backend
       const res = await fetch(deleteEndpoint, {
         method: "DELETE",
-        headers,
-        body,
+        ...ok,
       });
 
       if (!res.ok) {
@@ -169,6 +161,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       setError("Failed to send delete request to backend");
     }
   };
+
+  useEffect(() => {
+    scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [chats, isLoading]);
 
   return (
     <div className={styles.container}>
