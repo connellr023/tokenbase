@@ -8,8 +8,8 @@ import Chat from "@/components/Chat";
 import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
 import TypesetRenderer from "./TypesetRenderer";
-import { recvHttpStream } from "@/utils/recvHttpStream";
 import StandardButton from "./StandardButton";
+import { recvHttpStream } from "@/utils/recvHttpStream";
 
 type HttpChatRequest = {
   headers?: HeadersInit;
@@ -22,7 +22,7 @@ type ChatContainerProps = {
   suggestions: string[];
   constructPromptRequest: (prompt: string) => HttpChatRequest;
   constructDeleteRequest: (chatId: number) => HttpChatRequest;
-  onSend: () => Promise<string | undefined>;
+  onSend?: () => Promise<string | undefined>;
 };
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -51,7 +51,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
     {
       // Call the provided callback
-      const err = await onSend();
+      const err = await onSend?.();
 
       if (err) {
         setError(err);

@@ -1,10 +1,19 @@
-import styles from "@/styles/components/Home.module.scss";
+import styles from "@/styles/pages/Home.module.scss";
 import ChatContainer from "@/components/ChatContainer";
+import Modal from "@/components/Modal";
+import StandardButton from "@/components/StandardButton";
+import router from "next/router";
 import { backendEndpoint } from "@/utils/constants";
 import { useRef } from "react";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 import { GetServerSideProps } from "next";
 import { getChatSuggestions } from "@/utils/getChatSuggestions";
+import { useHomeModal } from "@/contexts/HomeModalContext";
+import {
+  faArrowRight,
+  faBolt,
+  faSignIn,
+} from "@fortawesome/free-solid-svg-icons";
 
 const guestPromptEndpoint = backendEndpoint + "api/guest/chat/prompt";
 const guestDeleteChatEndpoint = backendEndpoint + "api/guest/chat/delete";
@@ -22,6 +31,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 };
 
 const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
+  const { isOpen, close } = useHomeModal();
   const guestSessionId = useRef<string | null>(null);
 
   const setGuestSession = async () => {
@@ -66,6 +76,25 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
 
   return (
     <>
+      <Modal isOpen={isOpen}>
+        <h2 className={styles.modalTitle}>
+          <i>tokenbase</i>
+        </h2>
+        <div className={styles.modalButtonContainer}>
+          <StandardButton
+            icon={faBolt}
+            onClick={() => router.push("/register")}
+          >
+            Register
+          </StandardButton>
+          <StandardButton icon={faSignIn} onClick={() => router.push("/login")}>
+            Login
+          </StandardButton>
+          <StandardButton icon={faArrowRight} onClick={close}>
+            Continue as guest
+          </StandardButton>
+        </div>
+      </Modal>
       <div className={styles.container}>
         <ChatContainer
           promptEndpoint={guestPromptEndpoint}
