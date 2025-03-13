@@ -1,6 +1,8 @@
 @use "../variables.scss" as *;
 
 button.iconButton {
+  $alpha: 0.3;
+
   color: $txt-color-1;
   background: transparent;
   cursor: pointer;
@@ -15,6 +17,16 @@ button.iconButton {
 
   &:hover {
     opacity: 1;
-    background-color: $transparent-color-white;
+    background-color: rgba($txt-color-1, $alpha);
+  }
+
+  &.red {
+    $color: #f12525;
+
+    color: $color;
+
+    &:hover {
+      background-color: rgba($color, $alpha);
+    }
   }
 }
