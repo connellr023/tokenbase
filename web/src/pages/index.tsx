@@ -4,11 +4,11 @@ import Modal from "@/components/Modal";
 import StandardButton from "@/components/StandardButton";
 import router from "next/router";
 import { backendEndpoint } from "@/utils/constants";
-import { useRef } from "react";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 import { GetServerSideProps } from "next";
 import { getChatSuggestions } from "@/utils/getChatSuggestions";
-import { useHomeModal } from "@/contexts/HomeModalContext";
+import { useHomeModalContext } from "@/contexts/HomeModalContext";
+import { BearerVariant, useBearerContext } from "@/contexts/BearerContext";
 import {
   faArrowRight,
   faBolt,
@@ -31,46 +31,61 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 };
 
 const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
-  const { isOpen, close } = useHomeModal();
-  const guestSessionId = useRef<string | null>(null);
+  const { isOpen, close } = useHomeModalContext();
+  const { bearer, setBearer } = useBearerContext();
 
-  const setGuestSession = async () => {
-    if (!guestSessionId.current) {
+  const constructGuestPromptRequest = async (prompt: string) => {
+    const constructReq = (token: string) => {
+      return {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          prompt,
+        }),
+      };
+    };
+
+    if (!bearer) {
       try {
-        const id = await reqNewGuestSession();
+        const token = await reqNewGuestSession();
 
-        if (!id) {
-          return "Failed to create guest session";
+        if (!token) {
+          return {
+            error: "Failed to create guest session",
+          };
         }
 
-        guestSessionId.current = id;
+        setBearer({
+          variant: BearerVariant.Guest,
+          token,
+        });
+
+        return {
+          ok: constructReq(token),
+        };
       } catch {
-        return "Failed to request for guest session";
+        return {
+          error: "Failed to request for guest session",
+        };
       }
     }
+
+    return { ok: constructReq(bearer.token) };
   };
 
-  const constructGuestPromptRequest = (prompt: string) => {
+  const constructGuestDeleteChatRequest = async (chatId: number) => {
     return {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${guestSessionId.current ?? ""}`,
+      ok: {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer?.token}`,
+        },
+        body: JSON.stringify({
+          chatId,
+        }),
       },
-      body: JSON.stringify({
-        prompt,
-      }),
-    };
-  };
-
-  const constructGuestDeleteChatRequest = (chatId: number) => {
-    return {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${guestSessionId.current ?? ""}`,
-      },
-      body: JSON.stringify({
-        chatId,
-      }),
     };
   };
 
@@ -102,7 +117,6 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
           suggestions={chatSuggestions}
           constructPromptRequest={constructGuestPromptRequest}
           constructDeleteRequest={constructGuestDeleteChatRequest}
-          onSend={setGuestSession}
         />
       </div>
     </>

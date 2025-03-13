@@ -1,9 +1,11 @@
 import "@/styles/globals.scss";
 import Head from "next/head";
 import NavBar from "@/components/NavBar";
-import { merriweather400 } from "@/utils/fonts";
 import type { AppProps } from "next/app";
+import { merriweather400 } from "@/utils/fonts";
 import { HomeModalProvider } from "@/contexts/HomeModalContext";
+import { BearerContextProvider } from "@/contexts/BearerContext";
+import { ChatRecordsContextProvider } from "@/contexts/ChatRecordsContext";
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
@@ -20,7 +22,11 @@ const App: React.FC<AppProps> = ({ Component, pageProps }) => {
       <NavBar />
       <main className={merriweather400.className}>
         <HomeModalProvider>
-          <Component {...pageProps} />
+          <BearerContextProvider>
+            <ChatRecordsContextProvider>
+              <Component {...pageProps} />
+            </ChatRecordsContextProvider>
+          </BearerContextProvider>
         </HomeModalProvider>
       </main>
     </>
