@@ -1,15 +1,16 @@
 import React from "react";
 import MultistepForm from "@/components/MultistepForm";
+import StandardInput from "@/components/StandardInput";
 
 const Login: React.FC = () => {
   const steps = [
     <div key="step1">
-      <h2>Step 1: Enter Email</h2>
-      <input type="email" placeholder="Email" />
+      <p>Enter your username below.</p>
+      <StandardInput type="email" placeholder="Email" />
     </div>,
     <div key="step2">
-      <h2>Step 2: Enter Password</h2>
-      <input type="password" placeholder="Password" />
+      <p>Enter your password below.</p>
+      <StandardInput type="password" placeholder="Password" />
     </div>,
   ];
 
@@ -19,10 +20,9 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Login</h1>
-      <MultistepForm steps={steps} onSubmit={handleSubmit} />
-    </div>
+    <>
+      <MultistepForm title="Login" steps={steps} onSubmit={handleSubmit} />
+    </>
   );
 };
 

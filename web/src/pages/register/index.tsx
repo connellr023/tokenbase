@@ -1,19 +1,20 @@
 import React from "react";
 import MultistepForm from "@/components/MultistepForm";
+import StandardInput from "@/components/StandardInput";
 
 const Register: React.FC = () => {
   const steps = [
     <div key="step1">
-      <h2>Step 1: Enter Username</h2>
-      <input type="text" placeholder="Username" />
+      <p>Enter a username below.</p>
+      <StandardInput type="text" placeholder="Username" />
     </div>,
     <div key="step2">
-      <h2>Step 2: Enter Email</h2>
-      <input type="email" placeholder="Email" />
+      <p>Enter an email below.</p>
+      <StandardInput type="email" placeholder="Email" />
     </div>,
     <div key="step3">
-      <h2>Step 3: Enter Password</h2>
-      <input type="password" placeholder="Password" />
+      <p>Enter a password below.</p>
+      <StandardInput type="password" placeholder="Password" />
     </div>,
   ];
 
@@ -23,10 +24,9 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Register</h1>
-      <MultistepForm steps={steps} onSubmit={handleSubmit} />
-    </div>
+    <>
+      <MultistepForm title="Register" steps={steps} onSubmit={handleSubmit} />
+    </>
   );
 };
 

@@ -12,7 +12,30 @@ nav.container {
   position: sticky;
   top: 0;
 
+  div.buttonContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 0.7rem;
+  }
+
+  b.logo {
+    user-select: none;
+    font-size: 1.2rem;
+    margin-left: auto;
+    margin-right: 0.4rem;
+  }
+
   @media screen and (max-width: $breakpoint-xs) {
     justify-content: center;
+    flex-direction: column;
+
+    div.buttonContainer {
+      order: 2;
+    }
+
+    b.logo {
+      order: 1;
+      margin: 0;
+    }
   }
 }

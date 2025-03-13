@@ -66,8 +66,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
         )}
       </div>
       <p>
-        Note, the <b>LLM</b> used by <b>tokenbase</b> does <i>not</i> produce
-        perfect answers.
+        Note, the <b>LLM</b> used does <b>not</b> produce perfect answers.
       </p>
     </div>
   );

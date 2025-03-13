@@ -1,35 +1,73 @@
 @use "../variables.scss" as *;
 
-.stepIndicator {
+div.container {
+  width: 100%;
+  height: 100%;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
-  gap: 0.6rem;
+  justify-content: center;
+  text-align: center;
 
-  span {
-    $size: 0.65rem;
+  & > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
-    display: inline-block;
-    width: $size;
-    height: $size;
-    background-color: $txt-color-1;
-    opacity: 0.7;
-    border-radius: 100%;
-    transition: $transition-1;
+    h1 {
+      margin: 0;
+      margin-bottom: 1.5rem;
+    }
 
-    &.active {
-      transform: scale(1.25);
-      opacity: 1;
+    div.stepIndicator {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+      gap: 0.6rem;
+
+      span {
+        $size: 0.65rem;
+
+        display: inline-block;
+        width: $size;
+        height: $size;
+        background-color: $txt-color-1;
+        opacity: 0.7;
+        border-radius: 100%;
+        transition: $transition-1;
+
+        &.active {
+          transform: scale(1.25);
+          opacity: 1;
+        }
+      }
+    }
+
+    div.stepContainer {
+      margin-bottom: 1rem;
+      width: 100%;
+
+      p {
+        margin: 0.3rem 0 1rem 0;
+      }
+
+      * {
+        box-sizing: border-box;
+        width: 100%;
+      }
+    }
+
+    div.buttonContainer {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      gap: 0.6rem;
+
+      button {
+        width: 100%;
+      }
     }
   }
-}
-
-.stepContainer {
-  margin-bottom: 1rem;
-}
-
-.buttonContainer {
-  display: flex;
-  justify-content: space-between;
 }

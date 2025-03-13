@@ -92,9 +92,9 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
   return (
     <>
       <Modal isOpen={isOpen}>
-        <h2 className={styles.modalTitle}>
+        <h1 className={styles.modalTitle}>
           <i>tokenbase</i>
-        </h2>
+        </h1>
         <div className={styles.modalButtonContainer}>
           <StandardButton
             icon={faBolt}
