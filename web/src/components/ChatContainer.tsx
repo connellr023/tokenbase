@@ -118,7 +118,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        }
+        },
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
