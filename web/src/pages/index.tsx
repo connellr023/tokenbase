@@ -3,11 +3,25 @@ import ChatContainer from "@/components/ChatContainer";
 import { backendEndpoint } from "@/utils/constants";
 import { useRef } from "react";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
+import { GetServerSideProps } from "next";
+import { getChatSuggestions } from "@/utils/getChatSuggestions";
 
 const guestPromptEndpoint = backendEndpoint + "api/guest/chat/prompt";
 const guestDeleteChatEndpoint = backendEndpoint + "api/guest/chat/delete";
 
-const Home: React.FC = () => {
+type HomeProps = {
+  chatSuggestions: string[];
+};
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  return {
+    props: {
+      chatSuggestions: await getChatSuggestions(),
+    },
+  };
+};
+
+const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
   const guestSessionId = useRef<string | null>(null);
 
   const setGuestSession = async () => {
@@ -56,6 +70,7 @@ const Home: React.FC = () => {
         <ChatContainer
           promptEndpoint={guestPromptEndpoint}
           deleteEndpoint={guestDeleteChatEndpoint}
+          suggestions={chatSuggestions}
           constructPromptRequest={constructGuestPromptRequest}
           constructDeleteRequest={constructGuestDeleteChatRequest}
           onSend={setGuestSession}

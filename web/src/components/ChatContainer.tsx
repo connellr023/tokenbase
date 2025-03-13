@@ -9,6 +9,7 @@ import LoadingIndicator from "@/components/LoadingIndicator";
 import ErrorMessage from "./ErrorMessage";
 import TypesetRenderer from "./TypesetRenderer";
 import { recvHttpStream } from "@/utils/recvHttpStream";
+import StandardButton from "./StandardButton";
 
 type HttpChatRequest = {
   headers?: HeadersInit;
@@ -18,6 +19,7 @@ type HttpChatRequest = {
 type ChatContainerProps = {
   promptEndpoint: string;
   deleteEndpoint: string;
+  suggestions: string[];
   constructPromptRequest: (prompt: string) => HttpChatRequest;
   constructDeleteRequest: (chatId: number) => HttpChatRequest;
   onSend: () => Promise<string | undefined>;
@@ -26,6 +28,7 @@ type ChatContainerProps = {
 const ChatContainer: React.FC<ChatContainerProps> = ({
   promptEndpoint,
   deleteEndpoint,
+  suggestions,
   constructPromptRequest,
   constructDeleteRequest,
   onSend,
@@ -95,7 +98,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
         controller.signal,
         (chunk) => {
           // Check if this chunk is an error
-          // Alert for now...
           if (chunk.error) {
             setError(chunk.error);
             setLoading(false);
@@ -116,7 +118,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -191,6 +193,17 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                       "Enter a prompt to get started. Write **Markdown** and $\\LaTeX$ for formatting."
                     }
                   </TypesetRenderer>
+                  <div className={styles.suggestionsContainer}>
+                    {/* Render some random chat suggestions */}
+                    {suggestions?.map((suggestion, i) => (
+                      <StandardButton
+                        key={i}
+                        onClick={() => onPromptSend(suggestion)}
+                      >
+                        {suggestion}
+                      </StandardButton>
+                    ))}
+                  </div>
                 </div>
               )}
 

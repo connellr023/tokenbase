@@ -31,8 +31,21 @@ div.container {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-direction: column;
         width: 100%;
         color: $transparent-color-white;
+
+        div.suggestionsContainer {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+
+          @media screen and (max-width: $breakpoint-xs) {
+            display: none;
+          }
+        }
 
         p {
           max-width: 60%;
