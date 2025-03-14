@@ -7,16 +7,25 @@ import (
 )
 
 var suggestions = [...]string{
-	"Tell me a joke",
+	"Tell me a joke.",
 	"What is the meaning of life?",
 	"Why is the sky blue?",
-	"What is the capital of Assyria?",
 	"Why do we dream?",
 	"Where do babies come from?",
+	"What does the fox say?",
+	"Who is the fairest of them all?",
+	"Is there life on Mars?",
+	"Who let the dogs out?",
+	"Where is the beef?",
+	"Who shot first?",
+	"Who is the walrus?",
+	"Is the cake a lie?",
+	"What is the bite of '87?",
+	"Who is the real Slim Shady?",
 }
 
 func (i *Injection) GetChatSuggestions(w http.ResponseWriter, r *http.Request) {
-	n := max(rand.Intn(len(suggestions)), 2)
+	n := max(rand.Intn(len(suggestions)), 3)
 
 	// Create a randomly sized subset of suggestions
 	subset := make([]string, n)
