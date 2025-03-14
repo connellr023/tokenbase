@@ -48,7 +48,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           ref={textareaRef}
           value={prompt}
           onChange={handleInput}
-          placeholder="Ask Anything..."
+          placeholder="What's on your mind?"
           rows={1}
           spellCheck={false}
         />

@@ -12,7 +12,7 @@ services:
     depends_on:
       - surrealdb
       - redis
-      - tinyllama
+      - ollama
     build:
       context: .
       dockerfile: ./build/package/prod/backend.prod.dockerfile
@@ -25,10 +25,10 @@ services:
     networks:
       - app-network
 
-  tinyllama:
+  ollama:
     build:
       context: .
-      dockerfile: ./build/package/tinyllama.dockerfile
+      dockerfile: ./build/package/ollama.dockerfile
     deploy:
       resources:
         reservations:

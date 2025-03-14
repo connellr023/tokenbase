@@ -85,7 +85,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send request to Ollama API
-	ollamaRes, err := http.Post(utils.TinyLlamaDockerChatEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
+	ollamaRes, err := http.Post(utils.OllamaDockerChatEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
