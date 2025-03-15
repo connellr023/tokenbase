@@ -1,6 +1,7 @@
 import styles from "@/styles/components/NavBar.module.scss";
-import { useRouter } from "next/router";
 import StandardButton from "./StandardButton";
+import StandardDropdown from "./StandardDropdown";
+import { useRouter } from "next/router";
 import { faBolt, faSignIn, faStar } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar: React.FC = () => {
@@ -32,6 +33,18 @@ const NavBar: React.FC = () => {
           <StandardButton icon={faSignIn} onClick={() => router.push("/login")}>
             Log In
           </StandardButton>
+        )}
+
+        {/* Render model selection */}
+        {pathname === "/" && (
+          <StandardDropdown
+            items={[
+              {
+                label: "tinyllama",
+                onClick: () => {},
+              },
+            ]}
+          />
         )}
       </div>
 
