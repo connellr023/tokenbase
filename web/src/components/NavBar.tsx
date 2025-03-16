@@ -7,10 +7,11 @@ import {
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
+import { useModelsContext } from "@/contexts/ModelsContext";
 
 const NavBar: React.FC = () => {
-  const router = useRouter();
-  const { pathname } = router;
+  const { pathname } = useRouter();
+  const { availableModels, setSelectedIndex } = useModelsContext();
 
   return (
     <nav className={styles.container}>
@@ -18,12 +19,10 @@ const NavBar: React.FC = () => {
         {/* Render model selection */}
         {pathname === "/" && (
           <StandardDropdown
-            items={[
-              {
-                label: "tinyllama",
-                onClick: () => {},
-              },
-            ]}
+            items={availableModels.map((name, i) => ({
+              label: name.split(":")[0],
+              onClick: () => setSelectedIndex(i),
+            }))}
           />
         )}
 

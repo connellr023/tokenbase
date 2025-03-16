@@ -12,7 +12,7 @@ const (
 const (
 	OllamaDockerChatEndpoint = "http://ollama:11434/api/chat"
 	OllamaDockerTagsEndpoint = "http://ollama:11434/api/tags"
-	TinyLlamaModelName       = "tinyllama"
+	TinyLlamaModelName       = "tinyllama:latest"
 )
 
 // SurrealDB connection details

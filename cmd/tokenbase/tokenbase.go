@@ -111,8 +111,8 @@ func main() {
 	rootRouter.Route("/api", func(r chi.Router) {
 		middlewares.UseBearerExtractorMiddleware(r)
 
-		// Chat suggestions
 		r.Get("/suggestions", inj.GetChatSuggestions)
+		r.Get("/models", inj.GetModels)
 
 		// Guest sub-routes
 		r.Route("/guest", func(r chi.Router) {
