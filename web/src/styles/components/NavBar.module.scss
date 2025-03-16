@@ -15,7 +15,8 @@ nav.container {
   div.buttonContainer {
     display: flex;
     flex-direction: row;
-    gap: 0.7rem;
+    align-items: center;
+    gap: 1rem;
   }
 
   b.logo {

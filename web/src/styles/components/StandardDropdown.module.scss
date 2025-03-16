@@ -6,8 +6,8 @@
 }
 
 .dropdownToggle {
-  background-color: transparent;
-  color: $bg-color-3;
+  background-color: $bg-color-5;
+  color: rgba($txt-color-1, 0.55);
   padding: 0.65rem;
   border: none;
   cursor: pointer;
@@ -18,35 +18,13 @@
   gap: 0.5rem;
   font-size: 0.85rem;
   transition: $transition-2;
-}
 
-.dropdownToggle.open,
-.dropdownToggle:hover {
-  background-color: rgba($bg-color-3, 0.2);
+  &.open,
+  &:hover {
+    color: $txt-color-1;
+  }
 }
 
 .dropdownMenu {
-  display: block;
   position: absolute;
-  background-color: white;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  min-width: 160px;
-  border-radius: 4px;
-  margin-top: 5px;
-}
-
-.dropdownItem {
-  padding: 12px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.dropdownItem:hover {
-  background-color: #f1f1f1;
-}
-
-.icon {
-  margin-right: 8px;
 }

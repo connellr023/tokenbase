@@ -34,7 +34,7 @@ const StandardDropdown: React.FC<StandardDropdownProps> = ({ items }) => {
         }`}
         onClick={toggleDropdown}
       >
-        <i>{items[0].label}</i>
+        {items[0].label}
         <FontAwesomeIcon icon={faChevronDown} />
       </button>
       {isOpen && (
