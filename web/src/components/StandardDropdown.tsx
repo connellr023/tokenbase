@@ -3,7 +3,7 @@ import styles from "@/styles/components/StandardDropdown.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { merriweather400 } from "@/utils/fonts";
-import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 type DropdownItem = {
   icon?: IconProp;
@@ -63,7 +63,11 @@ const StandardDropdown: React.FC<StandardDropdownProps> = ({
         onClick={toggleDropdown}
       >
         {items[selectedIndex].label}
-        <FontAwesomeIcon icon={faChevronDown} />
+        {isOpen ? (
+          <FontAwesomeIcon icon={faChevronUp} />
+        ) : (
+          <FontAwesomeIcon icon={faChevronDown} />
+        )}
       </button>
       {isOpen && (
         <ul className={styles.dropdownMenu}>

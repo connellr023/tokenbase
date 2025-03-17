@@ -3,13 +3,17 @@
 nav.container {
   background-color: $bg-color-1;
   padding: 0.7rem;
+  padding-bottom: 0.5rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 0.7rem;
   height: auto;
+  width: 100%;
+  box-sizing: border-box;
   z-index: 1000;
-  position: sticky;
+  position: fixed;
+  left: 0;
   top: 0;
 
   div.buttonContainer {
