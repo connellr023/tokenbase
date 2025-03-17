@@ -39,7 +39,10 @@ body,
 }
 
 main {
-  height: calc(100% - 4rem);
+  $top-pad: 2rem;
+
+  padding-top: $top-pad;
+  height: calc(100% - $top-pad);
 }
 
 a {

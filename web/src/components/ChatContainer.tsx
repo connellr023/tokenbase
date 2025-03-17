@@ -38,6 +38,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortPrompt = useRef<(() => void) | null>(null);
+  const chatContainerRef = useRef<HTMLDivElement | null>(null);
 
   const onPromptSend = async (prompt: string) => {
     // Clear any previous error
@@ -106,7 +107,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -163,70 +164,71 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   };
 
   useEffect(() => {
-    scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth",
-    });
-  }, [chats, isLoading]);
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [isLoading]);
 
   return (
     <div className={styles.container}>
-      <div className={styles.chatContainer}>
-        <div>
-          {/* Render all finished chats */}
-          {chats.length > 0 || streamingChat
-            ? chats.map((chat) => (
-                <Chat
-                  key={chat.chatId}
-                  chatId={chat.chatId ?? -1}
-                  prompt={chat.prompt}
-                  reply={chat.reply}
-                  isComplete={true}
-                  onDelete={onChatDelete}
-                />
-              ))
-            : !error && (
-                <div className={styles.emptyChat}>
-                  <TypesetRenderer>
-                    {
-                      "Enter a prompt to get started. Write **Markdown** and $\\LaTeX$ for formatting."
-                    }
-                  </TypesetRenderer>
-                  <div className={styles.suggestionsContainer}>
-                    {/* Render some random chat suggestions */}
-                    {suggestions?.map((suggestion, i) => (
-                      <StandardButton
-                        key={i}
-                        onClick={() => onPromptSend(suggestion)}
-                      >
-                        {suggestion}
-                      </StandardButton>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-          {/* If a chat reply is being streamed back, render it here */}
-          {streamingChat && (
-            <Chat
-              key={streamingChat.chatId ?? -1}
-              chatId={streamingChat.chatId ?? -1}
-              prompt={streamingChat.prompt}
-              reply={streamingChat.reply}
-              isComplete={false}
-            />
-          )}
+      {chats.length === 0 && !streamingChat ? (
+        <div className={styles.emptyChat}>
+          <TypesetRenderer>
+            {
+              "Enter a prompt to get started. Write **Markdown** and $\\LaTeX$ for formatting."
+            }
+          </TypesetRenderer>
+          <div className={styles.suggestionsContainer}>
+            {/* Render some random chat suggestions */}
+            {suggestions?.map((suggestion, i) => (
+              <StandardButton key={i} onClick={() => onPromptSend(suggestion)}>
+                {suggestion}
+              </StandardButton>
+            ))}
+          </div>
         </div>
-        {error ? (
-          <ErrorMessage error={error} />
-        ) : (
-          isLoading && (
-            <div className={styles.loadingIndicatorContainer}>
-              {<LoadingIndicator />}
-            </div>
-          )
-        )}
-      </div>
+      ) : (
+        <div className={styles.chatContainer} ref={chatContainerRef}>
+          <div>
+            {/* Render all finished chats */}
+            {chats.map((chat) => (
+              <Chat
+                key={chat.chatId}
+                chatId={chat.chatId ?? -1}
+                prompt={chat.prompt}
+                reply={chat.reply}
+                isComplete={true}
+                onDelete={onChatDelete}
+              />
+            ))}
+
+            {/* If a chat reply is being streamed back, render it here */}
+            {streamingChat && (
+              <Chat
+                key={streamingChat.chatId ?? -1}
+                chatId={streamingChat.chatId ?? -1}
+                prompt={streamingChat.prompt}
+                reply={streamingChat.reply}
+                isComplete={false}
+              />
+            )}
+
+            {error ? (
+              <ErrorMessage error={error} />
+            ) : (
+              isLoading && (
+                <div className={styles.loadingIndicatorContainer}>
+                  {<LoadingIndicator />}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+
       <PromptArea
         onSend={onPromptSend}
         isDisabled={error != null}

@@ -26,7 +26,7 @@ type BearerContextType = {
 
 const BearerContext = createContext<BearerContextType | null>(null);
 
-export const BearerContextProvider: React.FC<{ children: React.ReactNode }> = ({
+export const BearerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [bearer, setBearer] = useState<Bearer | undefined>(undefined);
@@ -44,7 +44,7 @@ export const useBearerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useBearerContext must be used within a BearerContextProvider",
+      "useBearerContext must be used within a BearerContextProvider"
     );
   }
 

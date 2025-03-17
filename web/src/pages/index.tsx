@@ -14,6 +14,7 @@ import {
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
+import { useModelsContext } from "@/contexts/ModelsContext";
 
 const guestPromptEndpoint = backendEndpoint + "api/guest/chat/prompt";
 const guestDeleteChatEndpoint = backendEndpoint + "api/guest/chat/delete";
@@ -33,6 +34,7 @@ export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
 const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
   const { isOpen, close } = useHomeModalContext();
   const { bearer, setBearer } = useBearerContext();
+  const { availableModels, selectedIndex } = useModelsContext();
 
   const constructGuestPromptRequest = async (prompt: string) => {
     const constructReq = (token: string) => {
@@ -43,6 +45,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
         },
         body: JSON.stringify({
           prompt,
+          model: availableModels[selectedIndex],
         }),
       };
     };
@@ -91,7 +94,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen}>
+      <Modal isOpen={isOpen} onClickOutside={close}>
         <h1 className={styles.modalTitle}>Welcome.</h1>
         <div className={styles.modalButtonContainer}>
           <StandardButton

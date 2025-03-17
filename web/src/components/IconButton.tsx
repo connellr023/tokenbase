@@ -10,6 +10,7 @@ type IconButtonProps = {
   icon: IconProp;
   className?: string;
   color?: IconButtonColor;
+  label?: string;
   onClick: () => void;
 };
 
@@ -17,6 +18,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   icon,
   className,
   color,
+  label,
   onClick,
 }) => {
   let colorClassName = "";
@@ -30,12 +32,12 @@ const IconButton: React.FC<IconButtonProps> = ({
   }
 
   return (
-    <button
-      className={`${styles.iconButton} ${colorClassName} ${className}`}
-      onClick={onClick}
-    >
-      <FontAwesomeIcon icon={icon} />
-    </button>
+    <div className={styles.container}>
+      <button className={`${colorClassName} ${className}`} onClick={onClick}>
+        <FontAwesomeIcon icon={icon} />
+      </button>
+      {label && <label>{label}</label>}
+    </div>
   );
 };
 

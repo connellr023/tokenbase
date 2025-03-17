@@ -1,0 +1,14 @@
+@use "../variables.scss" as *;
+
+div.container > a {
+  color: rgba($txt-color-1, 0.55);
+  transition: $transition-2;
+  text-decoration: none;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  &:hover {
+    color: $txt-color-1;
+  }
+}

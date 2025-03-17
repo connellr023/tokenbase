@@ -66,7 +66,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
         )}
       </div>
       <p>
-        Note, the <b>LLM</b> used does <b>not</b> produce perfect answers.
+        Note, the models used do <b>not</b> always produce accurate answers.
       </p>
     </div>
   );

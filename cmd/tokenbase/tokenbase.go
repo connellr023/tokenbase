@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"net/http"
+	"time"
 	"tokenbase/internal/controllers"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/utils"
@@ -78,6 +79,9 @@ func AuthRedis() (*redis.Client, error) {
 }
 
 func main() {
+	// Sleep to wait for Docker containers to start
+	time.Sleep(5 * time.Second)
+
 	// Connect to SurrealDB over the Docker network
 	println("Connecting to SurrealDB...")
 	sdb, invalidateToken, err := AuthSurrealDb()
@@ -111,8 +115,8 @@ func main() {
 	rootRouter.Route("/api", func(r chi.Router) {
 		middlewares.UseBearerExtractorMiddleware(r)
 
-		// Chat suggestions
 		r.Get("/suggestions", inj.GetChatSuggestions)
+		r.Get("/models", inj.GetModels)
 
 		// Guest sub-routes
 		r.Route("/guest", func(r chi.Router) {

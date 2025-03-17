@@ -14,7 +14,7 @@ type ChatRecordsContextType = {
 
 const ChatRecordsContext = createContext<ChatRecordsContextType | null>(null);
 
-export const ChatRecordsContextProvider: React.FC<{
+export const ChatRecordsProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [chats, setChats] = useState<ChatRecord[]>([]);
@@ -31,7 +31,7 @@ export const useChatRecordsContext = () => {
 
   if (!context) {
     throw new Error(
-      "useChatRecordsContext must be used within a ChatRecordsContextProvider",
+      "useChatRecordsContext must be used within a ChatRecordsContextProvider"
     );
   }
 
