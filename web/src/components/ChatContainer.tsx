@@ -38,7 +38,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
   const abortPrompt = useRef<(() => void) | null>(null);
-  const chatContainerRef = useRef<HTMLDivElement | null>(null);
+  const loadingIndicatorRef = useRef<HTMLDivElement | null>(null);
 
   const onPromptSend = async (prompt: string) => {
     // Clear any previous error
@@ -107,7 +107,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -164,11 +164,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   };
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: "smooth",
-      });
+    if (loadingIndicatorRef.current) {
+      loadingIndicatorRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [isLoading]);
 
@@ -191,7 +188,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           </div>
         </div>
       ) : (
-        <div className={styles.chatContainer} ref={chatContainerRef}>
+        <div className={styles.chatContainer}>
           <div>
             {/* Render all finished chats */}
             {chats.map((chat) => (
@@ -220,7 +217,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
               <ErrorMessage error={error} />
             ) : (
               isLoading && (
-                <div className={styles.loadingIndicatorContainer}>
+                <div
+                  className={styles.loadingIndicatorContainer}
+                  ref={loadingIndicatorRef}
+                >
                   {<LoadingIndicator />}
                 </div>
               )

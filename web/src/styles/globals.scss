@@ -18,10 +18,6 @@ html {
   @media screen and (min-width: $breakpoint-lg) {
     font-size: 17px;
   }
-
-  @media screen and (min-width: $breakpoint-xl) {
-    font-size: 18px;
-  }
 }
 
 body {
@@ -39,10 +35,7 @@ body,
 }
 
 main {
-  $top-pad: 2rem;
-
-  padding-top: $top-pad;
-  height: calc(100% - $top-pad);
+  height: calc(100% - 4rem);
 }
 
 a {

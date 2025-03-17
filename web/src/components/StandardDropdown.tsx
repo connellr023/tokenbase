@@ -1,17 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import styles from "@/styles/components/StandardDropdown.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { merriweather400 } from "@/utils/fonts";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
-type DropdownItem = {
-  icon?: IconProp;
-  label: string;
-};
-
 type StandardDropdownProps = {
-  items: DropdownItem[];
+  items: string[];
   onSelect: (index: number) => void;
 };
 
@@ -20,7 +14,7 @@ const StandardDropdown: React.FC<StandardDropdownProps> = ({
   onSelect,
 }) => {
   if (items.length === 0) {
-    items = [{ label: "None" }];
+    items = ["None"];
   }
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -62,7 +56,7 @@ const StandardDropdown: React.FC<StandardDropdownProps> = ({
         }`}
         onClick={toggleDropdown}
       >
-        {items[selectedIndex].label}
+        {items[selectedIndex]}
         {isOpen ? (
           <FontAwesomeIcon icon={faChevronUp} />
         ) : (
@@ -80,10 +74,7 @@ const StandardDropdown: React.FC<StandardDropdownProps> = ({
               }`}
               onClick={() => handleItemClick(i)}
             >
-              {item.icon && (
-                <FontAwesomeIcon icon={item.icon} className={styles.icon} />
-              )}
-              {item.label}
+              {item}
             </li>
           ))}
         </ul>

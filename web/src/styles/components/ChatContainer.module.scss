@@ -6,7 +6,6 @@ div.container {
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: 55rem;
 
   div.loadingIndicatorContainer {
     margin-top: 1rem;
@@ -59,14 +58,11 @@ div.container {
     width: 100%;
     height: 100%;
     overflow-y: auto;
-    margin-bottom: 9rem;
 
     & > div {
-      $side-margin: 2rem;
-
-      margin-left: $side-margin;
-      margin-right: $side-margin;
-      height: 100%;
+      padding: 0 2.2rem;
+      margin: 1.6rem auto 7rem;
+      max-width: 55rem;
     }
   }
 }
