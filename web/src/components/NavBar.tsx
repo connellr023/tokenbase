@@ -2,12 +2,12 @@ import styles from "@/styles/components/NavBar.module.scss";
 import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import { useRouter } from "next/router";
+import { useModelsContext } from "@/contexts/ModelsContext";
 import {
   faArrowLeft,
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
-import { useModelsContext } from "@/contexts/ModelsContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
@@ -19,10 +19,10 @@ const NavBar: React.FC = () => {
         {/* Render model selection */}
         {pathname === "/" && (
           <StandardDropdown
-            items={availableModels.map((name, i) => ({
+            items={availableModels.map((name) => ({
               label: name.split(":")[0],
-              onClick: () => setSelectedIndex(i),
             }))}
+            onSelect={setSelectedIndex}
           />
         )}
 

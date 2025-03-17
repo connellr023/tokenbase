@@ -20,20 +20,15 @@ class RootApp extends App<RootAppProps> {
     const appProps = await App.getInitialProps(appContext);
 
     // Fetch all models
-    let availableModels = ["None"];
+    let availableModels = [];
 
     try {
       const modelsRes = await fetch(modelsEndpoint);
 
       if (modelsRes.ok) {
         availableModels = await modelsRes.json();
-      } else {
-        const error = await modelsRes.text();
-        console.error(error);
       }
-    } catch (e) {
-      throw new Error("Failed to fetch available models");
-    }
+    } catch {}
 
     return { ...appProps, availableModels };
   }

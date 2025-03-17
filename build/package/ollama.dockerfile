@@ -1,10 +1,10 @@
 FROM ollama/ollama:latest
 
 # Copy script
-COPY ../../scripts/pullmodels.sh ./pullmodels.sh
+COPY ../../scripts/ollamastart.sh ./ollamastart.sh
 
 # Make it executable
-RUN chmod +x /pullmodels.sh
+RUN chmod +x /ollamastart.sh
 
 # Execute the script
-RUN ./pullmodels.sh
+RUN ./ollamastart.sh

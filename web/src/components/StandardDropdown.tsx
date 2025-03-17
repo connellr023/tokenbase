@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "@/styles/components/StandardDropdown.module.scss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
@@ -8,42 +8,73 @@ import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 type DropdownItem = {
   icon?: IconProp;
   label: string;
-  onClick: () => void;
 };
 
 type StandardDropdownProps = {
   items: DropdownItem[];
+  onSelect: (index: number) => void;
 };
 
-const StandardDropdown: React.FC<StandardDropdownProps> = ({ items }) => {
+const StandardDropdown: React.FC<StandardDropdownProps> = ({
+  items,
+  onSelect,
+}) => {
   if (items.length === 0) {
-    throw new Error("Dropdown must have at least one item");
+    items = [{ label: "None" }];
   }
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
+  const handleItemClick = (index: number) => {
+    setIsOpen(false);
+    setSelectedIndex(index);
+    onSelect(index);
+  };
+
+  const handleClickOutside = (event: MouseEvent) => {
+    if (
+      dropdownRef.current &&
+      !dropdownRef.current.contains(event.target as Node)
+    ) {
+      setIsOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className={styles.dropdown}>
+    <div className={styles.dropdown} ref={dropdownRef}>
       <button
         className={`${isOpen ? styles.open : ""} ${styles.dropdownToggle} ${
           merriweather400.className
         }`}
         onClick={toggleDropdown}
       >
-        {items[0].label}
+        {items[selectedIndex].label}
         <FontAwesomeIcon icon={faChevronDown} />
       </button>
       {isOpen && (
         <ul className={styles.dropdownMenu}>
-          {items.map((item, index) => (
+          {items.map((item, i) => (
             <li
-              key={index}
-              className={styles.dropdownItem}
-              onClick={item.onClick}
+              aria-roledescription="menuitem"
+              key={i}
+              className={`${styles.dropdownItem} ${
+                i === selectedIndex ? styles.selected : ""
+              }`}
+              onClick={() => handleItemClick(i)}
             >
               {item.icon && (
                 <FontAwesomeIcon icon={item.icon} className={styles.icon} />

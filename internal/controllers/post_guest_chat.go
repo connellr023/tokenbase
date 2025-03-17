@@ -15,6 +15,7 @@ import (
 
 type postGuestChatRequest struct {
 	Prompt string `json:"prompt"`
+	Model  string `json:"model"`
 }
 
 // Endpoint for sending a prompt on a guest chat
@@ -71,7 +72,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
-		Model:    utils.TinyLlamaModelName,
+		Model:    req.Model,
 		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
 		Stream:   true,
 	}
