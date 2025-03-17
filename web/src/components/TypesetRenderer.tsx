@@ -1,9 +1,11 @@
 import "katex/dist/katex.min.css";
 import { merriweather500, firaMono400 } from "@/utils/fonts";
-import ReactMarkdown, { Components } from "react-markdown";
+import { PropsWithChildren } from "react";
+import ReactMarkdown from "react-markdown";
 import rehypeKatex from "rehype-katex";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
+import rehypeRaw from "rehype-raw";
 
 type TypesetRendererProps = {
   children?: string;
@@ -20,8 +22,8 @@ const extractLanguageName = (className: string) => {
 };
 
 const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
-  const renderers: Components = {
-    code({ className, children, ...props }) {
+  const renderers = {
+    code({ className, children, ...props }: PropsWithChildren<any>) {
       const lang = extractLanguageName(className || "");
 
       if (!lang) {
@@ -51,7 +53,7 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm, remarkMath]}
-      rehypePlugins={[rehypeKatex]}
+      rehypePlugins={[rehypeKatex, rehypeRaw]}
       components={renderers}
     >
       {children}

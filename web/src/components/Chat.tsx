@@ -2,7 +2,7 @@ import styles from "@/styles/components/Chat.module.scss";
 import IconButton, { IconButtonColor } from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
-import { faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 type ChatProps = {
   chatId: number;
@@ -32,6 +32,7 @@ const Chat: React.FC<ChatProps> = ({
       )}
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>
+          <IconButton icon={faRefresh} onClick={() => console.log("refresh")} />
           <IconButton icon={faCopy} onClick={() => console.log("copy")} />
           <IconButton
             icon={faTrash}

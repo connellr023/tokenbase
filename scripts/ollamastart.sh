@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of models to pull and run
-models=("tinyllama:latest" "deepseek-r1:1.5b")
+models=("tinyllama:latest" "gemma:2b")
 
 echo "Starting Ollama server..."
 ollama serve &
@@ -17,3 +17,5 @@ for model in "${models[@]}"; do
   echo "Running model: $model"
   ollama run "$model"
 done
+
+wait
