@@ -14,8 +14,6 @@ done
 for model in "${models[@]}"; do
   echo "Pulling model: $model"
   ollama pull "$model"
-  echo "Running model: $model"
-  ollama run "$model"
 done
 
 wait

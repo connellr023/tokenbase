@@ -94,7 +94,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen}>
+      <Modal isOpen={isOpen} onClickOutside={close}>
         <h1 className={styles.modalTitle}>Welcome.</h1>
         <div className={styles.modalButtonContainer}>
           <StandardButton

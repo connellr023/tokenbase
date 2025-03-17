@@ -48,6 +48,9 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
         </div>
       );
     },
+    think({ children }: PropsWithChildren<any>) {
+      return <>{children}</>;
+    },
   };
 
   return (
