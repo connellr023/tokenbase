@@ -19,9 +19,7 @@ const NavBar: React.FC = () => {
         {/* Render model selection */}
         {pathname === "/" && (
           <StandardDropdown
-            items={availableModels.map((name) => ({
-              label: name.split(":")[0],
-            }))}
+            items={availableModels.map((name) => ({ label: name }))}
             onSelect={setSelectedIndex}
           />
         )}

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of models to pull and run
-models=("tinyllama" "deepseek-r1")
+models=("tinyllama:latest" "deepseek-r1:1.5b")
 
 echo "Starting Ollama server..."
 ollama serve &
