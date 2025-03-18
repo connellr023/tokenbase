@@ -1,7 +1,7 @@
 @use "variables.scss" as *;
 
 html {
-  font-size: 14px;
+  font-size: unset;
 
   @media screen and (min-width: $breakpoint-xs) {
     font-size: 14px;
@@ -13,10 +13,6 @@ html {
 
   @media screen and (min-width: $breakpoint-md) {
     font-size: 16px;
-  }
-
-  @media screen and (min-width: $breakpoint-lg) {
-    font-size: 17px;
   }
 }
 

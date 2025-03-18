@@ -11,23 +11,15 @@ div.container {
   flex-direction: column;
   text-align: center;
 
-  & > p {
-    $side-padding: 0.7rem;
-
-    margin-left: $side-padding;
-    margin-right: $side-padding;
-    font-size: 0.9rem;
-    color: $transparent-color-white;
-  }
-
   & > div {
-    $side-margin: 1.2rem;
+    $side-margin: 1.5rem;
 
     width: calc(100% - (2 * $side-margin));
     padding: 0.6rem;
-    border-radius: $border-radius-1;
+    border-top-left-radius: $border-radius-1;
+    border-top-right-radius: $border-radius-1;
     background-color: $bg-color-2;
-    max-width: 60rem;
+    max-width: 57rem;
     display: flex;
     flex-direction: row;
     gap: 0.6rem;
@@ -39,10 +31,8 @@ div.container {
     }
 
     textarea {
-      $pad: 0.5rem;
-
-      padding-top: $pad;
-      padding-bottom: $pad;
+      padding-top: 0.5rem;
+      padding-bottom: 0.8rem;
       color: $txt-color-2;
       background: none;
       font-size: 1rem;
@@ -54,34 +44,44 @@ div.container {
       }
     }
 
-    button {
-      $size: 2.8rem;
-
-      cursor: pointer;
-      width: $size;
-      height: $size;
-      border-radius: 1000 * $size;
-      padding: 0 1.3rem;
-      font-size: 1.5rem;
-      color: $bg-color-2;
-      background-color: $button-color-1;
-      transition: $transition-1;
+    div.buttonContainer {
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
       margin-top: auto;
+      gap: 0.5rem;
 
-      &:hover {
-        background-color: $button-color-2;
-      }
+      button {
+        $size: 2.65rem;
 
-      &[disabled] {
-        cursor: not-allowed;
-        background-color: $bg-color-3;
+        cursor: pointer;
+        width: $size;
+        height: $size;
+        border-radius: 1000 * $size;
+        padding: 0 1.3rem;
+        font-size: 1.5rem;
         color: $bg-color-2;
+        background-color: $button-color-1;
+        transition: $transition-1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
 
         &:hover {
-          background-color: color.adjust($bg-color-3, $lightness: -4%);
+          background-color: $button-color-2;
+        }
+
+        &:active:not(:disabled) {
+          transform: scale(0.93);
+        }
+
+        &[disabled] {
+          cursor: not-allowed;
+          background-color: $bg-color-3;
+          color: $bg-color-2;
+
+          &:hover {
+            background-color: color.adjust($bg-color-3, $lightness: -4%);
+          }
         }
       }
     }

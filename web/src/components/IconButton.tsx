@@ -8,7 +8,6 @@ export enum IconButtonColor {
 
 type IconButtonProps = {
   icon: IconProp;
-  className?: string;
   color?: IconButtonColor;
   label?: string;
   onClick: () => void;
@@ -16,7 +15,6 @@ type IconButtonProps = {
 
 const IconButton: React.FC<IconButtonProps> = ({
   icon,
-  className,
   color,
   label,
   onClick,
@@ -32,8 +30,8 @@ const IconButton: React.FC<IconButtonProps> = ({
   }
 
   return (
-    <div className={styles.container}>
-      <button className={`${colorClassName} ${className}`} onClick={onClick}>
+    <div className={`${styles.container} ${colorClassName}`}>
+      <button onClick={onClick}>
         <FontAwesomeIcon icon={icon} />
       </button>
       {label && <label>{label}</label>}

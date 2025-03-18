@@ -1,9 +1,29 @@
 @use "../variables.scss" as *;
 
 div.container {
+  $alpha: 0.3;
+  --color: #{$txt-color-1};
+
+  &.red {
+    --color: #f01616;
+  }
+
   position: relative;
+  background: transparent;
+  opacity: 0.8;
+  transition: $transition-2;
+  border-radius: $border-radius-1 * 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 1;
+    background-color: color-mix(in srgb, var(--color) 40%, transparent);
+  }
 
   label {
+    pointer-events: none;
     color: rgba($txt-color-1, 0.85);
     opacity: 0;
     background-color: $bg-color-5;
@@ -13,9 +33,10 @@ div.container {
     border-radius: $border-radius-1 * 0.5;
     transform: translateX(-50%);
     left: 50%;
-    margin-top: 0.4rem;
+    top: 2.4rem;
     transition: opacity $transition-2;
     text-align: center;
+    z-index: 2;
   }
 
   button:hover + label {
@@ -23,33 +44,11 @@ div.container {
   }
 
   button {
-    $alpha: 0.3;
-
-    color: $txt-color-1;
-    background: transparent;
     cursor: pointer;
+    color: var(--color);
+    background: none;
     font-size: 1.1rem;
-    opacity: 0.8;
-    transition: $transition-2;
+    z-index: 1;
     padding: 0.4rem;
-    border-radius: $border-radius-1 * 0.5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      opacity: 1;
-      background-color: rgba($txt-color-1, $alpha);
-    }
-
-    &.red {
-      $color: #f12525;
-
-      color: $color;
-
-      &:hover {
-        background-color: rgba($color, $alpha);
-      }
-    }
   }
 }

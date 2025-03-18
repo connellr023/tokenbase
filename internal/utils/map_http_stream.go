@@ -30,7 +30,7 @@ var (
 // - An error if the response could not be streamed
 func MapHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, reqCtx context.Context, mapFunc func(U) V) error {
 	// Set headers for streaming response
-	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Transfer-Encoding", "chunked")
 
 	flusher, ok := w.(http.Flusher)

@@ -12,6 +12,8 @@ div.container {
     margin-bottom: 3rem;
   }
 
+  $max-width: 55rem;
+
   div.emptyChat {
     font-size: 1.2rem;
     user-select: none;
@@ -21,6 +23,7 @@ div.container {
     align-items: center;
     flex-direction: column;
     width: 100%;
+    max-width: $max-width;
     height: 100%;
     color: $transparent-color-white;
 
@@ -62,7 +65,7 @@ div.container {
     & > div {
       padding: 0 2.2rem;
       margin: 1.6rem auto 7rem;
-      max-width: 55rem;
+      max-width: $max-width;
     }
   }
 }

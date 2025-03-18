@@ -1,8 +1,12 @@
 import styles from "@/styles/components/PromptArea.module.scss";
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUp, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { merriweather500 } from "@/utils/fonts";
+import {
+  faArrowUp,
+  faPaperclip,
+  faStop,
+} from "@fortawesome/free-solid-svg-icons";
 
 type PromptAreaProps = {
   isDisabled: boolean;
@@ -23,22 +27,30 @@ const PromptArea: React.FC<PromptAreaProps> = ({
   const handleSend = () => {
     onSend(prompt.trim());
     setPrompt("");
-    resetHeight();
   };
 
-  const resetHeight = () => {
+  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setPrompt(e.target.value);
+  };
+
+  const adjustTextareaHeight = () => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
 
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
-    resetHeight();
-  };
+  useEffect(() => {
+    adjustTextareaHeight();
+  }, [prompt]);
 
-  useEffect(() => resetHeight(), [prompt]);
+  useEffect(() => {
+    window.addEventListener("resize", adjustTextareaHeight);
+
+    return () => {
+      window.removeEventListener("resize", adjustTextareaHeight);
+    };
+  }, []);
 
   return (
     <div className={styles.container}>
@@ -52,22 +64,24 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           rows={1}
           spellCheck={false}
         />
-        {canCancel ? (
-          <button onClick={onCancel}>
-            <FontAwesomeIcon icon={faSquare} />
+        <div className={styles.buttonContainer}>
+          <button disabled={isDisabled}>
+            <FontAwesomeIcon icon={faPaperclip} />
           </button>
-        ) : (
-          <button
-            onClick={handleSend}
-            disabled={isDisabled || prompt.trim().length === 0}
-          >
-            <FontAwesomeIcon icon={faArrowUp} />
-          </button>
-        )}
+          {canCancel ? (
+            <button onClick={onCancel}>
+              <FontAwesomeIcon icon={faStop} />
+            </button>
+          ) : (
+            <button
+              onClick={handleSend}
+              disabled={isDisabled || prompt.trim().length === 0}
+            >
+              <FontAwesomeIcon icon={faArrowUp} />
+            </button>
+          )}
+        </div>
       </div>
-      <p>
-        Note, the models used do <b>not</b> always produce accurate answers.
-      </p>
     </div>
   );
 };
