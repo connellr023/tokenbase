@@ -2,45 +2,41 @@
 
 nav.container {
   background-color: $bg-color-1;
-  padding: 0.7rem;
-  padding-bottom: 0.4rem;
+  padding: 0.4rem 0.6rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   gap: 0.7rem;
-  height: auto;
+  height: 3.3rem;
   width: 100%;
   box-sizing: border-box;
-  z-index: 1000;
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1000;
 
-  div.buttonContainer {
+  div.buttonsContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
   }
 
-  b.logo {
+  div.logo {
     user-select: none;
     font-size: 1.2rem;
     margin-left: auto;
-    margin-right: 0.4rem;
+    margin-right: 0.35rem;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    gap: 0.55rem;
   }
 
-  @media screen and (max-width: $breakpoint-xs) {
-    justify-content: center;
-    flex-direction: column;
-
-    div.buttonContainer {
-      order: 2;
-    }
-
-    b.logo {
-      order: 1;
-      margin: 0;
+  @media screen and (max-width: $breakpoint-sm) {
+    div.buttonsContainer {
+      display: none;
     }
   }
 }

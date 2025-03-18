@@ -45,7 +45,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
         },
         body: JSON.stringify({
           prompt,
-          model: availableModels[selectedIndex],
+          model: availableModels[selectedIndex].tag,
         }),
       };
     };

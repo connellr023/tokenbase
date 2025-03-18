@@ -24,15 +24,17 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Map the response to just a list of model names
-	modelNames := make([]string, len(tags.Models))
+	// Map the response to just a list of model info
+	modelList := make([]models.ModelInfo, len(tags.Models))
 
 	for i, model := range tags.Models {
-		modelNames[i] = model.Name
+		modelList[i] = models.ModelInfo{
+			Tag: model.Model,
+		}
 	}
 
 	// Encode as JSON
-	json, err := json.Marshal(modelNames)
+	json, err := json.Marshal(modelList)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

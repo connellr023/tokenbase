@@ -1,3 +1,4 @@
+import ModelInfo from "@/models/ModelInfo";
 import {
   createContext,
   Dispatch,
@@ -7,7 +8,7 @@ import {
 } from "react";
 
 type ModelsContextType = {
-  availableModels: string[];
+  availableModels: Readonly<ModelInfo[]>;
   selectedIndex: number;
   setSelectedIndex: Dispatch<SetStateAction<number>>;
 };
@@ -15,7 +16,7 @@ type ModelsContextType = {
 const ModelsContext = createContext<ModelsContextType | null>(null);
 
 type ModelsProviderProps = {
-  availableModels: string[];
+  availableModels: ModelInfo[];
   children: React.ReactNode;
 };
 

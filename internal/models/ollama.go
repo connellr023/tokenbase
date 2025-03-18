@@ -11,7 +11,7 @@ const (
 type OllamaChatMessage struct {
 	Role    OllamaRole `json:"role"`
 	Content string     `json:"content"`
-	Images  string     `json:"images,omitempty"`
+	Images  []string   `json:"images,omitempty"`
 }
 
 type OllamaChatRequest struct {
@@ -26,6 +26,14 @@ type OllamaChatResponse struct {
 	CreatedAt string            `json:"created_at"`
 	Message   OllamaChatMessage `json:"message"`
 	IsDone    bool              `json:"done"`
+}
+
+type OllamaModelDetails struct {
+	Format            string `json:"format"`
+	Family            string `json:"family"`
+	ParameterSize     string `json:"parameter_size"`
+	QuantizationLevel string `json:"quantization_level"`
+	Mmproj            bool   `json:"mmproj"`
 }
 
 type OllamaModel struct {

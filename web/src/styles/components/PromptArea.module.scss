@@ -51,6 +51,9 @@ div.container {
       gap: 0.5rem;
 
       button {
+        $button-color-1: $bg-color-1;
+        $button-color-2: color.adjust($button-color-1, $lightness: 15%);
+        $button-color-3: color.adjust($button-color-1, $lightness: 30%);
         $size: 2.65rem;
 
         cursor: pointer;
@@ -71,7 +74,8 @@ div.container {
         }
 
         &:active:not(:disabled) {
-          transform: scale(0.93);
+          transform: scale(0.91);
+          background-color: $button-color-3;
         }
 
         &[disabled] {

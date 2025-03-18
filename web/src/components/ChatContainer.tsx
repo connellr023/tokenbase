@@ -107,7 +107,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -230,8 +230,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       )}
 
       <PromptArea
-        onSend={onPromptSend}
         isDisabled={error != null}
+        onSend={onPromptSend}
+        canAttach={!streamingChat}
         canCancel={(isLoading || streamingChat != null) && !error}
         onCancel={() => abortPrompt.current?.()}
       />

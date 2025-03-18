@@ -1,36 +1,27 @@
 import "@/styles/globals.scss";
 import Head from "next/head";
 import NavBar from "@/components/NavBar";
+import ModelInfo from "@/models/ModelInfo";
 import App, { AppContext, AppProps } from "next/app";
 import { merriweather400 } from "@/utils/fonts";
 import { HomeModalProvider } from "@/contexts/HomeModalContext";
 import { BearerProvider } from "@/contexts/BearerContext";
 import { ChatRecordsProvider } from "@/contexts/ChatRecordsContext";
-import { backendEndpoint } from "@/utils/constants";
 import { ModelsProvider } from "@/contexts/ModelsContext";
-
-const modelsEndpoint = backendEndpoint + "api/models";
+import { getAvailableModels } from "@/utils/getAvailableModels";
 
 type RootAppProps = AppProps & {
-  availableModels: string[];
+  availableModels: ModelInfo[];
 };
 
 class RootApp extends App<RootAppProps> {
   static async getInitialProps(appContext: AppContext) {
     const appProps = await App.getInitialProps(appContext);
 
-    // Fetch all models
-    let availableModels = [];
-
-    try {
-      const modelsRes = await fetch(modelsEndpoint);
-
-      if (modelsRes.ok) {
-        availableModels = await modelsRes.json();
-      }
-    } catch {}
-
-    return { ...appProps, availableModels };
+    return {
+      ...appProps,
+      availableModels: await getAvailableModels(),
+    };
   }
 
   render() {

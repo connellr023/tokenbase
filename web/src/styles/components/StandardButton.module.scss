@@ -21,4 +21,9 @@ button.main {
   &:hover {
     background-color: $bg-color-3;
   }
+
+  &:active {
+    background-color: $bg-color-6;
+    transform: scale(0.95);
+  }
 }

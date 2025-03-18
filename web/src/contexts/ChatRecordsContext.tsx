@@ -8,7 +8,7 @@ import {
 } from "react";
 
 type ChatRecordsContextType = {
-  chats: ChatRecord[];
+  chats: Readonly<ChatRecord[]>;
   setChats: Dispatch<SetStateAction<ChatRecord[]>>;
 };
 
@@ -31,7 +31,7 @@ export const useChatRecordsContext = () => {
 
   if (!context) {
     throw new Error(
-      "useChatRecordsContext must be used within a ChatRecordsContextProvider",
+      "useChatRecordsContext must be used within a ChatRecordsContextProvider"
     );
   }
 

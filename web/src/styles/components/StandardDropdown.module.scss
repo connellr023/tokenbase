@@ -3,6 +3,7 @@
 div.dropdown {
   position: relative;
   display: inline-block;
+  user-select: none;
 
   button.dropdownToggle {
     background-color: $bg-color-5;

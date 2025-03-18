@@ -13,7 +13,7 @@ const StandardLink: React.FC<StandardLinkProps> = ({ icon, label, href }) => {
   return (
     <div className={styles.container}>
       <Link href={href} legacyBehavior>
-        <a className={styles.container}>
+        <a className={styles.container} draggable={false}>
           {icon && <FontAwesomeIcon icon={icon} />}
           <span>{label}</span>
         </a>

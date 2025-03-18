@@ -11,6 +11,7 @@ import {
 type PromptAreaProps = {
   isDisabled: boolean;
   canCancel: boolean;
+  canAttach: boolean;
   onSend: (prompt: string) => void;
   onCancel: () => void;
 };
@@ -18,6 +19,7 @@ type PromptAreaProps = {
 const PromptArea: React.FC<PromptAreaProps> = ({
   isDisabled,
   canCancel,
+  canAttach,
   onSend,
   onCancel,
 }) => {
@@ -65,7 +67,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           spellCheck={false}
         />
         <div className={styles.buttonContainer}>
-          <button disabled={isDisabled}>
+          <button disabled={isDisabled || !canAttach}>
             <FontAwesomeIcon icon={faPaperclip} />
           </button>
           {canCancel ? (

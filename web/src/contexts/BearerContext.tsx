@@ -19,7 +19,7 @@ export type Bearer = {
 };
 
 type BearerContextType = {
-  bearer?: Bearer;
+  bearer?: Readonly<Bearer>;
   setBearer: Dispatch<SetStateAction<Bearer | undefined>>;
   clearBearer: () => void;
 };
@@ -44,7 +44,7 @@ export const useBearerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useBearerContext must be used within a BearerContextProvider",
+      "useBearerContext must be used within a BearerContextProvider"
     );
   }
 

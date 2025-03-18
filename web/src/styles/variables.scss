@@ -11,6 +11,7 @@ $bg-color-2: #d8d8d8;
 $bg-color-3: #b6b6b6;
 $bg-color-4: #222222;
 $bg-color-5: #070707;
+$bg-color-6: #757575;
 
 $txt-color-1: #f6f6f6;
 $txt-color-2: #0c0c0c;
@@ -21,9 +22,6 @@ $transparent-color-white: rgba(255, 255, 255, 0.4);
 $transparent-color-black: rgba(0, 0, 0, 0.65);
 
 $border-radius-1: 1.4rem;
-
-$button-color-1: $bg-color-1;
-$button-color-2: color.adjust($button-color-1, $lightness: 15%);
 
 $transition-1: ease 0.2s;
 $transition-2: ease 0.1s;

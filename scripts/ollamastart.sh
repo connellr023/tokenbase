@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of models to pull and run
-models=("tinyllama:1.1b" "qwen2.5:0.5b")
+models=("qwen2.5:0.5b" "llava-phi3:3.8b")
 
 echo "Starting Ollama server..."
 ollama serve &
