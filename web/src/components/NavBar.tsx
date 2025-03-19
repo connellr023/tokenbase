@@ -52,7 +52,9 @@ const NavBar: React.FC = () => {
         <b>
           <i>tokenbase</i>
         </b>
-        <IconButton icon={faAnglesLeft} label="Open" onClick={openDrawer} />
+        {pathname == "/" && (
+          <IconButton icon={faAnglesLeft} label="Open" onClick={openDrawer} />
+        )}
       </div>
     </nav>
   );
