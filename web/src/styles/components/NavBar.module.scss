@@ -13,7 +13,7 @@ nav.container {
   position: fixed;
   left: 0;
   top: 0;
-  z-index: 1000;
+  z-index: 800;
 
   div.buttonsContainer {
     display: flex;
@@ -32,11 +32,5 @@ nav.container {
     flex-direction: row;
     justify-content: center;
     gap: 0.55rem;
-  }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    div.buttonsContainer {
-      display: none;
-    }
   }
 }

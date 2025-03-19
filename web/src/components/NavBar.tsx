@@ -3,6 +3,7 @@ import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
 import { useRouter } from "next/router";
+import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
 import {
   faAnglesLeft,
@@ -14,6 +15,7 @@ import {
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
   const { availableModels, setSelectedIndex } = useModelsContext();
+  const { openDrawer } = useRightDrawerContext();
 
   return (
     <nav className={styles.container}>
@@ -35,12 +37,12 @@ const NavBar: React.FC = () => {
         )}
 
         {/* Render navigation button back to register page */}
-        {(pathname === "/" || pathname === "/login") && (
+        {pathname === "/login" && (
           <StandardLink icon={faBolt} label="Register" href="/register" />
         )}
 
         {/* Render navigation button back to login page */}
-        {(pathname === "/" || pathname === "/register") && (
+        {pathname === "/register" && (
           <StandardLink icon={faSignIn} label="Login" href="/login" />
         )}
       </div>
@@ -50,7 +52,9 @@ const NavBar: React.FC = () => {
         <b>
           <i>tokenbase</i>
         </b>
-        <IconButton icon={faAnglesLeft} label="Open" onClick={() => {}} />
+        {pathname == "/" && (
+          <IconButton icon={faAnglesLeft} label="Open" onClick={openDrawer} />
+        )}
       </div>
     </nav>
   );

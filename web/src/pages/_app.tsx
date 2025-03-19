@@ -2,6 +2,7 @@ import "@/styles/globals.scss";
 import Head from "next/head";
 import NavBar from "@/components/NavBar";
 import ModelInfo from "@/models/ModelInfo";
+import RightDrawer from "@/components/RightDrawer";
 import App, { AppContext, AppProps } from "next/app";
 import { merriweather400 } from "@/utils/fonts";
 import { HomeModalProvider } from "@/contexts/HomeModalContext";
@@ -9,6 +10,7 @@ import { BearerProvider } from "@/contexts/BearerContext";
 import { ChatRecordsProvider } from "@/contexts/ChatRecordsContext";
 import { ModelsProvider } from "@/contexts/ModelsContext";
 import { getAvailableModels } from "@/utils/getAvailableModels";
+import { RightDrawerProvider } from "@/contexts/RightDrawerContext";
 
 type RootAppProps = AppProps & {
   availableModels: ModelInfo[];
@@ -42,10 +44,13 @@ class RootApp extends App<RootAppProps> {
           <HomeModalProvider>
             <BearerProvider>
               <ChatRecordsProvider>
-                <NavBar />
-                <main className={merriweather400.className}>
-                  <Component {...pageProps} />
-                </main>
+                <RightDrawerProvider>
+                  <NavBar />
+                  <RightDrawer />
+                  <main className={merriweather400.className}>
+                    <Component {...pageProps} />
+                  </main>
+                </RightDrawerProvider>
               </ChatRecordsProvider>
             </BearerProvider>
           </HomeModalProvider>

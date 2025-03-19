@@ -5,7 +5,7 @@ import StandardInput from "@/components/StandardInput";
 const Login: React.FC = () => {
   const steps = [
     <div key="step1">
-      <p>Enter your username below.</p>
+      <p>Enter your email below.</p>
       <StandardInput type="email" placeholder="Email" />
     </div>,
     <div key="step2">
