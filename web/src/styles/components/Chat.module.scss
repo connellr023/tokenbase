@@ -11,22 +11,26 @@ div.container {
   }
 
   pre > div {
-    border-radius: $border-radius-1 * 0.6;
+    $border-radius: $border-radius-1 * 0.6;
+
+    border-radius: $border-radius;
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-x: auto;
     display: flex;
     flex-direction: column;
+    background-color: $bg-color-4;
+    width: 100%;
 
     & > span {
-      $side-pad: 0.6rem;
-
-      padding: 0.42rem $side-pad 0.5rem $side-pad;
-      background-color: $bg-color-4;
+      padding: 0.5rem 0.6rem;
       color: $txt-color-1;
+      background-color: inherit;
     }
 
     & > div {
+      border-top-left-radius: $border-radius;
+      border-top-right-radius: $border-radius;
       padding: 0.7rem;
     }
   }

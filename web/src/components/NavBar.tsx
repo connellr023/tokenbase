@@ -10,10 +10,12 @@ import {
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
+import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
   const { availableModels, setSelectedIndex } = useModelsContext();
+  const { openDrawer } = useRightDrawerContext();
 
   return (
     <nav className={styles.container}>
@@ -50,7 +52,7 @@ const NavBar: React.FC = () => {
         <b>
           <i>tokenbase</i>
         </b>
-        <IconButton icon={faAnglesLeft} label="Open" onClick={() => {}} />
+        <IconButton icon={faAnglesLeft} label="Open" onClick={openDrawer} />
       </div>
     </nav>
   );
