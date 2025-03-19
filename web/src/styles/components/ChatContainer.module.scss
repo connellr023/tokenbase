@@ -27,7 +27,7 @@ div.container {
     width: 100%;
     max-width: $max-width;
     height: 100%;
-    color: $transparent-color-white;
+    color: rgba($txt-color-1, 0.5);
 
     div.suggestionsContainer {
       display: flex;

@@ -32,22 +32,19 @@ const Chat: React.FC<ChatProps> = ({
       )}
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>
-          <IconButton
-            icon={faRefresh}
-            label="Retry"
-            onClick={() => console.log("retry")}
-          />
-          <IconButton
-            icon={faCopy}
-            label="Copy"
-            onClick={() => console.log("copy")}
-          />
+          <IconButton icon={faRefresh} onClick={() => console.log("retry")}>
+            Retry
+          </IconButton>
+          <IconButton icon={faCopy} onClick={() => console.log("copy")}>
+            Copy
+          </IconButton>
           <IconButton
             icon={faTrash}
             color={IconButtonColor.Red}
-            label="Delete"
             onClick={() => onDelete?.(chatId)}
-          />
+          >
+            Delete
+          </IconButton>
         </div>
       )}
     </div>

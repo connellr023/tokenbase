@@ -5,17 +5,21 @@ import Link from "next/link";
 
 type StandardLinkProps = {
   icon?: IconProp;
-  label: string;
   href: string;
+  children: string;
 };
 
-const StandardLink: React.FC<StandardLinkProps> = ({ icon, label, href }) => {
+const StandardLink: React.FC<StandardLinkProps> = ({
+  icon,
+  children,
+  href,
+}) => {
   return (
     <div className={styles.container}>
       <Link href={href} legacyBehavior>
         <a className={styles.container} draggable={false}>
           {icon && <FontAwesomeIcon icon={icon} />}
-          <span>{label}</span>
+          <span>{children}</span>
         </a>
       </Link>
     </div>

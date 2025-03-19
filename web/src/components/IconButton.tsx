@@ -9,14 +9,14 @@ export enum IconButtonColor {
 type IconButtonProps = {
   icon: IconProp;
   color?: IconButtonColor;
-  label?: string;
+  children?: string;
   onClick: () => void;
 };
 
 const IconButton: React.FC<IconButtonProps> = ({
   icon,
   color,
-  label,
+  children,
   onClick,
 }) => {
   let colorClassName = "";
@@ -34,7 +34,7 @@ const IconButton: React.FC<IconButtonProps> = ({
       <button onClick={onClick}>
         <FontAwesomeIcon icon={icon} />
       </button>
-      {label && <label>{label}</label>}
+      {children && <label>{children}</label>}
     </div>
   );
 };
