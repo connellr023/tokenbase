@@ -6,6 +6,4 @@ COPY ../../scripts/ollamastart.sh ./ollamastart.sh
 # Make it executable
 RUN chmod +x /ollamastart.sh
 
-# Execute the script
-# RUN ./ollamastart.sh
-ENTRYPOINT ["/ollamastart.sh"]
+ENTRYPOINT ["/bin/bash", "/ollamastart.sh"]

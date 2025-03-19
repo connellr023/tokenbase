@@ -53,7 +53,8 @@ if [ -d "/docker-entrypoint-initdb.d" ]; then
     fi
   done
 else
-  echo "No migration directory found at /docker-entrypoint-initdb.d/"
+  echo "No migration directory found"
+  exit 1
 fi
 
 echo "SurrealDB initialization complete. Keeping the database running..."
