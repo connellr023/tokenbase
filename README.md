@@ -65,7 +65,15 @@ If these formatters are not used, the CI pipeline will create a commit with the 
 
 ### With an NVIDIA GPU
 
+#### Linux Systems
+
 First, install the **NVIDIA Container Toolkit** by following the instructions [here](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html).
+
+#### Windows Systems
+
+First, install GPU support. On Windows it is only available in Docker Desktop via WSL 2 backend Paravirtualization, to enable follow the instructions [here](https://docs.docker.com/desktop/features/gpu/)
+
+#### Common
 
 Then, run:
 
