@@ -4,9 +4,9 @@ div.container {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  width: 40vw;
-  min-width: 18rem;
-  max-width: 23rem;
+  width: 44vw;
+  min-width: 19rem;
+  max-width: 20.5rem;
   height: 100%;
   background-color: $bg-color-5;
   position: absolute;
@@ -34,6 +34,35 @@ div.container {
       font-size: 1.2rem;
       margin-right: 0.3rem;
       user-select: none;
+    }
+  }
+
+  div.guestMessageContainer {
+    color: rgba($txt-color-1, 0.7);
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.7rem;
+    text-align: center;
+  }
+
+  div.containerFooter {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.5rem;
+    padding-bottom: 0.3rem;
+    width: 100%;
+    box-sizing: border-box;
+
+    & > * {
+      width: 100%;
     }
   }
 }

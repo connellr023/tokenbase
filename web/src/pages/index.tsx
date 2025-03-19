@@ -9,12 +9,12 @@ import { GetServerSideProps } from "next";
 import { getChatSuggestions } from "@/utils/getChatSuggestions";
 import { useHomeModalContext } from "@/contexts/HomeModalContext";
 import { BearerVariant, useBearerContext } from "@/contexts/BearerContext";
+import { useModelsContext } from "@/contexts/ModelsContext";
 import {
   faArrowRight,
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
-import { useModelsContext } from "@/contexts/ModelsContext";
 
 const guestPromptEndpoint = backendEndpoint + "api/guest/chat/prompt";
 const guestDeleteChatEndpoint = backendEndpoint + "api/guest/chat/delete";
@@ -97,14 +97,14 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
       <Modal isOpen={isOpen} onClickOutside={close}>
         <h1 className={styles.modalTitle}>Welcome.</h1>
         <div className={styles.modalButtonContainer}>
+          <StandardButton icon={faSignIn} onClick={() => router.push("/login")}>
+            Login
+          </StandardButton>
           <StandardButton
             icon={faBolt}
             onClick={() => router.push("/register")}
           >
             Register
-          </StandardButton>
-          <StandardButton icon={faSignIn} onClick={() => router.push("/login")}>
-            Login
           </StandardButton>
           <StandardButton icon={faArrowRight} onClick={close}>
             Continue as guest

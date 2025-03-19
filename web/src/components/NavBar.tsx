@@ -33,17 +33,23 @@ const NavBar: React.FC = () => {
       <div className={styles.buttonsContainer}>
         {/* Render navigation back to main chat page */}
         {pathname !== "/" && (
-          <StandardLink icon={faArrowLeft} label="Chat" href="/" />
+          <StandardLink icon={faArrowLeft} href="/">
+            Chat
+          </StandardLink>
         )}
 
         {/* Render navigation button back to register page */}
         {pathname === "/login" && (
-          <StandardLink icon={faBolt} label="Register" href="/register" />
+          <StandardLink icon={faBolt} href="/register">
+            Register
+          </StandardLink>
         )}
 
         {/* Render navigation button back to login page */}
         {pathname === "/register" && (
-          <StandardLink icon={faSignIn} label="Login" href="/login" />
+          <StandardLink icon={faSignIn} href="/login">
+            Login
+          </StandardLink>
         )}
       </div>
 
@@ -53,7 +59,9 @@ const NavBar: React.FC = () => {
           <i>tokenbase</i>
         </b>
         {pathname == "/" && (
-          <IconButton icon={faAnglesLeft} label="Open" onClick={openDrawer} />
+          <IconButton icon={faAnglesLeft} onClick={openDrawer}>
+            Open
+          </IconButton>
         )}
       </div>
     </nav>
