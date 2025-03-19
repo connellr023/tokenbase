@@ -37,12 +37,12 @@ const NavBar: React.FC = () => {
         )}
 
         {/* Render navigation button back to register page */}
-        {(pathname === "/" || pathname === "/login") && (
+        {pathname === "/login" && (
           <StandardLink icon={faBolt} label="Register" href="/register" />
         )}
 
         {/* Render navigation button back to login page */}
-        {(pathname === "/" || pathname === "/register") && (
+        {pathname === "/register" && (
           <StandardLink icon={faSignIn} label="Login" href="/login" />
         )}
       </div>

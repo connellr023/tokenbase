@@ -33,10 +33,4 @@ nav.container {
     justify-content: center;
     gap: 0.55rem;
   }
-
-  @media screen and (max-width: $breakpoint-sm) {
-    div.buttonsContainer {
-      display: none;
-    }
-  }
 }
