@@ -47,7 +47,9 @@ class RootApp extends App<RootAppProps> {
                 <RightDrawerProvider>
                   <NavBar />
                   <main className={merriweather400.className}>
-                    <Component {...pageProps} />
+                    <div>
+                      <Component {...pageProps} />
+                    </div>
                     <RightDrawer />
                   </main>
                 </RightDrawerProvider>

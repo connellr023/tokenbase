@@ -36,6 +36,10 @@ main {
   display: flex;
   flex-direction: row;
 
+  & > div {
+    width: 100%;
+  }
+
   & > * {
     flex-grow: 1;
   }
