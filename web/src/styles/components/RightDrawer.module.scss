@@ -3,12 +3,55 @@
 div.container {
   display: flex;
   flex-direction: column;
-  width: 20rem;
+  box-sizing: border-box;
+  width: 40vw;
+  min-width: 18rem;
+  max-width: 23rem;
   height: 100%;
-  background-color: red;
+  background-color: $bg-color-5;
+  position: absolute;
+  right: -100%;
+  opacity: 0;
   z-index: 900;
+  transition: $transition-3;
+  border-top-left-radius: $border-radius-1;
+  border-bottom-left-radius: $border-radius-1;
+  padding: 0.8rem;
 
-  &.closed {
-    display: none;
+  &.open {
+    right: 0;
+    opacity: 1;
+  }
+
+  div.containerHeader {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.7rem;
+
+    b {
+      font-size: 1.2rem;
+      margin-right: 0.3rem;
+      user-select: none;
+    }
+  }
+}
+
+div.backdrop {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: $transparent-color-black;
+  z-index: 800;
+  opacity: 0;
+  transition: opacity $transition-3;
+
+  &.visible {
+    opacity: 1;
+    pointer-events: initial;
   }
 }

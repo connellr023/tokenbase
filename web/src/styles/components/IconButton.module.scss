@@ -22,9 +22,9 @@ div.container {
 
   label {
     pointer-events: none;
-    color: rgba($txt-color-1, 0.85);
+    color: $txt-color-1;
     opacity: 0;
-    background-color: $bg-color-5;
+    background-color: $transparent-color-black;
     padding: 0.4rem;
     position: absolute;
     font-size: 0.9rem;
@@ -34,7 +34,7 @@ div.container {
     top: 2.4rem;
     transition: opacity $transition-2;
     text-align: center;
-    z-index: 2;
+    z-index: 200;
   }
 
   button:hover + label {

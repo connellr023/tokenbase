@@ -3,6 +3,7 @@ import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
 import { useRouter } from "next/router";
+import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
 import {
   faAnglesLeft,
@@ -10,7 +11,6 @@ import {
   faBolt,
   faSignIn,
 } from "@fortawesome/free-solid-svg-icons";
-import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
