@@ -30,7 +30,7 @@ export const useRightDrawerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useRightDrawerContext must be used within a RightDrawerProvider"
+      "useRightDrawerContext must be used within a RightDrawerProvider",
     );
   }
 
