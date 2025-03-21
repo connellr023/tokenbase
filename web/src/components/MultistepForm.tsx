@@ -56,11 +56,11 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
             </StandardButton>
           )}
           {currentStep < steps.length - 1 ? (
-            <StandardButton icon={faArrowRight} onClick={nextStep}>
+            <StandardButton icon={faArrowRight} onClick={nextStep} isValid={() => validateStep(currentStep)}>
               Next
             </StandardButton>
           ) : (
-            <StandardButton icon={faCheck} onClick={nextStep}>
+            <StandardButton icon={faCheck} onClick={nextStep} isValid={() => validateStep(currentStep)}>
               Submit
             </StandardButton>
           )}

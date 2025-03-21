@@ -39,7 +39,7 @@ const Register: React.FC = () => {
 
   const handleSubmit = () => {
     // Handle form submission
-  
+
     const registerRequest: RegisterRequest = {
       username,
       email,
@@ -47,8 +47,9 @@ const Register: React.FC = () => {
     };
     console.log(registerRequest);
     console.log("Form submitted");
-    
 
+    // TODO: Send request to the server
+    
   };
 
   return (

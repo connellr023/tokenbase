@@ -22,7 +22,9 @@ const StandardInput: React.FC<StandardInputProps> = ({
 
   useEffect(() => {
     if (isValid) {
-      setError(!isValid());
+      setError(!isValid() && value !== undefined && value !== "");
+    } else {
+      setError(value !== undefined && value !== "");
     }
   }, [value, isValid]);
 

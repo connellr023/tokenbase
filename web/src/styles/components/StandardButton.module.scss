@@ -26,4 +26,9 @@ button.main {
     background-color: $bg-color-6;
     transform: scale(0.95);
   }
+
+  &.error {
+    background-color: $bg-color-4;
+    pointer-events: none;
+  }
 }
