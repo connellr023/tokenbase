@@ -11,17 +11,19 @@ type MultistepFormProps = {
   title: string;
   steps: React.ReactNode[];
   onSubmit: () => void;
+  validateStep: (step: number) => boolean; 
 };
 
 const MultistepForm: React.FC<MultistepFormProps> = ({
   title,
   steps,
   onSubmit,
+  validateStep,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
-    if (currentStep < steps.length - 1) {
+    if (validateStep(currentStep)) {
       setCurrentStep(currentStep + 1);
     } else {
       onSubmit();
