@@ -27,8 +27,16 @@ button.main {
     transform: scale(0.95);
   }
 
-  &.error {
-    background-color: $bg-color-4;
-    pointer-events: none;
+  &:disabled {
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: $bg-color-3;
+    }
+
+    &:active {
+      transform: none;
+      background-color: $bg-color-3;
+    }
   }
 }

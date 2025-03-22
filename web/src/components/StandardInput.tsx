@@ -10,7 +10,6 @@ type StandardInputProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-
 const StandardInput: React.FC<StandardInputProps> = ({
   placeholder,
   type,
@@ -21,7 +20,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   const [hasError, setError] = useState(false);
 
   useEffect(() => {
-    if (isValid) {
+    if (isValid !== undefined) {
       setError(!isValid() && value !== undefined && value !== "");
     } else {
       setError(value !== undefined && value !== "");

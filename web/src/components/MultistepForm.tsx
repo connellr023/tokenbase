@@ -11,19 +11,19 @@ type MultistepFormProps = {
   title: string;
   steps: React.ReactNode[];
   onSubmit: () => void;
-  validateStep: (step: number) => boolean; 
+  isStepValid: (step: number) => boolean;
 };
 
 const MultistepForm: React.FC<MultistepFormProps> = ({
   title,
   steps,
   onSubmit,
-  validateStep,
+  isStepValid,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
-    if (validateStep(currentStep)) {
+    if (isStepValid(currentStep)) {
       setCurrentStep(currentStep + 1);
     } else {
       onSubmit();
@@ -56,11 +56,19 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
             </StandardButton>
           )}
           {currentStep < steps.length - 1 ? (
-            <StandardButton icon={faArrowRight} onClick={nextStep} isValid={() => validateStep(currentStep)}>
+            <StandardButton
+              icon={faArrowRight}
+              onClick={nextStep}
+              isDisabled={!isStepValid(currentStep)}
+            >
               Next
             </StandardButton>
           ) : (
-            <StandardButton icon={faCheck} onClick={nextStep} isValid={() => validateStep(currentStep)}>
+            <StandardButton
+              icon={faCheck}
+              onClick={nextStep}
+              isDisabled={!isStepValid(currentStep)}
+            >
               Submit
             </StandardButton>
           )}

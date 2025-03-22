@@ -1,6 +1,6 @@
 type LoginRequest = {
-    email: string;
-    password_hash: string;
+  email: string;
+  password: string;
 };
 
 export default LoginRequest;

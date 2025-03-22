@@ -7,24 +7,21 @@ type StandardButtonProps = {
   children: string;
   icon?: IconProp;
   value?: string;
+  isDisabled?: boolean;
   onClick: () => void;
-  isValid?: () => boolean;
 };
 
 const StandardButton: React.FC<StandardButtonProps> = ({
   children,
   icon,
+  isDisabled,
   onClick,
-  isValid,
 }) => {
-  const hasError = isValid ? !isValid() : false;
-
   return (
     <button
-      className={`${styles.main} ${merriweather400.className} ${
-        hasError ? styles.error : ""
-      }`}
+      className={`${styles.main} ${merriweather400.className}`}
       onClick={onClick}
+      disabled={isDisabled}
     >
       {icon && <FontAwesomeIcon icon={icon} />}
       <span>{children}</span>

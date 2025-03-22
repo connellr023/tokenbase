@@ -1,7 +1,7 @@
 type RegisterRequest = {
-    username: string;
-    email: string;
-    password_hash: string;
+  username: string;
+  email: string;
+  password: string;
 };
 
 export default RegisterRequest;
