@@ -26,4 +26,17 @@ button.main {
     background-color: $bg-color-6;
     transform: scale(0.95);
   }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    &:hover {
+      background-color: $bg-color-3;
+    }
+
+    &:active {
+      transform: none;
+      background-color: $bg-color-3;
+    }
+  }
 }

@@ -6,18 +6,22 @@ import { merriweather400 } from "@/utils/fonts";
 type StandardButtonProps = {
   children: string;
   icon?: IconProp;
+  value?: string;
+  isDisabled?: boolean;
   onClick: () => void;
 };
 
 const StandardButton: React.FC<StandardButtonProps> = ({
   children,
   icon,
+  isDisabled,
   onClick,
 }) => {
   return (
     <button
       className={`${styles.main} ${merriweather400.className}`}
       onClick={onClick}
+      disabled={isDisabled}
     >
       {icon && <FontAwesomeIcon icon={icon} />}
       <span>{children}</span>
