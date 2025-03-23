@@ -32,7 +32,7 @@ export const useChatRecordsContext = () => {
 
   if (!context) {
     throw new Error(
-      "useChatRecordsContext must be used within a ChatRecordsContextProvider"
+      "useChatRecordsContext must be used within a ChatRecordsContextProvider",
     );
   }
 

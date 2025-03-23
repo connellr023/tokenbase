@@ -40,7 +40,7 @@ export const useBearerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useBearerContext must be used within a BearerContextProvider"
+      "useBearerContext must be used within a BearerContextProvider",
     );
   }
 
