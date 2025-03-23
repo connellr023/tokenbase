@@ -29,6 +29,12 @@ div.container {
     height: 100%;
     color: rgba($txt-color-1, 0.5);
 
+    div.greetingContainer {
+      margin-bottom: 0.7rem;
+      font-size: 1.4rem;
+      color: $txt-color-1;
+    }
+
     div.suggestionsContainer {
       display: flex;
       gap: 0.5rem;

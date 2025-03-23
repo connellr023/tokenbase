@@ -11,6 +11,7 @@ import { ChatRecordsProvider } from "@/contexts/ChatRecordsContext";
 import { ModelsProvider } from "@/contexts/ModelsContext";
 import { getAvailableModels } from "@/utils/getAvailableModels";
 import { RightDrawerProvider } from "@/contexts/RightDrawerContext";
+import { ConversationRecordsProvider } from "@/contexts/ConversationRecordsContext";
 
 type RootAppProps = AppProps & {
   availableModels: ModelInfo[];
@@ -43,15 +44,17 @@ class RootApp extends App<RootAppProps> {
         <ModelsProvider availableModels={availableModels}>
           <HomeModalProvider>
             <BearerProvider>
-              <ChatRecordsProvider>
-                <RightDrawerProvider>
-                  <NavBar />
-                  <RightDrawer />
-                  <main className={merriweather400.className}>
-                    <Component {...pageProps} />
-                  </main>
-                </RightDrawerProvider>
-              </ChatRecordsProvider>
+              <ConversationRecordsProvider>
+                <ChatRecordsProvider>
+                  <RightDrawerProvider>
+                    <NavBar />
+                    <RightDrawer />
+                    <main className={merriweather400.className}>
+                      <Component {...pageProps} />
+                    </main>
+                  </RightDrawerProvider>
+                </ChatRecordsProvider>
+              </ConversationRecordsProvider>
             </BearerProvider>
           </HomeModalProvider>
         </ModelsProvider>

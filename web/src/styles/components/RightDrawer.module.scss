@@ -64,6 +64,41 @@ div.container {
     & > * {
       width: 100%;
     }
+
+    div.profileContainer {
+      box-sizing: border-box;
+      background-color: $bg-color-4;
+      padding: 0.6rem 0.7rem;
+      border-radius: $border-radius-1 * 0.6;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.7rem;
+
+      span.profileIcon {
+        $size: 2.1rem;
+
+        user-select: none;
+        width: $size;
+        height: $size;
+        border-radius: 100%;
+        background-color: $profile-color-1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: $size * 0.55;
+        padding: $size * 0.05;
+        color: $txt-color-1;
+        flex-shrink: 0;
+      }
+
+      span.email {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 

@@ -1,7 +1,8 @@
-import { GenericUser, UserVariant } from "@/models/User";
+import { User, UserVariant } from "@/models/User";
 import {
   createContext,
   Dispatch,
+  ReactNode,
   SetStateAction,
   useContext,
   useState,
@@ -10,7 +11,7 @@ import {
 export type Bearer = {
   variant: UserVariant;
   token: string;
-  data?: GenericUser;
+  data?: User;
 };
 
 type BearerContextType = {
@@ -21,7 +22,7 @@ type BearerContextType = {
 
 const BearerContext = createContext<BearerContextType | null>(null);
 
-export const BearerProvider: React.FC<{ children: React.ReactNode }> = ({
+export const BearerProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [bearer, setBearer] = useState<Bearer | undefined>(undefined);

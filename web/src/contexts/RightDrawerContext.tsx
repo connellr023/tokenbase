@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
 type RightDrawerContextType = {
   isDrawerOpen: boolean;
@@ -30,7 +30,7 @@ export const useRightDrawerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useRightDrawerContext must be used within a RightDrawerProvider",
+      "useRightDrawerContext must be used within a RightDrawerProvider"
     );
   }
 

@@ -1,4 +1,5 @@
 import styles from "@/styles/pages/Home.module.scss";
+import React from "react";
 import ChatContainer from "@/components/ChatContainer";
 import Modal from "@/components/Modal";
 import StandardButton from "@/components/StandardButton";
@@ -8,8 +9,9 @@ import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 import { GetServerSideProps } from "next";
 import { getChatSuggestions } from "@/utils/getChatSuggestions";
 import { useHomeModalContext } from "@/contexts/HomeModalContext";
-import { BearerVariant, useBearerContext } from "@/contexts/BearerContext";
+import { useBearerContext } from "@/contexts/BearerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { UserVariant } from "@/models/User";
 import {
   faArrowRight,
   faBolt,
@@ -36,8 +38,26 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
   const { bearer, setBearer } = useBearerContext();
   const { availableModels, selectedIndex } = useModelsContext();
 
+  React.useEffect(() => {
+    setBearer({
+      variant: UserVariant.User,
+      token: "dsoifjiodswjifod",
+      data: {
+        id: 1,
+        email: "johndoe@gmail.com",
+        username: "Johnathan Dover",
+      },
+    });
+  }, []);
+
   const constructGuestPromptRequest = async (prompt: string) => {
     const constructReq = (token: string) => {
+      if (availableModels.length === 0) {
+        return {
+          error: "No models available",
+        };
+      }
+
       return {
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +81,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
         }
 
         setBearer({
-          variant: BearerVariant.Guest,
+          variant: UserVariant.Guest,
           token,
         });
 

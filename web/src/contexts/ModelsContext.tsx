@@ -2,6 +2,7 @@ import ModelInfo from "@/models/ModelInfo";
 import {
   createContext,
   Dispatch,
+  ReactNode,
   SetStateAction,
   useContext,
   useState,
@@ -17,7 +18,7 @@ const ModelsContext = createContext<ModelsContextType | null>(null);
 
 type ModelsProviderProps = {
   availableModels: ModelInfo[];
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const ModelsProvider: React.FC<ModelsProviderProps> = ({

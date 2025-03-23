@@ -4,7 +4,7 @@ export enum UserVariant {
   Guest,
 }
 
-export type GenericUser = {
+export type User = {
   id: number;
   email: string;
   username: string;
