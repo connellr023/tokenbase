@@ -8,8 +8,9 @@ import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
 import { GetServerSideProps } from "next";
 import { getChatSuggestions } from "@/utils/getChatSuggestions";
 import { useHomeModalContext } from "@/contexts/HomeModalContext";
-import { BearerVariant, useBearerContext } from "@/contexts/BearerContext";
+import { useBearerContext } from "@/contexts/BearerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { UserVariant } from "@/models/User";
 import {
   faArrowRight,
   faBolt,
@@ -38,6 +39,12 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
 
   const constructGuestPromptRequest = async (prompt: string) => {
     const constructReq = (token: string) => {
+      if (availableModels.length === 0) {
+        return {
+          error: "No models available",
+        };
+      }
+
       return {
         headers: {
           "Content-Type": "application/json",
@@ -61,7 +68,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
         }
 
         setBearer({
-          variant: BearerVariant.Guest,
+          variant: UserVariant.Guest,
           token,
         });
 

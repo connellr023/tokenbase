@@ -2,25 +2,37 @@ import styles from "@/styles/components/RightDrawer.module.scss";
 import IconButton from "./IconButton";
 import StandardButton from "./StandardButton";
 import { Url } from "next/dist/shared/lib/router/router";
+import { UserVariant } from "@/models/User";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
-import { BearerVariant, useBearerContext } from "@/contexts/BearerContext";
+import { useBearerContext } from "@/contexts/BearerContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { firaMono400, merriweather400 } from "@/utils/fonts";
 import {
   faAnglesRight,
   faBolt,
+  faBoxOpen,
+  faPlus,
   faShieldAlt,
   faSignIn,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
-  const { bearer } = useBearerContext();
+  const { bearer, clearBearer } = useBearerContext();
+  const { conversationRecords } = useConversationRecordsContext();
 
   const pushAndClose = async (path: Url) => {
     await push(path);
     closeDrawer();
+  };
+
+  const logout = () => {
+    closeDrawer();
+    clearBearer();
   };
 
   return (
@@ -43,33 +55,87 @@ const RightDrawer: React.FC = () => {
           </b>
         </div>
 
-        {/* Render message for guests */}
-        {(!bearer || bearer.variant === BearerVariant.Guest) && (
-          <div className={styles.guestMessageContainer}>
-            <div>
-              <FontAwesomeIcon icon={faShieldAlt} size="3x" />
+        <div>
+          {/* Render message for guests */}
+          {!bearer || bearer.variant === UserVariant.Guest ? (
+            <div className={styles.noConversationHistoryContainer}>
+              <div>
+                <FontAwesomeIcon icon={faShieldAlt} size="3x" />
+              </div>
+              <p>
+                Please <b>login</b> or <b>register</b> for the ability to manage
+                multiple conversations.
+              </p>
             </div>
-            <p>
-              Please <b>login</b> or <b>register</b> for the ability to manage
-              multiple conversations.
-            </p>
-          </div>
-        )}
+          ) : (
+            <>
+              {conversationRecords.length === 0 ? (
+                <div className={styles.noConversationHistoryContainer}>
+                  <div>
+                    <FontAwesomeIcon icon={faBoxOpen} size="3x" />
+                  </div>
+                  <p>
+                    You have no conversation history. New conversations will
+                    appear here once you start chatting.
+                  </p>
+                </div>
+              ) : (
+                <ul className={styles.conversationHistoryContainer}>
+                  {conversationRecords.map((record, i) => (
+                    <li key={i}>
+                      <button
+                        className={merriweather400.className}
+                        onClick={() => {} /* TODO */}
+                        key={i}
+                      >
+                        {record.title}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          )}
 
-        {/* Render footer area */}
-        <div className={styles.containerFooter}>
-          <StandardButton
-            icon={faSignIn}
-            onClick={() => pushAndClose("/login")}
-          >
-            Login
-          </StandardButton>
-          <StandardButton
-            icon={faBolt}
-            onClick={() => pushAndClose("/register")}
-          >
-            Register
-          </StandardButton>
+          {/* Render footer area */}
+          <div className={styles.containerFooter}>
+            {/* Render login button for guests */}
+            {!bearer || bearer.variant === UserVariant.Guest ? (
+              <>
+                <StandardButton
+                  icon={faSignIn}
+                  onClick={() => pushAndClose("/login")}
+                >
+                  Login
+                </StandardButton>
+                <StandardButton
+                  icon={faBolt}
+                  onClick={() => pushAndClose("/register")}
+                >
+                  Register
+                </StandardButton>
+              </>
+            ) : (
+              <>
+                <div className={styles.profileContainer}>
+                  <span
+                    className={`${styles.profileIcon} ${firaMono400.className}`}
+                  >
+                    {(bearer.data?.username ?? "?")[0].toUpperCase()}
+                  </span>
+                  <span className={styles.email}>
+                    {bearer.data?.email ?? "None"}
+                  </span>
+                </div>
+                <StandardButton icon={faPlus} onClick={() => {} /* TODO */}>
+                  New Conversation
+                </StandardButton>
+                <StandardButton icon={faSignOut} onClick={logout}>
+                  Logout
+                </StandardButton>
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>

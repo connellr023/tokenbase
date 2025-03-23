@@ -12,6 +12,9 @@ import Result from "@/utils/result";
 import { useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { useBearerContext } from "@/contexts/BearerContext";
+import { UserVariant } from "@/models/User";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type HttpChatReq = {
   headers?: HeadersInit;
@@ -34,6 +37,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   constructDeleteRequest,
 }) => {
   const { chats, setChats } = useChatRecordsContext();
+  const { bearer } = useBearerContext();
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -173,6 +177,12 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
     <div className={styles.container}>
       {chats.length === 0 && !streamingChat ? (
         <div className={styles.emptyChat}>
+          {/* Render a welcome message if there are no chats */}
+          {bearer?.variant === UserVariant.User && (
+            <div className={styles.greetingContainer}>
+              Welcome back, {bearer.data?.username.split(" ")[0] ?? "User"}...
+            </div>
+          )}
           <TypesetRenderer>
             {
               "Enter a prompt to get started. Write **Markdown** and $\\LaTeX$ for formatting."

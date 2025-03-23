@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 type HomeModalContextType = {
   isOpen: boolean;
@@ -7,7 +7,7 @@ type HomeModalContextType = {
 
 const HomeModalContext = createContext<HomeModalContextType | null>(null);
 
-export const HomeModalProvider: React.FC<{ children: React.ReactNode }> = ({
+export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [isOpen, setOpen] = useState(true);

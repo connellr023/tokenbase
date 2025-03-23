@@ -7,7 +7,7 @@ type StandardInputProps = {
   type?: React.HTMLInputTypeAttribute;
   value?: string;
   isValid?: () => boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 const StandardInput: React.FC<StandardInputProps> = ({
