@@ -1,5 +1,4 @@
 import styles from "@/styles/pages/Home.module.scss";
-import React from "react";
 import ChatContainer from "@/components/ChatContainer";
 import Modal from "@/components/Modal";
 import StandardButton from "@/components/StandardButton";
@@ -37,18 +36,6 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
   const { isOpen, close } = useHomeModalContext();
   const { bearer, setBearer } = useBearerContext();
   const { availableModels, selectedIndex } = useModelsContext();
-
-  React.useEffect(() => {
-    setBearer({
-      variant: UserVariant.User,
-      token: "dsoifjiodswjifod",
-      data: {
-        id: 1,
-        email: "johndoe@gmail.com",
-        username: "Johnathan Dover",
-      },
-    });
-  }, []);
 
   const constructGuestPromptRequest = async (prompt: string) => {
     const constructReq = (token: string) => {
