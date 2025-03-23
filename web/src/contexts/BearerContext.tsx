@@ -1,3 +1,4 @@
+import { GenericUser, UserVariant } from "@/models/User";
 import {
   createContext,
   Dispatch,
@@ -6,16 +7,10 @@ import {
   useState,
 } from "react";
 
-export enum BearerVariant {
-  Admin,
-  User,
-  Guest,
-}
-
 export type Bearer = {
-  variant: BearerVariant;
+  variant: UserVariant;
   token: string;
-  data?: any;
+  data?: GenericUser;
 };
 
 type BearerContextType = {
@@ -44,7 +39,7 @@ export const useBearerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useBearerContext must be used within a BearerContextProvider",
+      "useBearerContext must be used within a BearerContextProvider"
     );
   }
 
