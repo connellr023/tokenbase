@@ -29,6 +29,8 @@ div.container {
     align-items: center;
     justify-content: space-between;
     gap: 0.7rem;
+    height: min-content;
+    margin-bottom: 0.3rem;
 
     b {
       font-size: 1.2rem;
@@ -37,66 +39,108 @@ div.container {
     }
   }
 
-  div.noChatHistoryContainer {
-    color: rgba($txt-color-1, 0.7);
-    height: 100%;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.7rem;
-    text-align: center;
-  }
-
-  div.containerFooter {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.5rem;
-    padding-bottom: 0.3rem;
+  & > div {
     width: 100%;
+    height: 100%;
+    padding: 0.2rem;
+    overflow: hidden;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 
-    & > * {
-      width: 100%;
+    div.noConversationHistoryContainer {
+      color: rgba($txt-color-1, 0.7);
+      height: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 0.7rem;
+      text-align: center;
     }
 
-    div.profileContainer {
+    ul.conversationHistoryContainer {
+      list-style: none;
+      width: 100%;
+      overflow-y: auto;
       box-sizing: border-box;
-      background-color: $bg-color-4;
-      padding: 0.6rem 0.7rem;
-      border-radius: $border-radius-1 * 0.6;
+      padding: 0;
+      margin: 0 0 0.7rem 0;
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 0.15rem;
+
+      button {
+        cursor: pointer;
+        width: 100%;
+        padding: 0.6rem;
+        border-radius: $border-radius-2;
+        background-color: transparent;
+        color: $txt-color-1;
+        transition: $transition-2;
+        text-align: left;
+
+        &:hover {
+          background-color: $bg-color-4;
+        }
+
+        &:active {
+          background-color: $bg-color-1;
+          transform: scale(0.96);
+        }
+      }
+    }
+
+    div.containerFooter {
+      margin-top: auto;
+      display: flex;
+      height: min-content;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
       gap: 0.7rem;
 
-      span.profileIcon {
-        $size: 2.1rem;
+      width: 100%;
+      box-sizing: border-box;
 
-        user-select: none;
-        width: $size;
-        height: $size;
-        border-radius: 100%;
-        background-color: $profile-color-1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: $size * 0.55;
-        padding: $size * 0.05;
-        color: $txt-color-1;
-        flex-shrink: 0;
+      & > * {
+        width: 100%;
       }
 
-      span.email {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+      div.profileContainer {
+        box-sizing: border-box;
+        background-color: $bg-color-4;
+        padding: 0.6rem 0.7rem;
+        border-radius: $border-radius-2;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.7rem;
+
+        span.profileIcon {
+          $size: 2.1rem;
+
+          user-select: none;
+          width: $size;
+          height: $size;
+          border-radius: 100%;
+          background-color: $profile-color-1;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: $size * 0.55;
+          padding: $size * 0.05;
+          color: $txt-color-1;
+          flex-shrink: 0;
+        }
+
+        span.email {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
       }
     }
   }
