@@ -9,6 +9,6 @@ DEFINE FIELD created_at ON TABLE users TYPE datetime;
 DEFINE FIELD updated_at ON TABLE users TYPE datetime;
 
 -- Make sure ids, emails, and usernames are unique
-DEFINE INDEX unique_users_id ON users FIELDS (id) UNIQUE;
-DEFINE INDEX unique_users_email ON users FIELDS (email) UNIQUE;
-DEFINE INDEX unique_users_username ON users FIELDS (username) UNIQUE;
+DEFINE INDEX unique_users_id ON users FIELDS id UNIQUE;
+DEFINE INDEX unique_users_email ON users FIELDS email UNIQUE;
+DEFINE INDEX unique_users_username ON users FIELDS username UNIQUE;
