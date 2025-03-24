@@ -141,7 +141,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		Reply:  replyBuilder.String(),
 	}
 
-	if err := cache.SaveChatRecord(i.Rdb, guestSessionKey, record); err != nil {
+	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {
 		utils.WriteChatError(w, err)
 		return
 	}
