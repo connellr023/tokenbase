@@ -15,7 +15,7 @@ import (
 // - The system prompt
 // - Any error that occurred
 func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
-	res, err := surrealdb.Select[models.GlobalSettings](sdb, globalSettingsMainRecord)
+	res, err := surrealdb.Select[models.SurrealGlobalSettings](sdb, globalSettingsMainRecord)
 
 	if err != nil {
 		return "", err

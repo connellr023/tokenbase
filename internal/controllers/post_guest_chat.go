@@ -111,7 +111,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 				hasSentChatId = true
 
 				return models.ChatToken{
-					ChatId: chatId,
+					ChatID: chatId,
 					Token:  data.Message.Content,
 				}
 			}
@@ -135,8 +135,8 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Cache chat in Redis
-	record := models.ChatRecord{
-		ChatId: chatId,
+	record := models.RedisChatRecord{
+		ID:     chatId,
 		Prompt: req.Prompt,
 		Reply:  replyBuilder.String(),
 	}

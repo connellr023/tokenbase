@@ -1,15 +1,13 @@
 package models
 
 import (
-	"time"
-
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
-type Message struct {
-	Id             models.RecordID `json:"id"`
+type SurrealChatRecord struct {
+	ID             models.RecordID `json:"id"`
 	ConversationID models.RecordID `json:"conversation_id"`
 	Prompt         string          `json:"prompt"`
+	PromptImages   []string        `json:"prompt_images"`
 	Reply          string          `json:"reply"`
-	CreatedAt      time.Time       `json:"created_at"`
 }

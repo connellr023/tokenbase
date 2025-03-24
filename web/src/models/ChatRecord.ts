@@ -1,5 +1,5 @@
 type ChatRecord = {
-  chatId?: number;
+  id?: number;
   prompt: string;
   promptImages?: string[];
   reply: string;
