@@ -9,27 +9,26 @@ const Admin: React.FC = () => {
   const [prompt, setPrompt] = useState("");
 
   const isStepValid = (step: number) => {
-        return true;
+    return true;
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
-  }
+  };
 
   const steps = [
     <div key="step1">
       <StandardTextArea
-        placeholder="Enter prompt" 
+        placeholder="Enter prompt"
         max={200}
         onChange={handleChange}
       />
-    </div>
+    </div>,
   ];
 
   const handleSubmit = () => {
     console.log("Form submitted");
   };
-
 
   return (
     <>

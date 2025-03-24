@@ -34,18 +34,19 @@ const Login: React.FC = () => {
     console.log(loginRequest);
     console.log("Form submitted");
 
-    role === "Regular User" || role === ""? router.push("/"): router.push("/admin");
-
+    role === "Regular User" || role === ""
+      ? router.push("/")
+      : router.push("/admin");
   };
 
   const steps = [
     <div key="step1">
-    <p>Select role: </p>
-    <StandardDropdown
-      items={["Regular User", "Admin"]}
-      onSelect={(index) => setRole(index == 0? "Regular User": "Admin")}
-      isValid={() => isStepValid(0)}
-    />
+      <p>Select role: </p>
+      <StandardDropdown
+        items={["Regular User", "Admin"]}
+        onSelect={(index) => setRole(index == 0 ? "Regular User" : "Admin")}
+        isValid={() => isStepValid(0)}
+      />
     </div>,
     <div key="step2">
       <p>Enter your email below.</p>

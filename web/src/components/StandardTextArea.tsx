@@ -17,40 +17,38 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
   max,
   onChange,
 }) => {
-
-  max = max < 1? 10: max;
+  max = max < 1 ? 10 : max;
 
   const [hasError, setError] = useState(false);
   const [textValue, setValue] = useState("");
   const [charCount, setCount] = useState(max);
 
+  //   useEffect(() => {
+  //     if (isValid !== undefined) {
+  //       setError(!isValid() && value !== undefined && value !== "");
+  //     } else {
+  //       setError(value !== undefined && value !== "");
+  //     }
+  //   }, [value, isValid]);
 
-//   useEffect(() => {
-//     if (isValid !== undefined) {
-//       setError(!isValid() && value !== undefined && value !== "");
-//     } else {
-//       setError(value !== undefined && value !== "");
-//     }
-//   }, [value, isValid]);
-
-   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value);
-    setCount(max-event.target.value.length);
+    setCount(max - event.target.value.length);
     onChange;
   };
 
   return (
     <>
-        <textarea
-          className={`${styles.main} ${merriweather500.className} ${
+      <textarea
+        className={`${styles.main} ${merriweather500.className} ${
           hasError ? styles.error : ""
-          }`}
-          maxLength={max}
-          placeholder={placeholder}
-          value={value}
-          onChange={handleChange}
-        />
-        <p>Characters remaining: {charCount}</p>
+        }`}
+        maxLength={max}
+        placeholder={placeholder}
+        value={value}
+        onChange={handleChange}
+      />
+      <p>Characters remaining: {charCount}</p>
     </>
   );
 };
