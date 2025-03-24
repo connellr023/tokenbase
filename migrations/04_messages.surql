@@ -2,8 +2,8 @@ DEFINE TABLE messages SCHEMAFULL;
 
 DEFINE FIELD id ON TABLE messages TYPE string ASSERT $value != NONE;
 DEFINE FIELD conversation_id ON TABLE messages TYPE string ASSERT $value != NONE; -- Make sure there is a conversation with this id
-DEFINE FIELD sender ON TABLE messages TYPE string ASSERT $value IN ["user", "assistant", "system"]; -- likely won't save system messages here but figured I'd leave this just in case
-DEFINE FIELD content ON TABLE messages TYPE string;
+DEFINE FIELD prompt ON TABLE messages TYPE string;
+DEFINE FIELD reply ON TABLE messages TYPE string;
 DEFINE FIELD created_at ON TABLE messages TYPE datetime;
 
 -- Make sure the id is unique
