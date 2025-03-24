@@ -34,7 +34,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./migrations:/docker-entrypoint-initdb.d
+      - ./schemas:/docker-entrypoint-initdb.d
     networks:
       - app-network
 

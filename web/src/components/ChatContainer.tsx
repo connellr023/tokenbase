@@ -14,7 +14,6 @@ import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { UserVariant } from "@/models/User";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type HttpChatReq = {
   headers?: HeadersInit;
@@ -99,7 +98,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
           // Check if this chunk contains the chat ID
           if (chunk.chatId) {
-            newChat.chatId = chunk.chatId;
+            newChat.id = chunk.chatId;
           }
 
           // Construct the new chat entry
@@ -111,7 +110,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -130,7 +129,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       setStreamingChat(null);
 
       // Add the chat to the list if it has a chat ID
-      if (newChat.chatId) {
+      if (newChat.id) {
         setChats((prev) => [...prev, newChat]);
       }
     }, 200);
@@ -161,7 +160,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       }
 
       // Remove the chat from the list
-      setChats((prev) => prev.filter((chat) => chat.chatId !== chatId));
+      setChats((prev) => prev.filter((chat) => chat.id !== chatId));
     } catch {
       setError("Failed to send delete request to backend");
     }
@@ -203,8 +202,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* Render all finished chats */}
             {chats.map((chat) => (
               <Chat
-                key={chat.chatId}
-                chatId={chat.chatId ?? -1}
+                key={chat.id}
+                chatId={chat.id ?? -1}
                 prompt={chat.prompt}
                 reply={chat.reply}
                 isComplete={true}
@@ -215,8 +214,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* If a chat reply is being streamed back, render it here */}
             {streamingChat && (
               <Chat
-                key={streamingChat.chatId ?? -1}
-                chatId={streamingChat.chatId ?? -1}
+                key={streamingChat.id ?? -1}
+                chatId={streamingChat.id ?? -1}
                 prompt={streamingChat.prompt}
                 reply={streamingChat.reply}
                 isComplete={false}
