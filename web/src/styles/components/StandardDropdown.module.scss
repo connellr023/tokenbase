@@ -24,6 +24,10 @@ div.dropdown {
     &:hover {
       color: $txt-color-1;
     }
+
+    &.open{
+      margin-bottom: 80px;
+    }
   }
 
   ul.dropdownMenu {

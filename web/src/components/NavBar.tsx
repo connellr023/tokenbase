@@ -10,6 +10,7 @@ import {
   faArrowLeft,
   faBolt,
   faSignIn,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar: React.FC = () => {
@@ -32,7 +33,7 @@ const NavBar: React.FC = () => {
 
       <div className={styles.buttonsContainer}>
         {/* Render navigation back to main chat page */}
-        {pathname !== "/" && (
+        {pathname !== "/" && pathname !== "/admin" && (
           <StandardLink icon={faArrowLeft} href="/">
             Chat
           </StandardLink>
@@ -49,6 +50,13 @@ const NavBar: React.FC = () => {
         {pathname === "/register" && (
           <StandardLink icon={faSignIn} href="/login">
             Login
+          </StandardLink>
+        )}
+
+        {/* Render navigation button back to login page */}
+        {pathname === "/admin" && (
+          <StandardLink icon={faSignOut} href="/">
+            Logout
           </StandardLink>
         )}
       </div>
