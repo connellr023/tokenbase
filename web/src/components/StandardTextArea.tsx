@@ -7,7 +7,7 @@ type StandardTAProps = {
   value?: string;
   isValid?: () => boolean;
   max: number;
-  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
 const StandardTextArea: React.FC<StandardTAProps> = ({
@@ -15,7 +15,7 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
   value,
   isValid,
   max,
-  onChange
+  onChange,
 }) => {
 
   max = max < 1? 10: max;
@@ -36,6 +36,7 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value);
     setCount(max-event.target.value.length);
+    onChange;
   };
 
   return (
@@ -47,7 +48,7 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
           maxLength={max}
           placeholder={placeholder}
           value={value}
-          onChange={() => {onChange; handleChange;}}
+          onChange={handleChange}
         />
         <p>Characters remaining: {charCount}</p>
     </>
