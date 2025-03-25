@@ -25,8 +25,6 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
   const nextStep = () => {
     if (isStepValid(currentStep)) {
       setCurrentStep(currentStep + 1);
-    } else {
-      onSubmit();
     }
   };
 
@@ -66,7 +64,7 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
           ) : (
             <StandardButton
               icon={faCheck}
-              onClick={nextStep}
+              onClick={onSubmit}
               isDisabled={!isStepValid(currentStep)}
             >
               Submit

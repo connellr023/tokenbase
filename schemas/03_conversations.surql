@@ -2,8 +2,8 @@ DEFINE TABLE conversations SCHEMAFULL;
 
 DEFINE FIELD id ON TABLE conversations TYPE string ASSERT $value != NONE;
 DEFINE FIELD name ON TABLE conversations TYPE string;
-DEFINE FIELD created_at ON TABLE conversations TYPE datetime VALUE time::now();
-DEFINE FIELD updated_at ON TABLE conversations TYPE datetime VALUE time::now();
+DEFINE FIELD created_at ON TABLE conversations TYPE string VALUE <string>time::now();
+DEFINE FIELD updated_at ON TABLE conversations TYPE string VALUE <string>time::now();
 
 DEFINE FIELD user_id ON TABLE conversations TYPE string ASSERT $value != NONE;
 RELATE conversations:user_id->belongs_to->users:id;

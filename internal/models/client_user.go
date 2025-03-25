@@ -1,13 +1,9 @@
 package models
 
-import (
-	"time"
-)
-
 type ClientUser struct {
-	ID        string    `json:"id"`
-	Username  string    `json:"username"`
-	Email     string    `json:"email"`
-	IsAdmin   bool      `json:"isAdmin"`
-	CreatedAt time.Time `json:"createdAt"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	IsAdmin   bool   `json:"isAdmin"`
+	CreatedAt string `json:"createdAt"`
 }

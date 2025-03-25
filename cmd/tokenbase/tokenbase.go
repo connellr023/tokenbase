@@ -115,6 +115,9 @@ func main() {
 	rootRouter.Route("/api", func(r chi.Router) {
 		middlewares.UseBearerExtractorMiddleware(r)
 
+		r.Post("/login", inj.PostLogin)
+		// r.Post("/register", inj.PostRegister)
+
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)
 

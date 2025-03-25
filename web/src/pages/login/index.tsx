@@ -1,9 +1,11 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import LoginRequest from "@/models/LoginRequest";
 import React, { useState } from "react";
+import { LoginRequest, LoginResponse } from "@/models/Login";
 import { emailRegex } from "@/utils/regexps";
-import { minPasswordLength } from "@/utils/constants";
+import { backendEndpoint, minPasswordLength } from "@/utils/constants";
+
+const loginEndpont = backendEndpoint + "api/login";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -20,14 +22,31 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const loginRequest: LoginRequest = {
       email,
       password,
     };
 
-    console.log(loginRequest);
-    console.log("Form submitted");
+    try {
+      const res = await fetch(loginEndpont, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginRequest),
+      });
+
+      if (!res.ok) {
+        console.error("Failed to login");
+        return;
+      }
+
+      const data = (await res.json()) as LoginResponse;
+      console.log(data);
+    } catch (error) {
+      console.error("Failed to login", error);
+    }
   };
 
   const steps = [

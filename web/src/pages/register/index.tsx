@@ -1,7 +1,7 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import RegisterRequest from "@/models/RegisterRequest";
 import React, { useState } from "react";
+import { RegisterRequest } from "@/models/Register";
 import { emailRegex } from "@/utils/regexps";
 import { minPasswordLength } from "@/utils/constants";
 

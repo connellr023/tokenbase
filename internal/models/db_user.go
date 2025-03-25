@@ -1,8 +1,6 @@
 package models
 
 import (
-	"time"
-
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
@@ -12,5 +10,23 @@ type DbUser struct {
 	Email        string          `json:"email"`
 	PasswordHash string          `json:"password_hash"`
 	IsAdmin      bool            `json:"is_admin"`
-	CreatedAt    time.Time       `json:"created_at"`
+	CreatedAt    string          `json:"created_at"`
+}
+
+func (u DbUser) ToClientUser() (ClientUser, bool) {
+	userID, ok := u.ID.ID.(string)
+
+	if !ok {
+		return ClientUser{}, false
+	}
+
+	clientUser := ClientUser{
+		ID:        userID,
+		Email:     u.Email,
+		Username:  u.Username,
+		IsAdmin:   u.IsAdmin,
+		CreatedAt: u.CreatedAt,
+	}
+
+	return clientUser, true
 }
