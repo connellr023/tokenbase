@@ -7,8 +7,9 @@ textarea.main {
     border-radius: $border-radius-2;
     border: 2px solid transparent;
     transition: $transition-2;
-    height: 200px;
-    width: 200px;
+    height: 250px;
+    width: 400px;
+    font-size: 15px;
   
     &::placeholder {
       color: $transparent-color-black;
@@ -19,3 +20,25 @@ textarea.main {
       border-color: $red-color-1;
     }
   }
+
+  div.div1{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%;
+    width: 100%;
+  }
+
+  div.div1 button{
+    width: 100%;
+  }
+
+  p.count{
+    color: $txt-color-2;
+    position: relative;
+    bottom: 50px;
+    left: 180px;
+  }
+

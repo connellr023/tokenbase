@@ -23,7 +23,7 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
 
   const nextStep = () => {
-    if (isStepValid(currentStep) && currentStep+1 < steps.length) {
+    if (isStepValid(currentStep)) {
       setCurrentStep(currentStep + 1);
     } else {
       onSubmit();

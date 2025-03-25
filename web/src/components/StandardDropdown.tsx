@@ -7,7 +7,6 @@ import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 type StandardDropdownProps = {
   items: string[];
   onSelect: (index: number) => void;
-  isValid?: (index: number) => boolean;
 };
 
 const StandardDropdown: React.FC<StandardDropdownProps> = ({
