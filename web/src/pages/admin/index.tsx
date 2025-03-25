@@ -4,10 +4,9 @@ import React, { useState } from "react";
 const Admin: React.FC = () => {
   const [prompt, setPrompt] = useState("");
 
-
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
-  }
+  };
 
   const handleSubmit = () => {
     

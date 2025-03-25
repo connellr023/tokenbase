@@ -31,10 +31,17 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
   const [textValue, setValue] = useState("");
   const [charCount, setCount] = useState(max);
 
+  //   useEffect(() => {
+  //     if (isValid !== undefined) {
+  //       setError(!isValid() && value !== undefined && value !== "");
+  //     } else {
+  //       setError(value !== undefined && value !== "");
+  //     }
+  //   }, [value, isValid]);
 
    const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setValue(event.target.value);
-    setCount(max-event.target.value.length);
+    setCount(max - event.target.value.length);
     onChange;
   };
 
