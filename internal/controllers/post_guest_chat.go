@@ -135,7 +135,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Cache chat in Redis
-	record := models.RedisChatRecord{
+	record := models.ClientChatRecord{
 		ID:     chatId,
 		Prompt: req.Prompt,
 		Reply:  replyBuilder.String(),

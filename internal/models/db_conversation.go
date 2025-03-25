@@ -6,7 +6,7 @@ import (
 	"github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
-type SurrealConversation struct {
+type DbConversation struct {
 	ID        models.RecordID `json:"id"`
 	UserID    models.RecordID `json:"user_id"`
 	Name      string          `json:"name"`

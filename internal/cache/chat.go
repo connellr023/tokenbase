@@ -20,7 +20,7 @@ import (
 // - The next chat ID
 // - All previous chat records
 // - Any error that occurred
-func GetChatContext(rdb *redis.Client, key string) (int64, []models.RedisChatRecord, error) {
+func GetChatContext(rdb *redis.Client, key string) (int64, []models.ClientChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
@@ -57,10 +57,10 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.RedisChatRec
 		return -1, nil, err
 	}
 
-	chatRecords := make([]models.RedisChatRecord, 0, len(serializedRecords))
+	chatRecords := make([]models.ClientChatRecord, 0, len(serializedRecords))
 
 	for _, jsonRecord := range serializedRecords {
-		var record models.RedisChatRecord
+		var record models.ClientChatRecord
 
 		if err := json.Unmarshal([]byte(jsonRecord), &record); err == nil {
 			chatRecords = append(chatRecords, record)
@@ -80,7 +80,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.RedisChatRec
 //
 // Returns:
 // - Any error that occurred
-func SaveChatRecords(rdb *redis.Client, key string, records ...models.RedisChatRecord) error {
+func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChatRecord) error {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 

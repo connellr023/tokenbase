@@ -2,7 +2,6 @@ import styles from "@/styles/components/RightDrawer.module.scss";
 import IconButton from "./IconButton";
 import StandardButton from "./StandardButton";
 import { Url } from "next/dist/shared/lib/router/router";
-import { UserVariant } from "@/models/User";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useBearerContext } from "@/contexts/BearerContext";
@@ -57,7 +56,7 @@ const RightDrawer: React.FC = () => {
 
         <div>
           {/* Render message for guests */}
-          {!bearer || bearer.variant === UserVariant.Guest ? (
+          {!bearer?.user ? (
             <div className={styles.noConversationHistoryContainer}>
               <div>
                 <FontAwesomeIcon icon={faShieldAlt} size="3x" />
@@ -100,7 +99,7 @@ const RightDrawer: React.FC = () => {
           {/* Render footer area */}
           <div className={styles.containerFooter}>
             {/* Render login button for guests */}
-            {!bearer || bearer.variant === UserVariant.Guest ? (
+            {!bearer?.user ? (
               <>
                 <StandardButton
                   icon={faSignIn}
@@ -121,10 +120,10 @@ const RightDrawer: React.FC = () => {
                   <span
                     className={`${styles.profileIcon} ${firaMono400.className}`}
                   >
-                    {(bearer.data?.username ?? "?")[0].toUpperCase()}
+                    {(bearer.user.username ?? "?")[0].toUpperCase()}
                   </span>
                   <span className={styles.email}>
-                    {bearer.data?.email ?? "None"}
+                    {bearer.user.email ?? "None"}
                   </span>
                 </div>
                 <StandardButton icon={faPlus} onClick={() => {} /* TODO */}>

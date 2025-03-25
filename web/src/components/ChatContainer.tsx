@@ -13,7 +13,6 @@ import { useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
-import { UserVariant } from "@/models/User";
 
 type HttpChatReq = {
   headers?: HeadersInit;
@@ -110,7 +109,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -177,9 +176,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       {chats.length === 0 && !streamingChat ? (
         <div className={styles.emptyChat}>
           {/* Render a welcome message if there are no chats */}
-          {bearer?.variant === UserVariant.User && (
+          {bearer?.user && (
             <div className={styles.greetingContainer}>
-              Welcome back, {bearer.data?.username.split(" ")[0] ?? "User"}...
+              Welcome back, {bearer.user.username.split(" ")[0] ?? "User"}...
             </div>
           )}
           <TypesetRenderer>

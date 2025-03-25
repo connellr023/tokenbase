@@ -10,7 +10,6 @@ import { getChatSuggestions } from "@/utils/getChatSuggestions";
 import { useHomeModalContext } from "@/contexts/HomeModalContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
-import { UserVariant } from "@/models/User";
 import {
   faArrowRight,
   faBolt,
@@ -67,10 +66,7 @@ const Home: React.FC<HomeProps> = ({ chatSuggestions }) => {
           };
         }
 
-        setBearer({
-          variant: UserVariant.Guest,
-          token,
-        });
+        setBearer({ token });
 
         return {
           ok: constructReq(token),

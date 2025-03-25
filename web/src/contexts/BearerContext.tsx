@@ -1,4 +1,4 @@
-import { User, UserVariant } from "@/models/User";
+import { User } from "@/models/User";
 import {
   createContext,
   Dispatch,
@@ -9,9 +9,8 @@ import {
 } from "react";
 
 export type Bearer = {
-  variant: UserVariant;
   token: string;
-  data?: User;
+  user?: User;
 };
 
 type BearerContextType = {
@@ -40,7 +39,7 @@ export const useBearerContext = () => {
 
   if (!context) {
     throw new Error(
-      "useBearerContext must be used within a BearerContextProvider",
+      "useBearerContext must be used within a BearerContextProvider"
     );
   }
 
