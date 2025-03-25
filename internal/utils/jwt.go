@@ -17,6 +17,14 @@ var (
 	ErrInvalidToken = errors.New("invalid token")
 )
 
+// Generates a JWT for a user
+//
+// Parameters:
+// - user: User to generate a token for
+//
+// Returns:
+// - The generated JWT
+// - Any error that occurred
 func GenerateJwt(user models.ClientUser) (string, error) {
 	claims := jwt.MapClaims{
 		"user": user,
@@ -30,6 +38,14 @@ func GenerateJwt(user models.ClientUser) (string, error) {
 	return token.SignedString(key)
 }
 
+// Validates a JWT
+//
+// Parameters:
+// - tokenStr: JWT to validate
+//
+// Returns:
+// - The user associated with the token
+// - Any error that occurred
 func ValidateJwt(tokenStr string) (models.ClientUser, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {

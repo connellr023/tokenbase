@@ -4,10 +4,14 @@ import React, { useState } from "react";
 import { LoginRequest, LoginResponse } from "@/models/Login";
 import { emailRegex } from "@/utils/regexps";
 import { backendEndpoint, minPasswordLength } from "@/utils/constants";
+import { useBearerContext } from "@/contexts/BearerContext";
+import { useRouter } from "next/router";
 
 const loginEndpont = backendEndpoint + "api/login";
 
 const Login: React.FC = () => {
+  const { push } = useRouter();
+  const { setBearer } = useBearerContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -38,14 +42,18 @@ const Login: React.FC = () => {
       });
 
       if (!res.ok) {
-        console.error("Failed to login");
-        return;
+        return "Check your email and password.";
       }
 
       const data = (await res.json()) as LoginResponse;
-      console.log(data);
-    } catch (error) {
-      console.error("Failed to login", error);
+
+      setBearer({
+        token: data.jwt,
+        user: data.user,
+      });
+      push("/");
+    } catch (_) {
+      return "An error occurred while logging in.";
     }
   };
 
