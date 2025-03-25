@@ -95,7 +95,7 @@ func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChat
 		}
 
 		zRecords = append(zRecords, redis.Z{
-			Score:  float64(record.ID),
+			Score:  float64(record.CacheID),
 			Member: recordJson,
 		})
 	}
