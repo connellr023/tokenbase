@@ -1,6 +1,8 @@
 DEFINE TABLE users SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE users TYPE int ASSERT $value != NONE;
+LET $latest_user_id = SELECT id FROM users ORDER BY id DESC LIMIT 1;
+
+DEFINE FIELD id ON TABLE users TYPE int VALUE $latest_user_id + 1;
 DEFINE FIELD username ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD email ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD password_hash ON TABLE users TYPE string ASSERT $value != NONE;

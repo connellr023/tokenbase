@@ -1,6 +1,8 @@
 DEFINE TABLE conversations SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE conversations TYPE int ASSERT $value != NONE;
+LET $latest_conversation_id = SELECT id FROM conversations ORDER BY id DESC LIMIT 1;
+
+DEFINE FIELD id ON TABLE conversations TYPE int VALUE $latest_conversation_id + 1;
 DEFINE FIELD name ON TABLE conversations TYPE string;
 DEFINE FIELD created_at ON TABLE conversations TYPE datetime;
 DEFINE FIELD updated_at ON TABLE conversations TYPE datetime;

@@ -1,6 +1,8 @@
 DEFINE TABLE chat_records SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE chat_records TYPE int ASSERT $value != NONE;
+LET $latest_chat_record_id = SELECT id FROM chat_records ORDER BY id DESC LIMIT 1;
+
+DEFINE FIELD id ON TABLE chat_records TYPE int VALUE $latest_chat_record_id + 1;
 DEFINE FIELD prompt ON TABLE chat_records TYPE string;
 DEFINE FIELD reply ON TABLE chat_records TYPE string;
 DEFINE FIELD prompt_images ON TABLE chat_records TYPE array;
