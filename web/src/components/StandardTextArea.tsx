@@ -57,7 +57,7 @@ const StandardTextArea: React.FC<StandardTAProps> = ({
         <p className={styles.count}>{charCount}</p>
         <StandardButton
           icon={faCheck}
-          isDisabled={max == 0}
+          isDisabled={charCount==max}
           onClick={() => onSubmit}
         >
           Submit
