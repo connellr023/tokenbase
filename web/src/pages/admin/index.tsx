@@ -8,16 +8,14 @@ const Admin: React.FC = () => {
     setPrompt(e.target.value);
   };
 
-  const handleSubmit = () => {
-    
-  }
+  const handleSubmit = () => {};
 
   return (
     <>
       <StandardTextArea
         header="System Prompt"
         desc="Edit the global system prompt below."
-        placeholder="Enter prompt" 
+        placeholder="Enter prompt"
         max={200}
         onChange={handleChange}
         onSubmit={handleSubmit}
