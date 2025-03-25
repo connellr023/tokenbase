@@ -199,13 +199,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
         <div className={styles.chatContainer}>
           <div>
             {/* Render all finished chats */}
-            {chats.map((chat) => (
+            {chats.map((chat, i) => (
               <Chat
                 key={chat.id}
                 chatId={chat.id ?? -1}
                 prompt={chat.prompt}
                 reply={chat.reply}
                 isComplete={true}
+                isMostRecent={i === chats.length - 1}
                 onDelete={onChatDelete}
               />
             ))}
@@ -217,6 +218,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                 chatId={streamingChat.id ?? -1}
                 prompt={streamingChat.prompt}
                 reply={streamingChat.reply}
+                isMostRecent={true}
                 isComplete={false}
               />
             )}

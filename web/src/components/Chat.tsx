@@ -9,6 +9,7 @@ type ChatProps = {
   prompt: string;
   reply: string;
   isComplete: boolean;
+  isMostRecent: boolean;
   onDelete?: (chatId: number) => void;
 };
 
@@ -17,6 +18,7 @@ const Chat: React.FC<ChatProps> = ({
   prompt,
   reply,
   isComplete,
+  isMostRecent,
   onDelete,
 }) => {
   return (
@@ -32,9 +34,11 @@ const Chat: React.FC<ChatProps> = ({
       )}
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>
-          <IconButton icon={faRefresh} onClick={() => console.log("retry")}>
-            Retry
-          </IconButton>
+          {isMostRecent && (
+            <IconButton icon={faRefresh} onClick={() => console.log("retry")}>
+              Retry
+            </IconButton>
+          )}
           <IconButton icon={faCopy} onClick={() => console.log("copy")}>
             Copy
           </IconButton>

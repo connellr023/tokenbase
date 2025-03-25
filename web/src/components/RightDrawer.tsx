@@ -17,12 +17,15 @@ import {
   faSignIn,
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
   const { bearer, clearBearer } = useBearerContext();
-  const { conversationRecords } = useConversationRecordsContext();
+  const { clearChats } = useChatRecordsContext();
+  const { conversationRecords, clearConversationRecords } =
+    useConversationRecordsContext();
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -32,6 +35,8 @@ const RightDrawer: React.FC = () => {
   const logout = () => {
     closeDrawer();
     clearBearer();
+    clearChats();
+    clearConversationRecords();
   };
 
   return (

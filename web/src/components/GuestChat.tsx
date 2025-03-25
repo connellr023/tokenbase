@@ -104,15 +104,13 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
           </StandardButton>
         </div>
       </Modal>
-      <div className={styles.container}>
-        <ChatContainer
-          promptEndpoint={guestPromptEndpoint}
-          deleteEndpoint={guestDeleteChatEndpoint}
-          suggestions={chatSuggestions}
-          constructPromptRequest={constructGuestPromptRequest}
-          constructDeleteRequest={constructGuestDeleteChatRequest}
-        />
-      </div>
+      <ChatContainer
+        promptEndpoint={guestPromptEndpoint}
+        deleteEndpoint={guestDeleteChatEndpoint}
+        suggestions={chatSuggestions}
+        constructPromptRequest={constructGuestPromptRequest}
+        constructDeleteRequest={constructGuestDeleteChatRequest}
+      />
     </>
   );
 };
