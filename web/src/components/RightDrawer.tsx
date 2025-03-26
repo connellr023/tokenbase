@@ -18,6 +18,7 @@ import {
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { faBox } from "@fortawesome/free-solid-svg-icons/faBox";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
@@ -73,30 +74,43 @@ const RightDrawer: React.FC = () => {
             </div>
           ) : (
             <>
-              {conversationRecords.length === 0 ? (
+              {conversationRecords !== null ? (
+                <>
+                  {conversationRecords.length === 0 ? (
+                    <div className={styles.noConversationHistoryContainer}>
+                      <div>
+                        <FontAwesomeIcon icon={faBoxOpen} size="3x" />
+                      </div>
+                      <p>
+                        You have no conversation history. New conversations will
+                        appear here once you start chatting.
+                      </p>
+                    </div>
+                  ) : (
+                    <ul className={styles.conversationHistoryContainer}>
+                      {conversationRecords.map((record, i) => (
+                        <li key={i}>
+                          <button
+                            className={merriweather400.className}
+                            onClick={() => {} /* TODO */}
+                            key={i}
+                          >
+                            {record.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
                 <div className={styles.noConversationHistoryContainer}>
                   <div>
-                    <FontAwesomeIcon icon={faBoxOpen} size="3x" />
+                    <FontAwesomeIcon icon={faBox} size="3x" />
                   </div>
                   <p>
-                    You have no conversation history. New conversations will
-                    appear here once you start chatting.
+                    An error occurred while fetching your conversation history.
                   </p>
                 </div>
-              ) : (
-                <ul className={styles.conversationHistoryContainer}>
-                  {conversationRecords.map((record, i) => (
-                    <li key={i}>
-                      <button
-                        className={merriweather400.className}
-                        onClick={() => {} /* TODO */}
-                        key={i}
-                      >
-                        {record.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
               )}
             </>
           )}

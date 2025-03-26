@@ -14,7 +14,7 @@ import {
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
-  const { availableModels, setSelectedIndex } = useModelsContext();
+  const { availableModels, setSelectedModel } = useModelsContext();
   const { openDrawer } = useRightDrawerContext();
 
   return (
@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
             const split = model.tag.split(":");
             return `${split[0]} (${split[1]})`;
           })}
-          onSelect={setSelectedIndex}
+          onSelect={setSelectedModel}
         />
       )}
 

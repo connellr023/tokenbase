@@ -136,6 +136,7 @@ func main() {
 		r.Route("/user", func(r chi.Router) {
 			// User conversation sub-routes
 			r.Route("/conversation", func(r chi.Router) {
+				r.Get("/all", inj.GetConversations)
 				r.Post("/new", inj.PostConversation)
 				// r.Delete("/delete", inj.DeleteUserConversation)
 			})

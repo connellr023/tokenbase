@@ -5,7 +5,7 @@ DEFINE FIELD name ON TABLE conversations TYPE string ASSERT $value != NONE;
 DEFINE FIELD created_at ON TABLE conversations TYPE string VALUE <string>time::now();
 DEFINE FIELD updated_at ON TABLE conversations TYPE string VALUE <string>time::now();
 
-DEFINE FIELD user_id ON TABLE conversations TYPE string ASSERT $value != NONE;
+DEFINE FIELD user_id ON TABLE conversations TYPE string ASSERT $value != NONE AND record::exists(type::thing("users", $value));
 RELATE conversations:user_id->belongs_to->users:id;
 
 -- Make sure the id is unique

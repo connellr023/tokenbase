@@ -26,7 +26,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
     // If there is no selected conversation, we want to start a new one
     if (selectedConversationIndex === null) {
       const newConversation = await reqNewConversation(
-        availableModels[selectedModelIndex].tag,
+        availableModels[selectedModelIndex].tag ?? "",
         prompt,
         bearer?.token
       );
@@ -36,7 +36,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       }
 
       // Add the new conversation to the conversation records
-      setConversationRecords([newConversation, ...conversationRecords]);
+      setConversationRecords([newConversation, ...(conversationRecords ?? [])]);
       selectConversation(0);
 
       console.log(newConversation);
