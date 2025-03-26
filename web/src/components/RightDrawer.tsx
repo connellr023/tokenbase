@@ -161,6 +161,14 @@ const RightDrawer: React.FC = () => {
                 <StandardButton icon={faSignOut} onClick={logout}>
                   Logout
                 </StandardButton>
+                {bearer.user.isAdmin && (
+                  <StandardButton
+                    icon={faShieldAlt}
+                    onClick={() => pushAndClose("/admin")}
+                  >
+                    Admin
+                  </StandardButton>
+                )}
               </>
             )}
           </div>

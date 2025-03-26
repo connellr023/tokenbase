@@ -14,3 +14,6 @@ DEFINE INDEX users_username_index ON TABLE users FIELDS username UNIQUE;
 
 -- Insert test normal user
 INSERT INTO users (username, email, password_hash, is_admin) VALUES ("Norman User", "norman@gmail.com", crypto::bcrypt::generate("12345678"), false);
+
+-- Insert test admin user
+INSERT INTO users (username, email, password_hash, is_admin) VALUES ("Addy Admin", "admin@gmail.com", crypto::bcrypt::generate("12345678"), true);

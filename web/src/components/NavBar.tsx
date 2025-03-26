@@ -12,8 +12,9 @@ import {
   faArrowLeft,
   faBolt,
   faSignIn,
-  faTrash,
+  faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
+import { useBearerContext } from "@/contexts/BearerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
@@ -59,20 +60,22 @@ const NavBar: React.FC = () => {
       </div>
 
       {/* Render current conversations information */}
-      {selectedConversationIndex !== null && conversationRecords !== null && (
-        <div className={styles.conversationInfo}>
-          <h3 className={merriweather400.className}>
-            {conversationRecords[selectedConversationIndex].name}
-          </h3>
-        </div>
-      )}
+      {selectedConversationIndex !== null &&
+        conversationRecords !== null &&
+        pathname === "/" && (
+          <div className={styles.conversationInfo}>
+            <h3 className={merriweather400.className}>
+              {conversationRecords[selectedConversationIndex].name}
+            </h3>
+          </div>
+        )}
 
       {/* Render logo */}
       <div className={styles.logo}>
         <b>
           <i>tokenbase</i>
         </b>
-        {pathname == "/" && (
+        {pathname === "/" && (
           <IconButton icon={faAnglesLeft} onClick={openDrawer}>
             Open
           </IconButton>
