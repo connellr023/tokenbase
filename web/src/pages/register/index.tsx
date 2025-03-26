@@ -3,12 +3,17 @@ import StandardInput from "@/components/StandardInput";
 import React, { useState } from "react";
 import { RegisterRequest } from "@/models/Register";
 import { emailRegex } from "@/utils/regexps";
-import { minPasswordLength } from "@/utils/constants";
+import { backendEndpoint, minPasswordLength } from "@/utils/constants";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
+import { useRouter } from "next/router";
+import { LoginResponse } from "@/models/Login";
+
+const registerEndpont = backendEndpoint + "api/register";
 
 const Register: React.FC = () => {
+  const { push } = useRouter(); 
   const { setBearer } = useBearerContext();
   const { clearChats } = useChatRecordsContext();
   const { clearConversationRecords } = useConversationRecordsContext();
@@ -36,14 +41,35 @@ const Register: React.FC = () => {
       password,
     };
 
-    console.log(registerRequest);
-    console.log("Form submitted");
+    try {
+      const res = await fetch(registerEndpont, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerRequest),
+      });
 
-    clearChats();
-    clearConversationRecords();
-    setBearer({
-      token: "Dummy",
-    });
+      if (!res.ok) {
+        return "Username OR email already exists";
+      }
+
+      const data = (await res.json()) as LoginResponse;
+
+      console.log(registerRequest);
+      console.log("Form submitted");
+
+      clearChats();
+      clearConversationRecords();
+      setBearer({
+        token: data.jwt,
+        user: data.user,
+      });
+
+      push("/");
+    } catch (_) {
+      return "An error has occurred logging in following registration"
+    }
   };
 
   const steps = [

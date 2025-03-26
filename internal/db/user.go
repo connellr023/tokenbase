@@ -2,7 +2,6 @@ package db
 
 import (
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/surrealdb/surrealdb.go"
 )
@@ -52,10 +51,11 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 // - username: User's username
 // - email: User's email
 // - password: User's password in plaintext
+//
 // Returns:
 // - token: A JWT token of the user's login
 // - Any error that occurred
-func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (string, error) {
+func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (models.DbUser, error) {
 
 	user := map[string]any{
 		"username": username,
@@ -70,19 +70,12 @@ func RegisterUser(sdb *surrealdb.DB, username string, email string, password str
 	res, err := surrealdb.Create[models.DbUser](sdb, "users", user)
 
 	if err != nil {
-		return "", err
+		return models.DbUser{}, err
 	}
 
 	if res == nil {
-		return "", ErrFailedCreateUser
+		return models.DbUser{}, ErrFailedCreateUser
 	}
 
-	client, _ := res.ToClientUser()
-	token, err := utils.GenerateJwt(client)
-
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	return *res, nil
 }
