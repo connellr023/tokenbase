@@ -103,9 +103,6 @@ func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChat
 	// Add the chat record to the sorted set
 	pipe.ZAdd(ctx, key, zRecords...)
 
-	// Trim the sorted set to the maximum number of records
-	pipe.ZRemRangeByRank(ctx, key, 0, -utils.MaxChatsPerConversation-1)
-
 	// Refresh the session expiry
 	pipe.Expire(ctx, key, cacheSessionExpiry)
 

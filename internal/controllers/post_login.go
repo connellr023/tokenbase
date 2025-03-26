@@ -39,7 +39,7 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 	clientUser, ok := user.ToClientUser()
 
 	if !ok {
-		http.Error(w, ErrInvalidUserID.Error(), http.StatusInternalServerError)
+		http.Error(w, ErrInvalidID.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -58,5 +58,9 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+
+	if err := json.NewEncoder(w).Encode(res); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

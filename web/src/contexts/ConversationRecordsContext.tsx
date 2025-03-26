@@ -1,4 +1,4 @@
-import ConversationRecord from "@/models/ConversationRecord";
+import Conversation from "@/models/Conversation";
 import {
   createContext,
   Dispatch,
@@ -9,8 +9,11 @@ import {
 } from "react";
 
 type ConversationRecordsContextType = {
-  conversationRecords: Readonly<ConversationRecord[]>;
-  setConversationRecords: Dispatch<SetStateAction<ConversationRecord[]>>;
+  selectedConversationIndex: number | null;
+  selectConversation: (index: number) => void;
+  unselectConversation: () => void;
+  conversationRecords: Readonly<Conversation[]>;
+  setConversationRecords: Dispatch<SetStateAction<Conversation[]>>;
   clearConversationRecords: () => void;
 };
 
@@ -20,15 +23,26 @@ const ConversationRecordsContext =
 export const ConversationRecordsProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const [selectedConversationIndex, setSelectedConversationIndex] = useState<
+    number | null
+  >(null);
   const [conversationRecords, setConversationRecords] = useState<
-    ConversationRecord[]
+    Conversation[]
   >([]);
 
   const clearConversationRecords = () => setConversationRecords([]);
 
+  const selectConversation = (index: number) =>
+    setSelectedConversationIndex(index);
+
+  const unselectConversation = () => setSelectedConversationIndex(null);
+
   return (
     <ConversationRecordsContext.Provider
       value={{
+        selectedConversationIndex,
+        selectConversation,
+        unselectConversation,
         conversationRecords,
         setConversationRecords,
         clearConversationRecords,

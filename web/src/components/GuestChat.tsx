@@ -24,7 +24,7 @@ type GuestChatProps = {
 const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
   const { isOpen, close } = useHomeModalContext();
   const { bearer, setBearer } = useBearerContext();
-  const { availableModels, selectedIndex } = useModelsContext();
+  const { availableModels, selectedModelIndex } = useModelsContext();
 
   const constructGuestPromptRequest = async (prompt: string) => {
     const constructReq = (token: string) => {
@@ -41,7 +41,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
         },
         body: JSON.stringify({
           prompt,
-          model: availableModels[selectedIndex].tag,
+          model: availableModels[selectedModelIndex].tag,
         }),
       };
     };

@@ -36,15 +36,11 @@ func (i *Injection) GetChatSuggestions(w http.ResponseWriter, r *http.Request) {
 		subset[i], subset[j] = subset[j], subset[i]
 	})
 
-	// Encode the subset as JSON
-	json, err := json.Marshal(subset)
+	// Write the JSON to the response
+	w.Header().Set("Content-Type", "application/json")
 
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(subset); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Write the JSON to the response
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(json)
 }

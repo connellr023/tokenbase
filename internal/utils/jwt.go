@@ -6,6 +6,7 @@ import (
 	"tokenbase/internal/models"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/mitchellh/mapstructure"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 )
 
 var (
-	ErrInvalidToken = errors.New("invalid token")
+	ErrInvalidJwt = errors.New("invalid JWT")
 )
 
 // Generates a JWT for a user
@@ -48,10 +49,6 @@ func GenerateJwt(user models.ClientUser) (string, error) {
 // - Any error that occurred
 func ValidateJwt(tokenStr string) (models.ClientUser, error) {
 	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (any, error) {
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, ErrInvalidToken
-		}
-
 		return []byte(jwtSecretKey), nil
 	})
 
@@ -63,14 +60,14 @@ func ValidateJwt(tokenStr string) (models.ClientUser, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 
 	if !ok || !token.Valid {
-		return models.ClientUser{}, ErrInvalidToken
+		return models.ClientUser{}, ErrInvalidJwt
 	}
 
-	// Extract user
-	user, ok := claims["user"].(models.ClientUser)
+	// Convert the user map back to user struct
+	var user models.ClientUser
 
-	if !ok {
-		return models.ClientUser{}, ErrInvalidToken
+	if err = mapstructure.Decode(claims["user"], &user); err != nil {
+		return models.ClientUser{}, err
 	}
 
 	return user, nil

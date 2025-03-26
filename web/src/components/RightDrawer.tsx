@@ -23,7 +23,7 @@ const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
   const { bearer, clearBearer } = useBearerContext();
-  const { clearChats } = useChatRecordsContext();
+  const { chats, clearChats } = useChatRecordsContext();
   const { conversationRecords, clearConversationRecords } =
     useConversationRecordsContext();
 
@@ -92,7 +92,7 @@ const RightDrawer: React.FC = () => {
                         onClick={() => {} /* TODO */}
                         key={i}
                       >
-                        {record.title}
+                        {record.name}
                       </button>
                     </li>
                   ))}
@@ -131,7 +131,11 @@ const RightDrawer: React.FC = () => {
                     {bearer.user.email ?? "None"}
                   </span>
                 </div>
-                <StandardButton icon={faPlus} onClick={() => {} /* TODO */}>
+                <StandardButton
+                  isDisabled={chats.length === 0}
+                  icon={faPlus}
+                  onClick={() => {} /* TODO */}
+                >
                   New Conversation
                 </StandardButton>
                 <StandardButton icon={faSignOut} onClick={logout}>

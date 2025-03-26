@@ -4,10 +4,13 @@ import (
 	"context"
 	"net/http"
 	"strings"
+	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 
 	"github.com/go-chi/chi/v5"
 )
 
+type BearerToken string
 type bearerContextKey string
 
 const bearerKey bearerContextKey = "bearer"
@@ -26,7 +29,7 @@ func bearerExtractorMiddleware(next http.Handler) http.Handler {
 		parts := strings.Split(authHeader, " ")
 
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(w, "authorization header format must be 'Bearer <token>'", http.StatusUnauthorized)
+			http.Error(w, ErrInvalidAuthHeader.Error(), http.StatusUnauthorized)
 			return
 		}
 
@@ -42,6 +45,22 @@ func bearerExtractorMiddleware(next http.Handler) http.Handler {
 func GetBearerFromContext(ctx context.Context) (string, bool) {
 	bearer, ok := ctx.Value(bearerKey).(string)
 	return bearer, ok
+}
+
+func GetUserFromJwt(ctx context.Context) (models.ClientUser, error) {
+	bearer, ok := GetBearerFromContext(ctx)
+
+	if !ok {
+		return models.ClientUser{}, ErrInvalidBearerToken
+	}
+
+	user, err := utils.ValidateJwt(bearer)
+
+	if err != nil {
+		return models.ClientUser{}, err
+	}
+
+	return user, nil
 }
 
 func UseBearerExtractorMiddleware(router chi.Router) {

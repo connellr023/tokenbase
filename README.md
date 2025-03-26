@@ -139,6 +139,16 @@ To start the frontend service, goto the `web` directory and run:
 npm run dev
 ```
 
+### Entering SurrealDB SQL CLI
+
+Run:
+
+```sh
+./surreal sql --user root --pass root --ns tokenbaseNS --db tokenbaseDB
+```
+
+Within the `surrealdb` container.
+
 ## Production
 
 To run the optimized production environment, use the production `docker-compose` file:

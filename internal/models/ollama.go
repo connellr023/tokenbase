@@ -8,6 +8,19 @@ const (
 	SystemRole    = OllamaRole("system")
 )
 
+type OllamaGenerateRequest struct {
+	Model  string `json:"model"`
+	Prompt string `json:"prompt"`
+	Stream bool   `json:"stream"`
+}
+
+type OllamaGenerateResponse struct {
+	Model     string `json:"model"`
+	CreatedAt string `json:"created_at"`
+	Response  string `json:"response"`
+	IsDone    bool   `json:"done"`
+}
+
 type OllamaChatMessage struct {
 	Role    OllamaRole `json:"role"`
 	Content string     `json:"content"`
@@ -18,7 +31,7 @@ type OllamaChatRequest struct {
 	Model     string              `json:"model"`
 	KeepAlive int                 `json:"keep_alive,omitempty"`
 	Messages  []OllamaChatMessage `json:"messages"`
-	Stream    bool                `json:"stream,omitempty"`
+	Stream    bool                `json:"stream"`
 }
 
 type OllamaChatResponse struct {
