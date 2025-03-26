@@ -58,7 +58,7 @@ export const useConversationRecordsContext = () => {
 
   if (!context) {
     throw new Error(
-      "useConversationRecords must be used within a ConversationRecordsProvider"
+      "useConversationRecords must be used within a ConversationRecordsProvider",
     );
   }
 
