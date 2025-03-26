@@ -15,7 +15,7 @@ type NewConversationResponse = {
 export const reqNewConversation = async (
   model: string,
   firstPrompt: string,
-  jwt?: string
+  jwt?: string,
 ) => {
   try {
     const res = await fetch(newConversationEndpoint, {
