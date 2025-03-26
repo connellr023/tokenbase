@@ -53,52 +53,36 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 // - email: User's email
 // - password: User's password in plaintext
 // Returns:
-func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (string, error, error) { // return a token
-
-	const query = "SELECT username FROM users WHERE username = $username"
-	res_u, err := surrealdb.Query[[]models.DbUser](sdb, query, map[string]any{
-		"username": username,
-	})
-
-	if err != nil {
-		return "", err, nil
-	}
-
-	const query_2 = "SELECT email FROM users WHERE email = $email"
-	res_e, err := surrealdb.Query[[]models.DbUser](sdb, query, map[string]any{
-		"email": email,
-	})
-
-	if err != nil {
-		return "", err, nil
-	}
-
-	if len(*res_e) != 0 && len(*res_u) != 0 {
-		return "", ErrUsernameTaken, ErrEmailUsed
-	}
-
-	if len(*res_u) != 0 {
-		return "", ErrUsernameTaken, nil
-	}
-
-	if len(*res_e) != 0 {
-		return "", ErrEmailUsed, nil
-	}
+// - token: A JWT token of the user's login
+// - Any error that occurred
+func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (string, error) {
 
 	user := map[string]any{
 		"username": username,
 		"email":    email,
-		"password": password,
-		"isAdmin":  false,
+		"password_hash": map[string]any{
+			"function": "crypto::bcrypt::hash",
+			"args":     []any{password},
+		},
+		"isAdmin": false,
 	}
 
-	_, err = surrealdb.Insert[map[string]any](sdb, "users", user)
+	res, err := surrealdb.Create[models.DbUser](sdb, "users", user)
 
 	if err != nil {
-		return "", err, nil
+		return "", err
 	}
 
-	token, err := utils.GenerateJwt(user)
+	if res == nil {
+		return "", ErrFailedCreateUser
+	}
 
-	return token
+	client, _ := res.ToClientUser()
+	token, err := utils.GenerateJwt(client)
+
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
