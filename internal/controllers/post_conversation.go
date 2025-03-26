@@ -83,15 +83,8 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compose response
-	clientConversation, ok := dbConversation.ToClientConversation()
-
-	if !ok {
-		http.Error(w, ErrInvalidID.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	clientRes := postConversationResponse{
-		Conversation: clientConversation,
+		Conversation: dbConversation.ToClientConversation(),
 	}
 
 	// Send response

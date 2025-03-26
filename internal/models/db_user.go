@@ -13,20 +13,14 @@ type DbUser struct {
 	CreatedAt    string          `json:"created_at"`
 }
 
-func (u DbUser) ToClientUser() (ClientUser, bool) {
-	userID, ok := u.ID.ID.(string)
-
-	if !ok {
-		return ClientUser{}, false
-	}
-
+func (u DbUser) ToClientUser() ClientUser {
 	clientUser := ClientUser{
-		ID:        userID,
+		ID:        u.ID.String(),
 		Email:     u.Email,
 		Username:  u.Username,
 		IsAdmin:   u.IsAdmin,
 		CreatedAt: u.CreatedAt,
 	}
 
-	return clientUser, true
+	return clientUser
 }

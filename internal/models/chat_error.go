@@ -2,7 +2,7 @@ package models
 
 import "encoding/json"
 
-type ChatError struct {
+type streamError struct {
 	Error string `json:"error"`
 }
 
@@ -13,15 +13,15 @@ type ChatError struct {
 //
 // Returns:
 // - A new ChatError
-func NewChatError(err error) ChatError {
-	return ChatError{Error: err.Error()}
+func NewStreamError(err error) streamError {
+	return streamError{Error: err.Error()}
 }
 
 // Converts the error to a JSON byte array
 //
 // Returns:
 // - A JSON byte array representing the error
-func (e ChatError) ToJson() []byte {
+func (e streamError) ToJson() []byte {
 	json, _ := json.Marshal(e)
 	return json
 }

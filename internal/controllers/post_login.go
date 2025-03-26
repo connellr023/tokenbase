@@ -27,21 +27,15 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate user credentials
-	user, err := db.ValidateUserCredentials(i.Sdb, req.Email, req.Password)
+	// Validate dbUser credentials
+	dbUser, err := db.ValidateUserCredentials(i.Sdb, req.Email, req.Password)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	// Convert user to client user
-	clientUser, ok := user.ToClientUser()
-
-	if !ok {
-		http.Error(w, ErrInvalidID.Error(), http.StatusInternalServerError)
-		return
-	}
+	clientUser := dbUser.ToClientUser()
 
 	// Generate token
 	jwt, err := utils.GenerateJwt(clientUser)
