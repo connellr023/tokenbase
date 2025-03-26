@@ -4,6 +4,7 @@ import (
 	"tokenbase/internal/models"
 
 	"github.com/surrealdb/surrealdb.go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Validates a user's credentials
@@ -57,14 +58,18 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 // - Any error that occurred
 func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (models.DbUser, error) {
 
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	password_hash := string(bytes)
+
+	if err != nil {
+		return models.DbUser{}, err
+	}
+
 	user := map[string]any{
-		"username": username,
-		"email":    email,
-		"password_hash": map[string]any{
-			"function": "crypto::bcrypt::hash",
-			"args":     []any{password},
-		},
-		"isAdmin": false,
+		"username":      username,
+		"email":         email,
+		"password_hash": password_hash,
+		"is_admin":      false,
 	}
 
 	res, err := surrealdb.Create[models.DbUser](sdb, "users", user)
