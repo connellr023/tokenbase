@@ -50,14 +50,18 @@ const Register: React.FC = () => {
         body: JSON.stringify(registerRequest),
       });
 
+      const responseBody = await res.text();
       if (!res.ok) {
-        return "Username OR email already exists";
+        if (responseBody.includes("`users_username_index` already contains")) {
+          return `Username "${username}" has already been used`;
+        } else if (responseBody.includes("`users_email_index` already contains")) {
+          return `An account using "${email}" already exists`
+        } else {
+          return "Error registering"
+        }
       }
 
       const data = (await res.json()) as LoginResponse;
-
-      console.log(registerRequest);
-      console.log("Form submitted");
 
       clearChats();
       clearConversationRecords();
