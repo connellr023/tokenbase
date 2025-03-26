@@ -115,6 +115,9 @@ func main() {
 	rootRouter.Route("/api", func(r chi.Router) {
 		middlewares.UseBearerExtractorMiddleware(r)
 
+		r.Post("/login", inj.PostLogin)
+		// r.Post("/register", inj.PostRegister)
+
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)
 
@@ -131,6 +134,13 @@ func main() {
 
 		// User sub-routes
 		r.Route("/user", func(r chi.Router) {
+			// User conversation sub-routes
+			r.Route("/conversation", func(r chi.Router) {
+				r.Get("/all", inj.GetConversations)
+				r.Post("/new", inj.PostConversation)
+				// r.Delete("/delete", inj.DeleteUserConversation)
+			})
+
 			// User chat sub-routes
 			r.Route("/chat", func(r chi.Router) {
 				// TODO...

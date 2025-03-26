@@ -1,11 +1,18 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import RegisterRequest from "@/models/RegisterRequest";
 import React, { useState } from "react";
+import { RegisterRequest } from "@/models/Register";
 import { emailRegex } from "@/utils/regexps";
 import { minPasswordLength } from "@/utils/constants";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
+import { useBearerContext } from "@/contexts/BearerContext";
 
 const Register: React.FC = () => {
+  const { setBearer } = useBearerContext();
+  const { clearChats } = useChatRecordsContext();
+  const { clearConversationRecords, unselectConversation } =
+    useConversationRecordsContext();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,7 +30,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const registerRequest: RegisterRequest = {
       username,
       email,
@@ -32,6 +39,13 @@ const Register: React.FC = () => {
 
     console.log(registerRequest);
     console.log("Form submitted");
+
+    clearChats();
+    clearConversationRecords();
+    unselectConversation();
+    setBearer({
+      token: "Dummy",
+    });
   };
 
   const steps = [

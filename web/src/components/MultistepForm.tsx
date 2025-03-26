@@ -6,11 +6,12 @@ import {
   faArrowRight,
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import ErrorMessage from "./ErrorMessage";
 
 type MultistepFormProps = {
   title: string;
   steps: React.ReactNode[];
-  onSubmit: () => void;
+  onSubmit: () => Promise<string | void>;
   isStepValid: (step: number) => boolean;
 };
 
@@ -21,18 +22,26 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
   isStepValid,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
   const nextStep = () => {
     if (isStepValid(currentStep)) {
       setCurrentStep(currentStep + 1);
-    } else {
-      onSubmit();
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+    const error = await onSubmit();
+
+    if (error) {
+      setError(error);
     }
   };
 
@@ -66,13 +75,18 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
           ) : (
             <StandardButton
               icon={faCheck}
-              onClick={nextStep}
+              onClick={handleSubmit}
               isDisabled={!isStepValid(currentStep)}
             >
               Submit
             </StandardButton>
           )}
         </div>
+        {error && (
+          <div className={styles.errorContainer}>
+            <ErrorMessage error={error} />
+          </div>
+        )}
       </div>
     </div>
   );

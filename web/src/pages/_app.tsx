@@ -42,8 +42,8 @@ class RootApp extends App<RootAppProps> {
           <link rel="icon" href="/logo.svg" />
         </Head>
         <ModelsProvider availableModels={availableModels}>
-          <HomeModalProvider>
-            <BearerProvider>
+          <BearerProvider>
+            <HomeModalProvider>
               <ConversationRecordsProvider>
                 <ChatRecordsProvider>
                   <RightDrawerProvider>
@@ -55,8 +55,8 @@ class RootApp extends App<RootAppProps> {
                   </RightDrawerProvider>
                 </ChatRecordsProvider>
               </ConversationRecordsProvider>
-            </BearerProvider>
-          </HomeModalProvider>
+            </HomeModalProvider>
+          </BearerProvider>
         </ModelsProvider>
       </>
     );

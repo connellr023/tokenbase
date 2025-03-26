@@ -10,8 +10,8 @@ import {
 
 type ModelsContextType = {
   availableModels: Readonly<ModelInfo[]>;
-  selectedIndex: number;
-  setSelectedIndex: Dispatch<SetStateAction<number>>;
+  selectedModelIndex: number;
+  setSelectedModel: Dispatch<SetStateAction<number>>;
 };
 
 const ModelsContext = createContext<ModelsContextType | null>(null);
@@ -25,11 +25,15 @@ export const ModelsProvider: React.FC<ModelsProviderProps> = ({
   availableModels,
   children,
 }) => {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedModelIndex, setSelectedModelIndex] = useState(0);
 
   return (
     <ModelsContext.Provider
-      value={{ availableModels, selectedIndex, setSelectedIndex }}
+      value={{
+        availableModels,
+        selectedModelIndex,
+        setSelectedModel: setSelectedModelIndex,
+      }}
     >
       {children}
     </ModelsContext.Provider>

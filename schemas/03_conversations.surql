@@ -1,11 +1,11 @@
 DEFINE TABLE conversations SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE conversations TYPE int ASSERT $value != NONE;
-DEFINE FIELD name ON TABLE conversations TYPE string;
-DEFINE FIELD created_at ON TABLE conversations TYPE datetime;
-DEFINE FIELD updated_at ON TABLE conversations TYPE datetime;
+DEFINE FIELD id ON TABLE conversations TYPE string ASSERT $value != NONE;
+DEFINE FIELD name ON TABLE conversations TYPE string ASSERT $value != NONE;
+DEFINE FIELD created_at ON TABLE conversations TYPE string VALUE <string>time::now();
+DEFINE FIELD updated_at ON TABLE conversations TYPE string VALUE <string>time::now();
 
-DEFINE FIELD user_id ON TABLE conversations TYPE int ASSERT $value != NONE;
+DEFINE FIELD user_id ON TABLE conversations TYPE string ASSERT $value != NONE AND record::exists(type::thing("users", $value));
 RELATE conversations:user_id->belongs_to->users:id;
 
 -- Make sure the id is unique

@@ -1,22 +1,22 @@
-import { User, UserVariant } from "@/models/User";
+import User from "@/models/User";
 import {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useContext,
+  useEffect,
   useState,
 } from "react";
 
+const localStorageBearerKey = "bearer";
+
 export type Bearer = {
-  variant: UserVariant;
   token: string;
-  data?: User;
+  user?: User;
 };
 
 type BearerContextType = {
   bearer?: Readonly<Bearer>;
-  setBearer: Dispatch<SetStateAction<Bearer | undefined>>;
+  setBearer: (bearer: Bearer) => void;
   clearBearer: () => void;
 };
 
@@ -25,8 +25,30 @@ const BearerContext = createContext<BearerContextType | null>(null);
 export const BearerProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const [bearer, setBearer] = useState<Bearer | undefined>(undefined);
-  const clearBearer = () => setBearer(undefined);
+  const [bearer, setBearerState] = useState<Bearer | undefined>(undefined);
+
+  const setBearer = (newBearer: Bearer) => {
+    setBearerState(newBearer);
+
+    // Only store in local storage if the token belongs to a user (not a guest)
+    if (newBearer.user) {
+      localStorage.setItem(localStorageBearerKey, JSON.stringify(newBearer));
+    }
+  };
+
+  const clearBearer = () => {
+    setBearerState(undefined);
+    localStorage.removeItem(localStorageBearerKey);
+  };
+
+  // Retrieve bearer from local storage on mount
+  useEffect(() => {
+    const bearerString = localStorage.getItem(localStorageBearerKey);
+
+    if (bearerString) {
+      setBearerState(JSON.parse(bearerString) as Bearer);
+    }
+  }, []);
 
   return (
     <BearerContext.Provider value={{ bearer, setBearer, clearBearer }}>

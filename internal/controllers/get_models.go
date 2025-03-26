@@ -33,15 +33,11 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Encode as JSON
-	json, err := json.Marshal(modelList)
+	// Write the JSON to the response
+	w.Header().Set("Content-Type", "application/json")
 
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(modelList); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	// Write the JSON to the response
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(json)
 }

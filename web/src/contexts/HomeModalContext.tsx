@@ -1,4 +1,11 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { useBearerContext } from "./BearerContext";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 type HomeModalContextType = {
   isOpen: boolean;
@@ -10,7 +17,14 @@ const HomeModalContext = createContext<HomeModalContextType | null>(null);
 export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { bearer } = useBearerContext();
   const [isOpen, setOpen] = useState(true);
+
+  useEffect(() => {
+    if (bearer) {
+      setOpen(false);
+    }
+  }, [bearer]);
 
   return (
     <HomeModalContext.Provider value={{ isOpen, close: () => setOpen(false) }}>

@@ -15,11 +15,29 @@ nav.container {
   top: 0;
   z-index: 800;
 
-  div.buttonsContainer {
+  div.linksContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: 1rem;
+  }
+
+  div.conversationInfo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    flex-shrink: 1;
+    max-width: calc(100% - 20rem);
+
+    h3 {
+      color: $txt-color-1;
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   div.logo {

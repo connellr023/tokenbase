@@ -80,6 +80,9 @@ div.container {
         color: $txt-color-1;
         transition: $transition-2;
         text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
 
         &:hover {
           background-color: $bg-color-4;

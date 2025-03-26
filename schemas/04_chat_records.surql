@@ -1,12 +1,11 @@
 DEFINE TABLE chat_records SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE chat_records TYPE int ASSERT $value != NONE;
+DEFINE FIELD id ON TABLE chat_records TYPE string ASSERT $value != NONE;
 DEFINE FIELD prompt ON TABLE chat_records TYPE string;
 DEFINE FIELD reply ON TABLE chat_records TYPE string;
-DEFINE FIELD prompt_images ON TABLE chat_records TYPE array;
-DEFINE FIELD prompt_images.* ON TABLE chat_records TYPE string;
+DEFINE FIELD prompt_images ON TABLE chat_records TYPE array<string> DEFAULT ALWAYS [];
 
-DEFINE FIELD conversation_id ON TABLE chat_records TYPE int ASSERT $value != NONE;
+DEFINE FIELD conversation_id ON TABLE chat_records TYPE string ASSERT $value != NONE AND record::exists(type::thing("conversations", $value));
 RELATE chat_records:conversation_id->belongs_to->conversations:id;
 
 -- Make sure the id is unique

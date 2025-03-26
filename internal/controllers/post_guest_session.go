@@ -26,13 +26,10 @@ func (i *Injection) PostGuestSession(w http.ResponseWriter, r *http.Request) {
 		GuestSessionId: id,
 	}
 
-	resJson, err := json.Marshal(res)
+	w.Header().Set("Content-Type", "application/json")
 
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(res); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(resJson)
 }

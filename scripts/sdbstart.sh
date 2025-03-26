@@ -4,15 +4,6 @@ echo "Starting SurrealDB in the background..."
 /surreal start --user root --pass root &
 SURREALDB_PID=$!
 
-# Path to flag file
-FLAG_FILE="./sdbstart.flag"
-
-# Check if the flag file exists
-if [ -f "$FLAG_FILE" ]; then
-  echo "Script has already run"
-  wait
-fi
-
 # Wait for SurrealDB to become available with proper health checking
 echo "Waiting for SurrealDB to start..."
 MAX_RETRIES=30
@@ -65,8 +56,6 @@ else
   echo "No schemas directory found"
   exit 1
 fi
-
-touch "$FLAG_FILE"
 
 echo "SurrealDB initialization complete. Keeping the database running..."
 wait $SURREALDB_PID
