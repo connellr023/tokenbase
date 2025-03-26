@@ -11,7 +11,8 @@ import { useBearerContext } from "@/contexts/BearerContext";
 const Register: React.FC = () => {
   const { setBearer } = useBearerContext();
   const { clearChats } = useChatRecordsContext();
-  const { clearConversationRecords } = useConversationRecordsContext();
+  const { clearConversationRecords, unselectConversation } =
+    useConversationRecordsContext();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -41,6 +42,7 @@ const Register: React.FC = () => {
 
     clearChats();
     clearConversationRecords();
+    unselectConversation();
     setBearer({
       token: "Dummy",
     });

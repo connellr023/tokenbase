@@ -2,20 +2,25 @@ import styles from "@/styles/components/NavBar.module.scss";
 import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
+import { merriweather400 } from "@/utils/fonts";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import {
   faAnglesLeft,
   faArrowLeft,
   faBolt,
   faSignIn,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
   const { availableModels, setSelectedModel } = useModelsContext();
   const { openDrawer } = useRightDrawerContext();
+  const { conversationRecords, selectedConversationIndex } =
+    useConversationRecordsContext();
 
   return (
     <nav className={styles.container}>
@@ -30,7 +35,7 @@ const NavBar: React.FC = () => {
         />
       )}
 
-      <div className={styles.buttonsContainer}>
+      <div className={styles.linksContainer}>
         {/* Render navigation back to main chat page */}
         {pathname !== "/" && (
           <StandardLink icon={faArrowLeft} href="/">
@@ -52,6 +57,15 @@ const NavBar: React.FC = () => {
           </StandardLink>
         )}
       </div>
+
+      {/* Render current conversations information */}
+      {selectedConversationIndex !== null && conversationRecords !== null && (
+        <div className={styles.conversationInfo}>
+          <h3 className={merriweather400.className}>
+            {conversationRecords[selectedConversationIndex].name}
+          </h3>
+        </div>
+      )}
 
       {/* Render logo */}
       <div className={styles.logo}>
