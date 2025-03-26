@@ -123,7 +123,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		})
 
 		if err != nil && !errors.Is(err, utils.ErrStreamAborted) {
-			utils.WriteChatError(w, err)
+			utils.WriteStreamError(w, err)
 			return
 		}
 	}
@@ -142,7 +142,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {
-		utils.WriteChatError(w, err)
+		utils.WriteStreamError(w, err)
 		return
 	}
 }

@@ -33,14 +33,7 @@ func (i *Injection) GetConversations(w http.ResponseWriter, r *http.Request) {
 	clientConversations := make([]models.ClientConversation, 0, len(conversations))
 
 	for _, conversation := range conversations {
-		clientConversation, ok := conversation.ToClientConversation()
-
-		if !ok {
-			http.Error(w, ErrBadData.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		clientConversations = append(clientConversations, clientConversation)
+		clientConversations = append(clientConversations, conversation.ToClientConversation())
 	}
 
 	// Send the response

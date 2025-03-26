@@ -69,8 +69,13 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Filter out quote characters from the generated name
+	filteredResponse := utils.FilterString(res.Response, func(r rune) bool {
+		return r != '"' && r != '“' && r != '”'
+	})
+
 	// Create conversation
-	dbConversation, err := db.NewConversation(i.Sdb, res.Response, user.ID)
+	dbConversation, err := db.NewConversation(i.Sdb, filteredResponse, user.ID)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -78,15 +83,8 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compose response
-	clientConversation, ok := dbConversation.ToClientConversation()
-
-	if !ok {
-		http.Error(w, ErrInvalidID.Error(), http.StatusInternalServerError)
-		return
-	}
-
 	clientRes := postConversationResponse{
-		Conversation: clientConversation,
+		Conversation: dbConversation.ToClientConversation(),
 	}
 
 	// Send response

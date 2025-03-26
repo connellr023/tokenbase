@@ -1,9 +1,11 @@
-import { useBearerContext } from "@/contexts/BearerContext";
 import ChatContainer from "./ChatContainer";
+import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
 import { backendEndpoint } from "@/utils/constants";
 import { reqNewConversation } from "@/utils/reqNewConversation";
+import { useEffect } from "react";
+import { reqAllConversations } from "@/utils/reqAllConversations";
 
 const userPromptEndpoint = backendEndpoint + "api/user/chat/prompt";
 const userDeleteChatEndpoint = backendEndpoint + "api/user/chat/delete";
@@ -48,6 +50,19 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
   const constructUserDeleteChatRequest = async (chatId: number) => {
     return { error: "Not implemented" };
   };
+
+  useEffect(() => {
+    if (!bearer?.user) {
+      return;
+    }
+
+    const getAllConversations = async () => {
+      const conversations = await reqAllConversations(bearer.token);
+      setConversationRecords(conversations);
+    };
+
+    getAllConversations();
+  }, [bearer]);
 
   return (
     <ChatContainer

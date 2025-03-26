@@ -1,6 +1,6 @@
 DEFINE TABLE users SCHEMAFULL;
 
-DEFINE FIELD id ON TABLE users TYPE string ASSERT $value != NONE;
+DEFINE FIELD id ON TABLE users TYPE record ASSERT $value != NONE;
 DEFINE FIELD username ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD email ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD password_hash ON TABLE users TYPE string ASSERT $value != NONE;

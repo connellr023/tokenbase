@@ -37,9 +37,5 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 		return models.DbUser{}, ErrNoResults
 	}
 
-	if data.Status != DbOk {
-		return models.DbUser{}, ErrQueryFailed
-	}
-
 	return data.Result[0], nil
 }
