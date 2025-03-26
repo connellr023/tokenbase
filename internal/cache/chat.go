@@ -20,7 +20,7 @@ import (
 // - The next chat ID
 // - All previous chat records
 // - Any error that occurred
-func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, error) {
+func GetChatContext(rdb *redis.Client, key string) (int64, []models.ClientChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
@@ -57,10 +57,10 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 		return -1, nil, err
 	}
 
-	chatRecords := make([]models.ChatRecord, 0, len(serializedRecords))
+	chatRecords := make([]models.ClientChatRecord, 0, len(serializedRecords))
 
 	for _, jsonRecord := range serializedRecords {
-		var record models.ChatRecord
+		var record models.ClientChatRecord
 
 		if err := json.Unmarshal([]byte(jsonRecord), &record); err == nil {
 			chatRecords = append(chatRecords, record)
@@ -70,7 +70,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 	return chatId, chatRecords, nil
 }
 
-// Save a chat record for a guest/user
+// Save chat records for a guest/user
 // Will remove oldest records if the maximum is exceeded
 //
 // Parameters:
@@ -80,30 +80,34 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ChatRecord, 
 //
 // Returns:
 // - Any error that occurred
-func SaveChatRecord(rdb *redis.Client, key string, record models.ChatRecord) error {
+func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChatRecord) error {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
-	// Serialize the chat record to JSON
-	recordJson, err := json.Marshal(record)
+	// Map chat records to sorted set members
+	zRecords := make([]redis.Z, 0, len(records))
 
-	if err != nil {
-		return err
+	for _, record := range records {
+		recordJson, err := json.Marshal(record)
+
+		if err != nil {
+			return err
+		}
+
+		zRecords = append(zRecords, redis.Z{
+			Score:  float64(record.CacheID),
+			Member: recordJson,
+		})
 	}
 
-	recordScore := float64(record.ChatId)
-
 	// Add the chat record to the sorted set
-	pipe.ZAdd(ctx, key, redis.Z{Score: recordScore, Member: recordJson})
-
-	// Trim the sorted set to the maximum number of records
-	pipe.ZRemRangeByRank(ctx, key, 0, -utils.MaxChatsPerConversation-1)
+	pipe.ZAdd(ctx, key, zRecords...)
 
 	// Refresh the session expiry
 	pipe.Expire(ctx, key, cacheSessionExpiry)
 
 	// Execute pipeline
-	_, err = pipe.Exec(ctx)
+	_, err := pipe.Exec(ctx)
 	return err
 }
 

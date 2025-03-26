@@ -1,4 +1,4 @@
-import StandardTextArea from "@/components/StandardTextArea";
+import TextareaForm from "@/components/TextareaForm";
 import React, { useState } from "react";
 
 const Admin: React.FC = () => {
@@ -12,10 +12,10 @@ const Admin: React.FC = () => {
 
   return (
     <>
-      <StandardTextArea
+      <TextareaForm
         header="System Prompt"
         desc="Edit the global system prompt below."
-        placeholder="Enter prompt"
+        placeholder="Enter prompt."
         max={200}
         onChange={handleChange}
         onSubmit={handleSubmit}

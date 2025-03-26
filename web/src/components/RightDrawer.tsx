@@ -2,7 +2,6 @@ import styles from "@/styles/components/RightDrawer.module.scss";
 import IconButton from "./IconButton";
 import StandardButton from "./StandardButton";
 import { Url } from "next/dist/shared/lib/router/router";
-import { UserVariant } from "@/models/User";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useBearerContext } from "@/contexts/BearerContext";
@@ -18,12 +17,21 @@ import {
   faSignIn,
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { faBox } from "@fortawesome/free-solid-svg-icons/faBox";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
   const { bearer, clearBearer } = useBearerContext();
-  const { conversationRecords } = useConversationRecordsContext();
+  const { clearChats } = useChatRecordsContext();
+  const {
+    conversationRecords,
+    clearConversationRecords,
+    selectedConversationIndex,
+    selectConversation,
+    unselectConversation,
+  } = useConversationRecordsContext();
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -33,6 +41,9 @@ const RightDrawer: React.FC = () => {
   const logout = () => {
     closeDrawer();
     clearBearer();
+    clearChats();
+    clearConversationRecords();
+    unselectConversation();
   };
 
   return (
@@ -57,7 +68,7 @@ const RightDrawer: React.FC = () => {
 
         <div>
           {/* Render message for guests */}
-          {!bearer || bearer.variant === UserVariant.Guest ? (
+          {!bearer?.user ? (
             <div className={styles.noConversationHistoryContainer}>
               <div>
                 <FontAwesomeIcon icon={faShieldAlt} size="3x" />
@@ -69,30 +80,43 @@ const RightDrawer: React.FC = () => {
             </div>
           ) : (
             <>
-              {conversationRecords.length === 0 ? (
+              {conversationRecords !== null ? (
+                <>
+                  {conversationRecords.length === 0 ? (
+                    <div className={styles.noConversationHistoryContainer}>
+                      <div>
+                        <FontAwesomeIcon icon={faBoxOpen} size="3x" />
+                      </div>
+                      <p>
+                        You have no conversation history. New conversations will
+                        appear here once you start chatting.
+                      </p>
+                    </div>
+                  ) : (
+                    <ul className={styles.conversationHistoryContainer}>
+                      {conversationRecords.map((record, i) => (
+                        <li key={i}>
+                          <button
+                            className={merriweather400.className}
+                            onClick={() => selectConversation(i)}
+                            key={i}
+                          >
+                            {record.name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              ) : (
                 <div className={styles.noConversationHistoryContainer}>
                   <div>
-                    <FontAwesomeIcon icon={faBoxOpen} size="3x" />
+                    <FontAwesomeIcon icon={faBox} size="3x" />
                   </div>
                   <p>
-                    You have no conversation history. New conversations will
-                    appear here once you start chatting.
+                    An error occurred while fetching your conversation history.
                   </p>
                 </div>
-              ) : (
-                <ul className={styles.conversationHistoryContainer}>
-                  {conversationRecords.map((record, i) => (
-                    <li key={i}>
-                      <button
-                        className={merriweather400.className}
-                        onClick={() => {} /* TODO */}
-                        key={i}
-                      >
-                        {record.title}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
               )}
             </>
           )}
@@ -100,7 +124,7 @@ const RightDrawer: React.FC = () => {
           {/* Render footer area */}
           <div className={styles.containerFooter}>
             {/* Render login button for guests */}
-            {!bearer || bearer.variant === UserVariant.Guest ? (
+            {!bearer?.user ? (
               <>
                 <StandardButton
                   icon={faSignIn}
@@ -121,18 +145,30 @@ const RightDrawer: React.FC = () => {
                   <span
                     className={`${styles.profileIcon} ${firaMono400.className}`}
                   >
-                    {(bearer.data?.username ?? "?")[0].toUpperCase()}
+                    {(bearer.user.username ?? "?")[0].toUpperCase()}
                   </span>
                   <span className={styles.email}>
-                    {bearer.data?.email ?? "None"}
+                    {bearer.user.email ?? "None"}
                   </span>
                 </div>
-                <StandardButton icon={faPlus} onClick={() => {} /* TODO */}>
+                <StandardButton
+                  isDisabled={selectedConversationIndex === null}
+                  icon={faPlus}
+                  onClick={unselectConversation}
+                >
                   New Conversation
                 </StandardButton>
                 <StandardButton icon={faSignOut} onClick={logout}>
                   Logout
                 </StandardButton>
+                {bearer.user.isAdmin && (
+                  <StandardButton
+                    icon={faShieldAlt}
+                    onClick={() => pushAndClose("/admin")}
+                  >
+                    Admin
+                  </StandardButton>
+                )}
               </>
             )}
           </div>

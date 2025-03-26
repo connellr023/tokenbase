@@ -42,8 +42,8 @@ If these formatters are not used, the CI pipeline will create a commit with the 
   - Contains dockerfiles for all services
 - `cmd/tokenbase/`
   - Entry point for the main backend service
-- `migrations/`
-  - Contains all database migration scripts
+- `schemas/`
+  - Contains all database schema scripts
 - `scripts/`
   - Contains general scripts that can also be executed in a container
 - `test/`
@@ -138,6 +138,16 @@ To start the frontend service, goto the `web` directory and run:
 ```sh
 npm run dev
 ```
+
+### Entering SurrealDB SQL CLI
+
+Run:
+
+```sh
+./surreal sql --user root --pass root --ns tokenbaseNS --db tokenbaseDB
+```
+
+Within the `surrealdb` container.
 
 ## Production
 

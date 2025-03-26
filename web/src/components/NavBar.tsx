@@ -2,9 +2,11 @@ import styles from "@/styles/components/NavBar.module.scss";
 import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
+import { merriweather400 } from "@/utils/fonts";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import {
   faAnglesLeft,
   faArrowLeft,
@@ -12,11 +14,14 @@ import {
   faSignIn,
   faSignOut,
 } from "@fortawesome/free-solid-svg-icons";
+import { useBearerContext } from "@/contexts/BearerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
-  const { availableModels, setSelectedIndex } = useModelsContext();
+  const { availableModels, setSelectedModel } = useModelsContext();
   const { openDrawer } = useRightDrawerContext();
+  const { conversationRecords, selectedConversationIndex } =
+    useConversationRecordsContext();
 
   return (
     <nav className={styles.container}>
@@ -27,13 +32,13 @@ const NavBar: React.FC = () => {
             const split = model.tag.split(":");
             return `${split[0]} (${split[1]})`;
           })}
-          onSelect={setSelectedIndex}
+          onSelect={setSelectedModel}
         />
       )}
 
-      <div className={styles.buttonsContainer}>
+      <div className={styles.linksContainer}>
         {/* Render navigation back to main chat page */}
-        {pathname !== "/" && pathname !== "/admin" && (
+        {pathname !== "/" && (
           <StandardLink icon={faArrowLeft} href="/">
             Chat
           </StandardLink>
@@ -52,21 +57,25 @@ const NavBar: React.FC = () => {
             Login
           </StandardLink>
         )}
-
-        {/* Render navigation button back to login page */}
-        {pathname === "/admin" && (
-          <StandardLink icon={faSignOut} href="/">
-            Logout
-          </StandardLink>
-        )}
       </div>
+
+      {/* Render current conversations information */}
+      {selectedConversationIndex !== null &&
+        conversationRecords !== null &&
+        pathname === "/" && (
+          <div className={styles.conversationInfo}>
+            <h3 className={merriweather400.className}>
+              {conversationRecords[selectedConversationIndex].name}
+            </h3>
+          </div>
+        )}
 
       {/* Render logo */}
       <div className={styles.logo}>
         <b>
           <i>tokenbase</i>
         </b>
-        {pathname == "/" && (
+        {pathname === "/" && (
           <IconButton icon={faAnglesLeft} onClick={openDrawer}>
             Open
           </IconButton>

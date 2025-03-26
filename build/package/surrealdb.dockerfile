@@ -11,6 +11,7 @@ COPY --from=busybox /bin/mv /bin/mv
 COPY --from=busybox /bin/cp /bin/cp
 COPY --from=busybox /bin/clear /bin/clear
 COPY --from=busybox /bin/sleep /bin/sleep
+COPY --from=busybox /bin/touch /bin/touch
 
 USER root
 

@@ -22,7 +22,7 @@ if [ $count -eq $MAX_RETRIES ]; then
   exit 1
 fi
 
-echo "Attempting to run migrations..."
+echo "Attempting to run schema scripts..."
 sleep 1
 
 # Run all .surql scripts in /docker-entrypoint-initdb.d/
@@ -53,7 +53,7 @@ if [ -d "/docker-entrypoint-initdb.d" ]; then
     fi
   done
 else
-  echo "No migration directory found"
+  echo "No schemas directory found"
   exit 1
 fi
 

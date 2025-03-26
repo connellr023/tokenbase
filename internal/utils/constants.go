@@ -4,14 +4,14 @@ const BackendEndpoint = ":8090"
 
 // Chat context details
 const (
-	MaxChatsPerConversation = 60
-	MaxChatsInAContext      = 8
+	MaxChatsInAContext = 10
 )
 
 // Ollama connection details
 const (
-	OllamaDockerChatEndpoint = "http://ollama:11434/api/chat"
-	OllamaDockerTagsEndpoint = "http://ollama:11434/api/tags"
+	OllamaDockerChatEndpoint     = "http://ollama:11434/api/chat"
+	OllamaDockerTagsEndpoint     = "http://ollama:11434/api/tags"
+	OllamaDockerGenerateEndpoint = "http://ollama:11434/api/generate"
 )
 
 // SurrealDB connection details
