@@ -1,12 +1,12 @@
 import styles from "@/styles/components/MultistepForm.module.scss";
 import React, { useState } from "react";
 import StandardButton from "./StandardButton";
+import ErrorMessage from "./ErrorMessage";
 import {
   faArrowLeft,
   faArrowRight,
   faCheck,
 } from "@fortawesome/free-solid-svg-icons";
-import ErrorMessage from "./ErrorMessage";
 
 type MultistepFormProps = {
   title: string;

@@ -178,7 +178,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           {/* Render a welcome message if there are no chats */}
           {bearer?.user && (
             <div className={styles.greetingContainer}>
-              Welcome back, {bearer.user.username.split(" ")[0] ?? "User"}...
+              Welcome back, {bearer.user.username}...
             </div>
           )}
           <TypesetRenderer>

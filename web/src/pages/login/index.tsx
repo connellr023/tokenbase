@@ -15,7 +15,8 @@ const Login: React.FC = () => {
   const { push } = useRouter();
   const { setBearer } = useBearerContext();
   const { clearChats } = useChatRecordsContext();
-  const { clearConversationRecords } = useConversationRecordsContext();
+  const { clearConversationRecords, unselectConversation } =
+    useConversationRecordsContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -53,6 +54,7 @@ const Login: React.FC = () => {
 
       clearChats();
       clearConversationRecords();
+      unselectConversation();
       setBearer({
         token: data.jwt,
         user: data.user,

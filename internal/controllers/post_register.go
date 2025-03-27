@@ -7,18 +7,24 @@ import (
 	"tokenbase/internal/utils"
 )
 
-type postRegistrationRequest struct {
+type postRegisterRequest struct {
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
-func (i *Injection) PostRegistration(w http.ResponseWriter, r *http.Request) {
+func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
 	// Parse request body
-	var req postRegistrationRequest
+	var req postRegisterRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Validate account constraints
+	if len(req.Password) < utils.MinPasswordLength || len(req.Username) < utils.MinUsernameLength || len(req.Username) > utils.MaxUsernameLength {
+		http.Error(w, ErrBadData.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -30,13 +36,7 @@ func (i *Injection) PostRegistration(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Convert user to client user
-	clientUser, ok := user.ToClientUser()
-
-	if !ok {
-		http.Error(w, ErrInvalidID.Error(), http.StatusInternalServerError)
-		return
-	}
+	clientUser := user.ToClientUser()
 
 	// Generate token
 	jwt, err := utils.GenerateJwt(clientUser)

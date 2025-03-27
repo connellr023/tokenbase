@@ -24,9 +24,14 @@ const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
   const { bearer, clearBearer } = useBearerContext();
-  const { chats, clearChats } = useChatRecordsContext();
-  const { conversationRecords, clearConversationRecords } =
-    useConversationRecordsContext();
+  const { clearChats } = useChatRecordsContext();
+  const {
+    conversationRecords,
+    clearConversationRecords,
+    selectedConversationIndex,
+    selectConversation,
+    unselectConversation,
+  } = useConversationRecordsContext();
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -38,6 +43,7 @@ const RightDrawer: React.FC = () => {
     clearBearer();
     clearChats();
     clearConversationRecords();
+    unselectConversation();
   };
 
   return (
@@ -91,8 +97,12 @@ const RightDrawer: React.FC = () => {
                       {conversationRecords.map((record, i) => (
                         <li key={i}>
                           <button
-                            className={merriweather400.className}
-                            onClick={() => {} /* TODO */}
+                            className={`${merriweather400.className} ${
+                              selectedConversationIndex === i
+                                ? styles.selected
+                                : ""
+                            }`}
+                            onClick={() => selectConversation(i)}
                             key={i}
                           >
                             {record.name}
@@ -146,15 +156,23 @@ const RightDrawer: React.FC = () => {
                   </span>
                 </div>
                 <StandardButton
-                  isDisabled={chats.length === 0}
+                  isDisabled={selectedConversationIndex === null}
                   icon={faPlus}
-                  onClick={() => {} /* TODO */}
+                  onClick={unselectConversation}
                 >
                   New Conversation
                 </StandardButton>
                 <StandardButton icon={faSignOut} onClick={logout}>
                   Logout
                 </StandardButton>
+                {bearer.user.isAdmin && (
+                  <StandardButton
+                    icon={faShieldAlt}
+                    onClick={() => pushAndClose("/admin")}
+                  >
+                    Admin
+                  </StandardButton>
+                )}
               </>
             )}
           </div>

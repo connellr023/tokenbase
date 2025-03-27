@@ -116,7 +116,7 @@ func main() {
 		middlewares.UseBearerExtractorMiddleware(r)
 
 		r.Post("/login", inj.PostLogin)
-		r.Post("/register", inj.PostRegistration)
+		r.Post("/register", inj.PostRegister)
 
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)

@@ -77,12 +77,16 @@ div.container {
         padding: 0.6rem;
         border-radius: $border-radius-2;
         background-color: transparent;
-        color: $txt-color-1;
+        color: $transparent-color-white;
         transition: $transition-2;
         text-align: left;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+
+        &.selected {
+          color: $txt-color-1;
+        }
 
         &:hover {
           background-color: $bg-color-4;

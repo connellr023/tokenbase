@@ -4,7 +4,6 @@ import (
 	"tokenbase/internal/models"
 
 	"github.com/surrealdb/surrealdb.go"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // Validates a user's credentials
@@ -38,10 +37,6 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 		return models.DbUser{}, ErrNoResults
 	}
 
-	if data.Status != DbOk {
-		return models.DbUser{}, ErrQueryFailed
-	}
-
 	return data.Result[0], nil
 }
 
@@ -57,30 +52,22 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 // - token: A JWT token of the user's login
 // - Any error that occurred
 func RegisterUser(sdb *surrealdb.DB, username string, email string, password string) (models.DbUser, error) {
-
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	password_hash := string(bytes)
-
-	if err != nil {
-		return models.DbUser{}, err
-	}
-
-	user := map[string]any{
-		"username":      username,
-		"email":         email,
-		"password_hash": password_hash,
-		"is_admin":      false,
-	}
-
-	res, err := surrealdb.Create[models.DbUser](sdb, "users", user)
+	const query = "INSERT INTO users (username, email, password_hash, is_admin) VALUES ($username, $email, crypto::bcrypt::generate($password), $is_admin) RETURN AFTER"
+	res, err := surrealdb.Query[[]models.DbUser](sdb, query, map[string]any{
+		"username": username,
+		"email":    email,
+		"password": password,
+		"is_admin": false,
+	})
 
 	if err != nil {
 		return models.DbUser{}, err
 	}
 
-	if res == nil {
-		return models.DbUser{}, ErrFailedCreateUser
+	if res == nil || len(*res) == 0 {
+		return models.DbUser{}, ErrQueryFailed
 	}
 
-	return *res, nil
+	user := (*res)[0].Result[0]
+	return user, nil
 }

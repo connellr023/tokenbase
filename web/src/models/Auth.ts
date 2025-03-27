@@ -5,7 +5,13 @@ export type LoginRequest = {
   password: string;
 };
 
-export type LoginResponse = {
+export type RegisterRequest = {
+  username: string;
+  email: string;
+  password: string;
+};
+
+export type AuthResponse = {
   jwt: string;
   user: User;
 };
