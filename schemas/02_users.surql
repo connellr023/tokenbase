@@ -5,7 +5,7 @@ DEFINE FIELD username ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD email ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD password_hash ON TABLE users TYPE string ASSERT $value != NONE;
 DEFINE FIELD is_admin ON TABLE users TYPE bool;
-DEFINE FIELD created_at ON TABLE users TYPE string VALUE <string>time::now();
+DEFINE FIELD created_at ON TABLE users TYPE int VALUE time::millis();
 
 -- Make sure ids, emails, and usernames are unique
 DEFINE INDEX users_id_index ON TABLE users FIELDS id UNIQUE;

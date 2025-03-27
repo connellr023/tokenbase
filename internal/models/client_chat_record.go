@@ -3,10 +3,10 @@ package models
 // Represents a single back-and-forth chat record
 // Will be used to represent a chat record in both Redis and SurrealDB
 type ClientChatRecord struct {
-	CacheID      int64    `json:"id"` // ID used in Redis
 	Prompt       string   `json:"prompt"`
 	PromptImages []string `json:"promptImages,omitempty"` // Base64 encoded images
 	Reply        string   `json:"reply"`
+	CreatedAt    int64    `json:"created_at"` // Score used in Redis
 }
 
 // Converts a chat record to a pair of Ollama compatible chat messages

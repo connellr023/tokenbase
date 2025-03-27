@@ -30,7 +30,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag ?? "",
         prompt,
-        bearer?.token,
+        bearer?.token
       );
 
       if (!newConversation) {
@@ -47,7 +47,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
     return { error: "Not implemented" };
   };
 
-  const constructUserDeleteChatRequest = async (chatId: number) => {
+  const constructUserDeleteChatRequest = async (createdAt: number) => {
     return { error: "Not implemented" };
   };
 

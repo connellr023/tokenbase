@@ -1,5 +1,5 @@
 type ChatToken = {
-  chatId: number;
+  createdAt: number;
   token: string;
 };
 

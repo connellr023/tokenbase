@@ -71,7 +71,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
     return { ok: constructReq(bearer.token) };
   };
 
-  const constructGuestDeleteChatRequest = async (chatId: number) => {
+  const constructGuestDeleteChatRequest = async (createdAt: number) => {
     return {
       ok: {
         headers: {
@@ -79,7 +79,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
           Authorization: `Bearer ${bearer?.token}`,
         },
         body: JSON.stringify({
-          chatId,
+          createdAt,
         }),
       },
     };

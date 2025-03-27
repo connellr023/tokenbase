@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
@@ -21,7 +22,7 @@ type postGuestChatRequest struct {
 // Endpoint for sending a prompt on a guest chat
 // The guest chat should already exist
 // The response will be streamed to the client in chunks
-// The chat ID will be sent within the first chunk which will be used to identify that specific chat interaction
+// The chat creation time will be sent within the first chunk which will be used to identify that specific chat interaction
 func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Extract token (guest session ID) from request
 	token, ok := middlewares.GetBearerFromContext(r.Context())
@@ -41,7 +42,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(token)
-	chatId, prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
+	prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
 
 	if errors.Is(err, cache.ErrSessionNotFound) {
 		http.Error(w, err.Error(), http.StatusNotFound)
@@ -95,28 +96,31 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	defer ollamaRes.Body.Close()
 
+	// Set creation time of the chat
+	creationTime := time.Now().UnixMilli()
+
 	// Keep track of the LLM's reply so far
 	var replyBuilder strings.Builder
 
 	// Stream the response to the client
 	{
-		hasSentChatId := false
+		hasSentCreationTime := false
 
 		err = utils.MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
 			// Append response to the reply string
 			replyBuilder.WriteString(data.Message.Content)
 
-			// Determine if chat ID has been sent
-			if !hasSentChatId {
-				hasSentChatId = true
+			// Determine if the creation time should be sent
+			if !hasSentCreationTime {
+				hasSentCreationTime = true
 
 				return models.ChatToken{
-					CacheChatID: chatId,
-					Token:       data.Message.Content,
+					CreatedAt: creationTime,
+					Token:     data.Message.Content,
 				}
 			}
 
-			// No need to send chat ID again
+			// No need to send creation time again
 			return models.ChatToken{
 				Token: data.Message.Content,
 			}
@@ -136,9 +140,9 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Cache chat in Redis
 	record := models.ClientChatRecord{
-		CacheID: chatId,
-		Prompt:  req.Prompt,
-		Reply:   replyBuilder.String(),
+		CreatedAt: creationTime,
+		Prompt:    req.Prompt,
+		Reply:     replyBuilder.String(),
 	}
 
 	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {

@@ -3,7 +3,7 @@ type User = {
   email: string;
   username: string;
   isAdmin: boolean;
-  createdAt: string;
+  createdAt: number;
 };
 
 export default User;
