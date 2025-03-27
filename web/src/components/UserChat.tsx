@@ -30,7 +30,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag ?? "",
         prompt,
-        bearer?.token
+        bearer?.token,
       );
 
       if (!newConversation) {
