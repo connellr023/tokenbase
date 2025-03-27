@@ -1,14 +1,23 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
 import React, { useState } from "react";
-import { RegisterRequest } from "@/models/Register";
 import { emailRegex } from "@/utils/regexps";
-import { minPasswordLength } from "@/utils/constants";
+import {
+  backendEndpoint,
+  maxUsernameLength,
+  minPasswordLength,
+  minUsernameLength,
+} from "@/utils/constants";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
+import { useRouter } from "next/router";
+import { AuthResponse, RegisterRequest } from "@/models/Auth";
+
+const registerEndpont = backendEndpoint + "api/register";
 
 const Register: React.FC = () => {
+  const { push } = useRouter();
   const { setBearer } = useBearerContext();
   const { clearChats } = useChatRecordsContext();
   const { clearConversationRecords, unselectConversation } =
@@ -20,7 +29,11 @@ const Register: React.FC = () => {
   const isStepValid = (step: number) => {
     switch (step) {
       case 0:
-        return username.trim() !== "";
+        const trimmedUsername = username.trim();
+        return (
+          trimmedUsername.length >= minUsernameLength &&
+          trimmedUsername.length <= maxUsernameLength
+        );
       case 1:
         return email.trim() !== "" && emailRegex.test(email);
       case 2:
@@ -37,15 +50,43 @@ const Register: React.FC = () => {
       password,
     };
 
-    console.log(registerRequest);
-    console.log("Form submitted");
+    try {
+      const res = await fetch(registerEndpont, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(registerRequest),
+      });
 
-    clearChats();
-    clearConversationRecords();
-    unselectConversation();
-    setBearer({
-      token: "Dummy",
-    });
+      if (!res.ok) {
+        const responseBody = await res.text();
+
+        if (responseBody.includes("`users_username_index` already contains")) {
+          return `Username "${username}" has already been used`;
+        } else if (
+          responseBody.includes("`users_email_index` already contains")
+        ) {
+          return `An account using "${email}" already exists`;
+        } else {
+          return "Error registering";
+        }
+      }
+
+      const data = (await res.json()) as AuthResponse;
+
+      clearChats();
+      clearConversationRecords();
+      unselectConversation();
+      setBearer({
+        token: data.jwt,
+        user: data.user,
+      });
+
+      push("/");
+    } catch {
+      return "An error has occurred during registration";
+    }
   };
 
   const steps = [

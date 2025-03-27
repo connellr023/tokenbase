@@ -20,6 +20,12 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   const { bearer } = useBearerContext();
   const [isOpen, setOpen] = useState(true);
 
+  useEffect(() => {
+    if (bearer) {
+      setOpen(false);
+    }
+  }, [bearer]);
+
   return (
     <HomeModalContext.Provider value={{ isOpen, close: () => setOpen(false) }}>
       {children}

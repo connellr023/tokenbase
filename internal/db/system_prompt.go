@@ -7,12 +7,10 @@ import (
 	sdbModels "github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
-var (
-	systemPromptRecordID = sdbModels.RecordID{
-		Table: "system_prompt",
-		ID:    "main",
-	}
-)
+var systemPromptRecordID = sdbModels.RecordID{
+	Table: "system_prompt",
+	ID:    "main",
+}
 
 // Gets the system prompt from persistent storage
 //

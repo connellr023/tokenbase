@@ -6,7 +6,6 @@ DEFINE FIELD name ON TABLE conversations TYPE string ASSERT $value != NONE;
 DEFINE FIELD created_at ON TABLE conversations TYPE string VALUE <string>time::now();
 DEFINE FIELD updated_at ON TABLE conversations TYPE string VALUE <string>time::now();
 
-
 -- Make sure the id is unique
 DEFINE INDEX conversation_id_index ON TABLE conversations FIELDS id UNIQUE;
 

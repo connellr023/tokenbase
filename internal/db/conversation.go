@@ -45,7 +45,7 @@ func NewConversation(sdb *surrealdb.DB, name string, userID string) (models.DbCo
 // - A list of conversations
 // - An error if the conversations could not be retrieved
 func GetAllConversations(sdb *surrealdb.DB, userID string) ([]models.DbConversation, error) {
-	const query = "SELECT * FROM conversations WHERE user_id = <record>$user_id"
+	const query = "SELECT * FROM conversations WHERE user_id = <record>$user_id ORDER BY updated_at DESC"
 	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
 		"user_id": userID,
 	})

@@ -2,6 +2,13 @@ package utils
 
 const BackendEndpoint = ":8090"
 
+// Account constraints
+const (
+	MinPasswordLength = 8
+	MinUsernameLength = 5
+	MaxUsernameLength = 25
+)
+
 // Chat context details
 const (
 	MaxChatsInAContext = 10

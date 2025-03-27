@@ -97,7 +97,11 @@ const RightDrawer: React.FC = () => {
                       {conversationRecords.map((record, i) => (
                         <li key={i}>
                           <button
-                            className={merriweather400.className}
+                            className={`${merriweather400.className} ${
+                              selectedConversationIndex === i
+                                ? styles.selected
+                                : ""
+                            }`}
                             onClick={() => selectConversation(i)}
                             key={i}
                           >
