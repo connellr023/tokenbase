@@ -24,7 +24,7 @@ func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
 
 	// Validate account constraints
 	if len(req.Password) < utils.MinPasswordLength || len(req.Username) < utils.MinUsernameLength || len(req.Username) > utils.MaxUsernameLength {
-		http.Error(w, ErrBadData.Error(), http.StatusBadRequest)
+		http.Error(w, utils.ErrBadData.Error(), http.StatusBadRequest)
 		return
 	}
 

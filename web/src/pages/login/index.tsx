@@ -1,7 +1,7 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
 import React, { useState } from "react";
-import { LoginRequest, LoginResponse } from "@/models/Login";
+import { LoginRequest, AuthResponse } from "@/models/Auth";
 import { emailRegex } from "@/utils/regexps";
 import { backendEndpoint, minPasswordLength } from "@/utils/constants";
 import { useBearerContext } from "@/contexts/BearerContext";
@@ -50,7 +50,7 @@ const Login: React.FC = () => {
         return "Check your email and password.";
       }
 
-      const data = (await res.json()) as LoginResponse;
+      const data = (await res.json()) as AuthResponse;
 
       clearChats();
       clearConversationRecords();

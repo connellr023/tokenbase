@@ -48,7 +48,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get the system prompt
-	systemPrompt, err := utils.FetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -88,7 +88,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 
 	// Stream the response to the client
 	{
-		err := utils.MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
+		err := MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
 			replyBuilder.WriteString(data.Message.Content)
 
 			return models.ChatToken{
@@ -98,7 +98,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		})
 
 		if err != nil && !errors.Is(err, utils.ErrStreamAborted) {
-			utils.WriteStreamError(w, err)
+			WriteStreamError(w, err)
 			return
 		}
 	}
@@ -148,7 +148,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 
 	// Check for errors
 	for err := range errorChan {
-		utils.WriteStreamError(w, err)
+		WriteStreamError(w, err)
 		return
 	}
 }

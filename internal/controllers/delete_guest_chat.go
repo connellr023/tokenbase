@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/middlewares"
+	"tokenbase/internal/utils"
 )
 
 type deleteGuestChatRequest struct {
@@ -16,7 +17,7 @@ func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
 	token, ok := middlewares.GetBearerFromContext(r.Context())
 
 	if !ok {
-		http.Error(w, ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
+		http.Error(w, utils.ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
 		return
 	}
 
