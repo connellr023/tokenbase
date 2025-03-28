@@ -17,7 +17,7 @@ import (
 // Returns:
 // - The system prompt
 // - An error if the system prompt could not be retrieved or cached
-func FetchSystemPrompt(sdb *surrealdb.DB, rdb *redis.Client) (string, error) {
+func fetchSystemPrompt(sdb *surrealdb.DB, rdb *redis.Client) (string, error) {
 	// Check cache for system prompt
 	systemPrompt, err := cache.GetSystemPrompt(rdb)
 

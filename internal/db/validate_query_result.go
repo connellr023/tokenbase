@@ -15,7 +15,7 @@ import (
 // Returns:
 // - An error if the query failed or if there are no results.
 // - If out is not nil, it will be populated with the first result.
-func ValidateSingleQueryResult[T any](result *[]surrealdb.QueryResult[[]T], out *T) error {
+func validateSingleQueryResult[T any](result *[]surrealdb.QueryResult[[]T], out *T) error {
 	if result == nil || len(*result) == 0 {
 		return utils.ErrQueryFailed
 	}
@@ -45,16 +45,11 @@ func ValidateSingleQueryResult[T any](result *[]surrealdb.QueryResult[[]T], out 
 // Returns:
 // - A slice of type T containing the data from the query result.
 // - An error if the query failed or if there are no results.
-func ValidateArrayQueryResult[T any](result *[]surrealdb.QueryResult[[]T]) ([]T, error) {
+func validateArrayQueryResult[T any](result *[]surrealdb.QueryResult[[]T]) ([]T, error) {
 	if result == nil || len(*result) == 0 {
 		return nil, utils.ErrQueryFailed
 	}
 
 	data := (*result)[0].Result
-
-	if len(data) == 0 {
-		return nil, utils.ErrNoResults
-	}
-
 	return data, nil
 }

@@ -25,7 +25,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
   const { bearer } = useBearerContext();
 
   if (!bearer?.user) {
-    throw new Error("User not authenticated");
+    throw new Error("Bearer token is not available");
   }
 
   const constructUserPromptRequest = async (prompt: string) => {
@@ -60,7 +60,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag,
         prompt,
-        bearer.token,
+        bearer.token
       );
 
       if (!newConversation) {
@@ -103,13 +103,12 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
   };
 
   useEffect(() => {
-    const getAllConversations = async () => {
+    // Fetch all conversations when the component mounts
+    (async () => {
       const conversations = await reqAllConversations(bearer.token);
       setConversationRecords(conversations);
-    };
-
-    getAllConversations();
-  }, [bearer]);
+    })();
+  }, []);
 
   return (
     <ChatContainer

@@ -28,7 +28,7 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 	}
 
 	var user models.DbUser
-	err = ValidateSingleQueryResult(res, &user)
+	err = validateSingleQueryResult(res, &user)
 	return user, err
 }
 
@@ -57,6 +57,6 @@ func RegisterUser(sdb *surrealdb.DB, username string, email string, password str
 	}
 
 	var user models.DbUser
-	err = ValidateSingleQueryResult(res, &user)
+	err = validateSingleQueryResult(res, &user)
 	return user, err
 }

@@ -47,7 +47,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the system prompt
-	systemPrompt, err := FetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
