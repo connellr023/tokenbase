@@ -29,3 +29,14 @@ func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
 
 	return res.Prompt, nil
 }
+
+func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (string, error) {
+	const query = "UPDATE system_prompt SET prompt = $prompt"
+	_, err := surrealdb.Query[string](sdb, query, map[string]interface{}{
+		"prompt": prompt,
+	})
+	if err != nil {
+		return "", err
+	}
+	return prompt, nil
+}
