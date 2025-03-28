@@ -5,5 +5,5 @@ type ClientUser struct {
 	Username  string `json:"username"`
 	Email     string `json:"email"`
 	IsAdmin   bool   `json:"isAdmin"`
-	CreatedAt string `json:"createdAt"`
+	CreatedAt int64  `json:"createdAt"`
 }

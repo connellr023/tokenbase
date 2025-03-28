@@ -9,7 +9,7 @@ import (
 // Creates a new conversation in the database
 //
 // Parameters:
-// - sdb: A pointer to the surrealdb.DB instance
+// - sdb: A pointer to the surrealdb database instance
 // - name: The name of the conversation
 // - userID: The user ID of the conversation owner
 //

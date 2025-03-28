@@ -5,56 +5,45 @@ import (
 	"encoding/json"
 	"fmt"
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
 
-// Get the next chat ID and all previous chat records for a guest/user
+// Get the all previous chat records for a guest/user
 //
 // Parameters:
 // - rdb: Redis client
 // - key: The key for the guest/user session
 //
 // Returns:
-// - The next chat ID
 // - All previous chat records
 // - Any error that occurred
-func GetChatContext(rdb *redis.Client, key string) (int64, []models.ClientChatRecord, error) {
+func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
 	// Check if session exists
 	existsCmd := pipe.Exists(ctx, key)
 
-	// Get the next chat ID
-	incrCmd := pipe.Incr(ctx, globalChatIdCounterKey)
-
-	// Fetch all messages from highest chat ID to lowest
-	// Keep the number of messages to a maximum
-	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, utils.MaxChatsInAContext-1)
+	// Fetch all messages from most recent creation time to oldest
+	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, -1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
-		return -1, nil, err
+		return nil, err
 	}
 
 	// Ensure session exists
-	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
-		return -1, nil, ErrSessionNotFound
-	}
-
-	// Get the next chat ID
-	chatId, err := incrCmd.Result()
-
-	if err != nil {
-		return -1, nil, err
+	if exists, err := existsCmd.Result(); err != nil {
+		return nil, err
+	} else if exists == 0 {
+		return nil, ErrKeyNotFound
 	}
 
 	// Deserialize chat records
 	serializedRecords, err := zrevrangeCmd.Result()
 
 	if err != nil {
-		return -1, nil, err
+		return nil, err
 	}
 
 	chatRecords := make([]models.ClientChatRecord, 0, len(serializedRecords))
@@ -67,7 +56,7 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ClientChatRe
 		}
 	}
 
-	return chatId, chatRecords, nil
+	return chatRecords, nil
 }
 
 // Save chat records for a guest/user
@@ -81,6 +70,11 @@ func GetChatContext(rdb *redis.Client, key string) (int64, []models.ClientChatRe
 // Returns:
 // - Any error that occurred
 func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChatRecord) error {
+	// No records to save
+	if len(records) == 0 {
+		return nil
+	}
+
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
@@ -95,7 +89,7 @@ func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChat
 		}
 
 		zRecords = append(zRecords, redis.Z{
-			Score:  float64(record.CacheID),
+			Score:  float64(record.CreatedAt),
 			Member: recordJson,
 		})
 	}
@@ -116,16 +110,16 @@ func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChat
 // Parameters:
 // - rdb: Redis client
 // - key: The key for the guest/user session
-// - chatId: The chat ID to delete
+// - createdAt: The creation time of the chat record to delete
 //
 // Returns:
 // - Any error that occurred
-func DeleteChatRecord(rdb *redis.Client, key string, chatId int64) error {
+func DeleteChatRecord(rdb *redis.Client, key string, createdAt int64) error {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
-	// Remove the chat record from the sorted set by chat ID
-	score := fmt.Sprint(chatId)
+	// Remove the chat record from the sorted set by creation time
+	score := fmt.Sprint(createdAt)
 	zremrangebyrankCmd := pipe.ZRemRangeByScore(ctx, key, score, score)
 
 	// Execute pipeline

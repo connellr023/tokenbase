@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { firaMono400, merriweather400 } from "@/utils/fonts";
 import {
@@ -16,15 +17,16 @@ import {
   faShieldAlt,
   faSignIn,
   faSignOut,
+  faBox,
 } from "@fortawesome/free-solid-svg-icons";
-import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
-import { faBox } from "@fortawesome/free-solid-svg-icons/faBox";
+import { reqConversationChats } from "@/utils/reqConversationChats";
+import { useState } from "react";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
   const { isDrawerOpen, closeDrawer } = useRightDrawerContext();
   const { bearer, clearBearer } = useBearerContext();
-  const { clearChats } = useChatRecordsContext();
+  const { clearChats, setChats } = useChatRecordsContext();
   const {
     conversationRecords,
     clearConversationRecords,
@@ -32,6 +34,7 @@ const RightDrawer: React.FC = () => {
     selectConversation,
     unselectConversation,
   } = useConversationRecordsContext();
+  const [isError, setError] = useState(false);
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -44,6 +47,33 @@ const RightDrawer: React.FC = () => {
     clearChats();
     clearConversationRecords();
     unselectConversation();
+  };
+
+  const updateConversationChats = async (conversationIndex: number) => {
+    if (conversationIndex === selectedConversationIndex || !bearer?.token) {
+      return;
+    }
+
+    selectConversation(conversationIndex);
+    setError(false);
+
+    const selectedConversation = conversationRecords![conversationIndex];
+    const chats = await reqConversationChats(
+      bearer.token,
+      selectedConversation.id,
+    );
+
+    if (chats === null) {
+      setError(true);
+      return;
+    }
+
+    setChats(chats);
+  };
+
+  const newConversation = () => {
+    unselectConversation();
+    setChats([]);
   };
 
   return (
@@ -80,7 +110,7 @@ const RightDrawer: React.FC = () => {
             </div>
           ) : (
             <>
-              {conversationRecords !== null ? (
+              {conversationRecords !== null && !isError ? (
                 <>
                   {conversationRecords.length === 0 ? (
                     <div className={styles.noConversationHistoryContainer}>
@@ -102,7 +132,7 @@ const RightDrawer: React.FC = () => {
                                 ? styles.selected
                                 : ""
                             }`}
-                            onClick={() => selectConversation(i)}
+                            onClick={() => updateConversationChats(i)}
                             key={i}
                           >
                             {record.name}
@@ -118,7 +148,7 @@ const RightDrawer: React.FC = () => {
                     <FontAwesomeIcon icon={faBox} size="3x" />
                   </div>
                   <p>
-                    An error occurred while fetching your conversation history.
+                    Something went wrong while fetching your conversation data.
                   </p>
                 </div>
               )}
@@ -158,7 +188,7 @@ const RightDrawer: React.FC = () => {
                 <StandardButton
                   isDisabled={selectedConversationIndex === null}
                   icon={faPlus}
-                  onClick={unselectConversation}
+                  onClick={newConversation}
                 >
                   New Conversation
                 </StandardButton>

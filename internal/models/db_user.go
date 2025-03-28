@@ -10,7 +10,7 @@ type DbUser struct {
 	Email        string          `json:"email"`
 	PasswordHash string          `json:"password_hash"`
 	IsAdmin      bool            `json:"is_admin"`
-	CreatedAt    string          `json:"created_at"`
+	CreatedAt    int64           `json:"created_at"`
 }
 
 func (u DbUser) ToClientUser() ClientUser {

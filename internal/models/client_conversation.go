@@ -4,6 +4,6 @@ type ClientConversation struct {
 	ID        string `json:"id"`
 	UserID    string `json:"userId"`
 	Name      string `json:"name"`
-	CreatedAt string `json:"createdAt"`
-	UpdatedAt string `json:"updatedAt"`
+	CreatedAt int64  `json:"createdAt"`
+	UpdatedAt int64  `json:"updatedAt"`
 }
