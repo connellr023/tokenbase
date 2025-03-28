@@ -110,7 +110,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        }
+        },
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -161,7 +161,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
       // Remove the chat from the list
       setChats((prev) =>
-        prev.filter((chat) => chat.createdAt !== chatCreatedAt)
+        prev.filter((chat) => chat.createdAt !== chatCreatedAt),
       );
     } catch {
       setError("Failed to send delete request to backend");
