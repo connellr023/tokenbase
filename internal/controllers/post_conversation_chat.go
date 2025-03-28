@@ -39,7 +39,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Check context of conversation (expected to be cached)
-	conversationKey := cache.FmtConversationKey(req.ConversationID)
+	conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
 	prevChatRecords, err := cache.GetAllChats(i.Rdb, conversationKey)
 
 	if err != nil {

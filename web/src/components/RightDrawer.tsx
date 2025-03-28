@@ -50,7 +50,7 @@ const RightDrawer: React.FC = () => {
   };
 
   const updateConversationChats = async (conversationIndex: number) => {
-    if (conversationIndex === selectedConversationIndex) {
+    if (conversationIndex === selectedConversationIndex || !bearer?.token) {
       return;
     }
 
@@ -58,7 +58,10 @@ const RightDrawer: React.FC = () => {
     setError(false);
 
     const selectedConversation = conversationRecords![conversationIndex];
-    const chats = await reqConversationChats(selectedConversation.id);
+    const chats = await reqConversationChats(
+      bearer.token,
+      selectedConversation.id
+    );
 
     if (chats === null) {
       setError(true);

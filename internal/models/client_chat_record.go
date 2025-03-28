@@ -6,7 +6,7 @@ type ClientChatRecord struct {
 	Prompt       string   `json:"prompt"`
 	PromptImages []string `json:"promptImages"` // Base64 encoded images
 	Reply        string   `json:"reply"`
-	CreatedAt    int64    `json:"created_at"` // Score used in Redis
+	CreatedAt    int64    `json:"createdAt"` // Score used in Redis
 }
 
 // Converts a chat record to a pair of Ollama compatible chat messages

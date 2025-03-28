@@ -75,3 +75,40 @@ func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, rep
 	chat := data[0]
 	return chat, nil
 }
+
+// Delete a chat record from the database by its creation time
+//
+// Parameters:
+// - sdb: a surrealdb database instance
+// - createdAt: the creation time of the chat record
+// - userID: the ID of the user
+// - conversationID: the ID of the conversation
+//
+// Returns:
+// - The deleted chat record
+// - An error if the chat record could not be deleted
+func DeleteChatRecordByCreationTime(sdb *surrealdb.DB, createdAt int64, userID string, conversationID string) (models.DbChatRecord, error) {
+	const query = "IF (<record>$conversation_id).user_id = <record>$user_id THEN (DELETE FROM chat_records WHERE conversation_id = <record>$conversation_id AND created_at = $created_at RETURN AFTER) ELSE ([]) END"
+	res, err := surrealdb.Query[[]models.DbChatRecord](sdb, query, map[string]any{
+		"conversation_id": conversationID,
+		"user_id":         userID,
+		"created_at":      createdAt,
+	})
+
+	if err != nil {
+		return models.DbChatRecord{}, err
+	}
+
+	if res == nil || len(*res) == 0 {
+		return models.DbChatRecord{}, ErrQueryFailed
+	}
+
+	data := (*res)[0].Result
+
+	if len(data) == 0 {
+		return models.DbChatRecord{}, ErrNoResults
+	}
+
+	chat := data[0]
+	return chat, nil
+}

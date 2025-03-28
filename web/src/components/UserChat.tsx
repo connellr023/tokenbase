@@ -58,7 +58,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
     // If there is no selected conversation, we want to start a new one
     if (selectedConversationIndex === null) {
       const newConversation = await reqNewConversation(
-        availableModels[selectedModelIndex].tag ?? "",
+        availableModels[selectedModelIndex].tag,
         prompt,
         bearer.token
       );
@@ -82,13 +82,24 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
   };
 
   const constructUserDeleteChatRequest = async (createdAt: number) => {
-    if (conversationRecords === null) {
+    if (conversationRecords === null || selectedConversationIndex === null) {
       return {
-        error: "Cannot delete chat without conversation records",
+        error: "Cannot delete chat without conversation records and selection",
       };
     }
 
-    return { error: "Not implemented" };
+    return {
+      ok: {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`,
+        },
+        body: JSON.stringify({
+          conversationId: conversationRecords[selectedConversationIndex].id,
+          createdAt,
+        }),
+      },
+    };
   };
 
   useEffect(() => {

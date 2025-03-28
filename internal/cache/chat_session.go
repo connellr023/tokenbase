@@ -11,12 +11,13 @@ import (
 // Format a conversation key for Redis
 //
 // Parameters:
-// - conversationId: The unique conversation ID
+// - userID: The unique user ID
+// - conversationID: The unique conversation ID
 //
 // Returns:
 // - The formatted conversation key
-func FmtConversationKey(conversationId string) string {
-	return "conversation:" + conversationId
+func FmtConversationKey(userID string, conversationID string) string {
+	return "conversation:(" + userID + "," + conversationID + ")"
 }
 
 // Format a guest session key for Redis

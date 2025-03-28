@@ -20,8 +20,6 @@ type postGuestChatRequest struct {
 
 // Endpoint for sending a prompt on a guest chat
 // The guest chat should already exist
-// The response will be streamed to the client in chunks
-// The chat creation time will be sent within the first chunk which will be used to identify that specific chat interaction
 func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Extract token (guest session ID) from request
 	token, ok := middlewares.GetBearerFromContext(r.Context())

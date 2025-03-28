@@ -90,7 +90,7 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Create conversation in cache
-	conversationKey := cache.FmtConversationKey(clientConversation.ID)
+	conversationKey := cache.FmtConversationKey(user.ID, clientConversation.ID)
 	if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

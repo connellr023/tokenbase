@@ -145,6 +145,7 @@ func main() {
 			r.Route("/chat", func(r chi.Router) {
 				r.Get("/all/{conversation_id}", inj.GetConversationChats)
 				r.Post("/prompt", inj.PostConversationChat)
+				r.Delete("/delete", inj.DeleteConversationChat)
 			})
 		})
 	})

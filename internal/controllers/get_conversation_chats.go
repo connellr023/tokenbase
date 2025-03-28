@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
+	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
 
 	"github.com/go-chi/chi/v5"
@@ -15,11 +16,19 @@ type getConversationChatsResponse struct {
 }
 
 func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request) {
+	// Extract user from JWT
+	user, err := middlewares.GetUserFromJwt(r.Context())
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
 
 	// Extract the conversation ID from the URL
 	conversationID := chi.URLParam(r, "conversation_id")
-	conversationKey := cache.FmtConversationKey(conversationID)
+	conversationKey := cache.FmtConversationKey(user.ID, conversationID)
 
 	// Check if cache contains the client chat records
 	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey); err == nil {
