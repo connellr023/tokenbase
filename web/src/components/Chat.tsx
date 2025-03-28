@@ -5,17 +5,17 @@ import TypeCursor from "./TypeCursor";
 import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 
 type ChatProps = {
-  chatId: number;
+  createdAt: number;
   prompt: string;
   reply: string;
   isComplete: boolean;
   isMostRecent: boolean;
-  onDelete?: (chatId: number) => void;
+  onDelete?: (createdAt: number) => void;
 };
 
 
 const Chat: React.FC<ChatProps> = ({
-  chatId,
+  createdAt,
   prompt,
   reply,
   isComplete,
@@ -46,7 +46,7 @@ const Chat: React.FC<ChatProps> = ({
           <IconButton
             icon={faTrash}
             color={IconButtonColor.Red}
-            onClick={() => onDelete?.(chatId)}
+            onClick={() => onDelete?.(createdAt)}
           >
             Delete
           </IconButton>

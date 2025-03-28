@@ -6,40 +6,41 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 	"tokenbase/internal/cache"
+	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 )
 
-type postGuestChatRequest struct {
-	Prompt string `json:"prompt"`
-	Model  string `json:"model"`
+type postConversationChatRequest struct {
+	Prompt         string `json:"prompt"`
+	Model          string `json:"model"`
+	ConversationID string `json:"conversationId"`
 }
 
-// Endpoint for sending a prompt on a guest chat
-// The guest chat should already exist
-func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
-	// Extract token (guest session ID) from request
-	token, ok := middlewares.GetBearerFromContext(r.Context())
+func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request) {
+	// Extract user from JWT
+	user, err := middlewares.GetUserFromJwt(r.Context())
 
-	if !ok {
-		http.Error(w, ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
 
-	// Parse request body
-	var req postGuestChatRequest
+	// Parse request
+	var req postConversationChatRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Check context of conversation
-	guestSessionKey := cache.FmtGuestSessionKey(token)
-	prevChatRecords, err := cache.GetAllChats(i.Rdb, guestSessionKey)
+	// Check context of conversation (expected to be cached)
+	conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
+	prevChatRecords, err := cache.GetAllChats(i.Rdb, conversationKey)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -102,9 +103,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Check if the chat was cancelled before any reply was sent
 	if replyBuilder.Len() == 0 {
-		// Do not bother saving the chat record
 		return
 	}
 
@@ -112,15 +111,43 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// TODO
 	promptImages := []string{}
 
-	// Cache chat in Redis
-	record := models.ClientChatRecord{
-		CreatedAt:    creationTime,
-		Prompt:       req.Prompt,
-		PromptImages: promptImages,
-		Reply:        replyBuilder.String(),
-	}
+	// Aggregate saving the chat record in the database and cache
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	errorChan := make(chan error, 2)
 
-	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {
+	// Save chat record in the database
+	go func() {
+		defer wg.Done()
+
+		if _, err := db.SaveChatRecord(i.Sdb, req.Prompt, promptImages, replyBuilder.String(), creationTime, user.ID, req.ConversationID); err != nil {
+			errorChan <- err
+		}
+	}()
+
+	// Cache chat record
+	go func() {
+		defer wg.Done()
+
+		record := models.ClientChatRecord{
+			CreatedAt:    creationTime,
+			Prompt:       req.Prompt,
+			PromptImages: promptImages,
+			Reply:        replyBuilder.String(),
+		}
+
+		if err := cache.SaveChatRecords(i.Rdb, conversationKey, record); err != nil {
+			errorChan <- err
+		}
+	}()
+
+	go func() {
+		wg.Wait()
+		close(errorChan)
+	}()
+
+	// Check for errors
+	for err := range errorChan {
 		utils.WriteStreamError(w, err)
 		return
 	}

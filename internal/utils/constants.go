@@ -9,11 +9,6 @@ const (
 	MaxUsernameLength = 25
 )
 
-// Chat context details
-const (
-	MaxChatsInAContext = 10
-)
-
 // Ollama connection details
 const (
 	OllamaDockerChatEndpoint     = "http://ollama:11434/api/chat"

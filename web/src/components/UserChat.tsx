@@ -24,13 +24,43 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
   const { availableModels, selectedModelIndex } = useModelsContext();
   const { bearer } = useBearerContext();
 
+  if (!bearer?.user) {
+    throw new Error("User not authenticated");
+  }
+
   const constructUserPromptRequest = async (prompt: string) => {
+    if (conversationRecords === null) {
+      return {
+        error: "Cannot create prompt request without conversation records",
+      };
+    }
+
+    const constructReq = (conversationId: string) => {
+      if (availableModels.length === 0) {
+        return {
+          error: "No models available",
+        };
+      }
+
+      return {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`,
+        },
+        body: JSON.stringify({
+          prompt,
+          model: availableModels[selectedModelIndex].tag,
+          conversationId,
+        }),
+      };
+    };
+
     // If there is no selected conversation, we want to start a new one
     if (selectedConversationIndex === null) {
       const newConversation = await reqNewConversation(
-        availableModels[selectedModelIndex].tag ?? "",
+        availableModels[selectedModelIndex].tag,
         prompt,
-        bearer?.token,
+        bearer.token,
       );
 
       if (!newConversation) {
@@ -38,24 +68,41 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       }
 
       // Add the new conversation to the conversation records
-      setConversationRecords([newConversation, ...(conversationRecords ?? [])]);
+      setConversationRecords([newConversation, ...conversationRecords]);
       selectConversation(0);
 
-      console.log(newConversation);
-    }
+      return { ok: constructReq(newConversation.id) };
+    } else {
+      // There is already a selected conversation
+      const currentConversation =
+        conversationRecords[selectedConversationIndex];
 
-    return { error: "Not implemented" };
+      return { ok: constructReq(currentConversation.id) };
+    }
   };
 
-  const constructUserDeleteChatRequest = async (chatId: number) => {
-    return { error: "Not implemented" };
+  const constructUserDeleteChatRequest = async (createdAt: number) => {
+    if (conversationRecords === null || selectedConversationIndex === null) {
+      return {
+        error: "Cannot delete chat without conversation records and selection",
+      };
+    }
+
+    return {
+      ok: {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`,
+        },
+        body: JSON.stringify({
+          conversationId: conversationRecords[selectedConversationIndex].id,
+          createdAt,
+        }),
+      },
+    };
   };
 
   useEffect(() => {
-    if (!bearer?.user) {
-      return;
-    }
-
     const getAllConversations = async () => {
       const conversations = await reqAllConversations(bearer.token);
       setConversationRecords(conversations);

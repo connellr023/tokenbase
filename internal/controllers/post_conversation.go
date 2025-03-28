@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
@@ -83,8 +84,16 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compose response
+	clientConversation := dbConversation.ToClientConversation()
 	clientRes := postConversationResponse{
-		Conversation: dbConversation.ToClientConversation(),
+		Conversation: clientConversation,
+	}
+
+	// Create conversation in cache
+	conversationKey := cache.FmtConversationKey(user.ID, clientConversation.ID)
+	if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
 
 	// Send response

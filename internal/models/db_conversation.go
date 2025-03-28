@@ -8,8 +8,8 @@ type DbConversation struct {
 	ID        models.RecordID `json:"id"`
 	UserID    models.RecordID `json:"user_id"`
 	Name      string          `json:"name"`
-	CreatedAt string          `json:"created_at"`
-	UpdatedAt string          `json:"updated_at"`
+	CreatedAt int64           `json:"created_at"`
+	UpdatedAt int64           `json:"updated_at"`
 }
 
 func (c DbConversation) ToClientConversation() ClientConversation {

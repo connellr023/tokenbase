@@ -2,8 +2,8 @@ type Conversation = {
   id: string;
   userId: string;
   name: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 };
 
 export default Conversation;

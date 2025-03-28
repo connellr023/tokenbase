@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 
 type HttpChatReq = {
   headers?: HeadersInit;
@@ -24,7 +25,7 @@ type ChatContainerProps = {
   deleteEndpoint: string;
   suggestions: string[];
   constructPromptRequest: (prompt: string) => Promise<Result<HttpChatReq>>;
-  constructDeleteRequest: (chatId: number) => Promise<Result<HttpChatReq>>;
+  constructDeleteRequest: (createdAt: number) => Promise<Result<HttpChatReq>>;
 };
 
 const ChatContainer: React.FC<ChatContainerProps> = ({
@@ -95,9 +96,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             return;
           }
 
-          // Check if this chunk contains the chat ID
-          if (chunk.chatId) {
-            newChat.id = chunk.chatId;
+          // Check if this chunk contains the timestamp
+          if (chunk.createdAt) {
+            newChat.createdAt = chunk.createdAt;
           }
 
           // Construct the new chat entry
@@ -127,19 +128,19 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       // Stream is finished, so add the chat to the list
       setStreamingChat(null);
 
-      // Add the chat to the list if it has a chat ID
-      if (newChat.id) {
+      // Add the chat to the list if it has a timestamp
+      if (newChat.createdAt) {
         setChats((prev) => [...prev, newChat]);
       }
     }, 200);
   };
 
-  const onChatDelete = async (chatId: number) => {
+  const onChatDelete = async (chatCreatedAt: number) => {
     // Clear any previous error
     setError(null);
 
     // Construct the request using the provided callback
-    const { ok, error } = await constructDeleteRequest(chatId);
+    const { ok, error } = await constructDeleteRequest(chatCreatedAt);
 
     if (error) {
       setError(error);
@@ -159,7 +160,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       }
 
       // Remove the chat from the list
-      setChats((prev) => prev.filter((chat) => chat.id !== chatId));
+      setChats((prev) =>
+        prev.filter((chat) => chat.createdAt !== chatCreatedAt),
+      );
     } catch {
       setError("Failed to send delete request to backend");
     }
@@ -201,8 +204,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* Render all finished chats */}
             {chats.map((chat, i) => (
               <Chat
-                key={chat.id}
-                chatId={chat.id ?? -1}
+                key={chat.createdAt}
+                createdAt={chat.createdAt ?? -1}
                 prompt={chat.prompt}
                 reply={chat.reply}
                 isComplete={true}
@@ -214,8 +217,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* If a chat reply is being streamed back, render it here */}
             {streamingChat && (
               <Chat
-                key={streamingChat.id ?? -1}
-                chatId={streamingChat.id ?? -1}
+                key={streamingChat.createdAt ?? -1}
+                createdAt={streamingChat.createdAt ?? -1}
                 prompt={streamingChat.prompt}
                 reply={streamingChat.reply}
                 isMostRecent={true}
