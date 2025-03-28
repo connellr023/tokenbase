@@ -4,7 +4,7 @@ package models
 // Will be used to represent a chat record in both Redis and SurrealDB
 type ClientChatRecord struct {
 	Prompt       string   `json:"prompt"`
-	PromptImages []string `json:"promptImages,omitempty"` // Base64 encoded images
+	PromptImages []string `json:"promptImages"` // Base64 encoded images
 	Reply        string   `json:"reply"`
 	CreatedAt    int64    `json:"created_at"` // Score used in Redis
 }

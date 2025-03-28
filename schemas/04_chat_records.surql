@@ -5,7 +5,7 @@ DEFINE FIELD conversation_id ON TABLE chat_records TYPE record ASSERT $value != 
 DEFINE FIELD prompt ON TABLE chat_records TYPE string;
 DEFINE FIELD reply ON TABLE chat_records TYPE string;
 DEFINE FIELD prompt_images ON TABLE chat_records TYPE array<string> DEFAULT ALWAYS [];
-DEFINE FIELD created_at ON TABLE chat_records TYPE int VALUE time::millis();
+DEFINE FIELD created_at ON TABLE chat_records TYPE int DEFAULT ALWAYS time::millis();
 
 -- Make sure the id is unique
 DEFINE INDEX chat_record_id_index ON TABLE chat_records FIELDS id UNIQUE;

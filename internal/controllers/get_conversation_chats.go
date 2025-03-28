@@ -42,7 +42,7 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get all conversation chats from the database
-	dbChats, err := db.GetAllChatsFromConversation(i.Sdb, conversationID)
+	dbChats, err := db.GetAllChatRecordsFromConversation(i.Sdb, conversationID)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

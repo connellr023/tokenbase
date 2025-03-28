@@ -144,6 +144,7 @@ func main() {
 			// User chat sub-routes
 			r.Route("/chat", func(r chi.Router) {
 				r.Get("/all/{conversation_id}", inj.GetConversationChats)
+				r.Post("/prompt", inj.PostConversationChat)
 			})
 		})
 	})
