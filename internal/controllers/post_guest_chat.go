@@ -42,9 +42,9 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(token)
-	prevChatRecords, err := cache.GetChatContext(i.Rdb, guestSessionKey)
+	prevChatRecords, err := cache.GetAllChats(i.Rdb, guestSessionKey)
 
-	if errors.Is(err, cache.ErrSessionNotFound) {
+	if errors.Is(err, cache.ErrCacheMiss) {
 		http.Error(w, err.Error(), http.StatusNotFound)
 		return
 	} else if err != nil {
@@ -57,9 +57,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		// Try to get the system prompt from the database
-		systemPrompt, err = db.GetSystemPrompt(i.Sdb)
-
-		if err != nil {
+		if systemPrompt, err = db.GetSystemPrompt(i.Sdb); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}

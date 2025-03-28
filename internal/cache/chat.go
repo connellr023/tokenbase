@@ -19,7 +19,7 @@ import (
 // Returns:
 // - All previous chat records
 // - Any error that occurred
-func GetChatContext(rdb *redis.Client, key string) ([]models.ClientChatRecord, error) {
+func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, error) {
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
@@ -36,7 +36,7 @@ func GetChatContext(rdb *redis.Client, key string) ([]models.ClientChatRecord, e
 
 	// Ensure session exists
 	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
-		return nil, ErrSessionNotFound
+		return nil, ErrCacheMiss
 	}
 
 	// Deserialize chat records

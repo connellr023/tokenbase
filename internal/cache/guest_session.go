@@ -8,6 +8,13 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
+// Format a guest session key for Redis
+//
+// Parameters:
+// - sessionId: The unique guest session ID
+//
+// Returns:
+// - The formatted guest session key
 func FmtGuestSessionKey(sessionId string) string {
 	return "guest_session:" + sessionId
 }

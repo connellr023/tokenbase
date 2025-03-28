@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 
 type HttpChatReq = {
   headers?: HeadersInit;

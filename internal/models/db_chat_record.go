@@ -12,3 +12,12 @@ type DbChatRecord struct {
 	Reply          string          `json:"reply"`
 	CreatedAt      int64           `json:"created_at"`
 }
+
+func (c DbChatRecord) ToClientChatRecord() ClientChatRecord {
+	return ClientChatRecord{
+		Prompt:       c.Prompt,
+		PromptImages: c.PromptImages,
+		Reply:        c.Reply,
+		CreatedAt:    c.CreatedAt,
+	}
+}
