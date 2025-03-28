@@ -3,6 +3,7 @@ import IconButton, { IconButtonColor } from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
 import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useState } from "react";
 
 type ChatProps = {
   createdAt: number;
@@ -22,6 +23,17 @@ const Chat: React.FC<ChatProps> = ({
   isMostRecent,
   onDelete,
 }) => {
+  const [copyButtonText, setCopyButtonText] = useState("Copy");
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(reply);
+    setCopyButtonText("Copied!");
+  };
+
+  const handleMouseLeave = () => {
+    setCopyButtonText("Copy");    
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.promptContainer}>
@@ -40,8 +52,8 @@ const Chat: React.FC<ChatProps> = ({
               Retry
             </IconButton>
           )}
-          <IconButton icon={faCopy} onClick={() => navigator.clipboard.writeText(reply)}>
-            Copy
+          <IconButton icon={faCopy} onClick={handleCopy} onMouseLeave={handleMouseLeave}>
+            {copyButtonText}
           </IconButton>
           <IconButton
             icon={faTrash}
