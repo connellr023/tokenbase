@@ -14,7 +14,6 @@ type ChatProps = {
   onDelete?: (createdAt: number) => void;
 };
 
-
 const Chat: React.FC<ChatProps> = ({
   createdAt,
   prompt,
@@ -31,7 +30,7 @@ const Chat: React.FC<ChatProps> = ({
   };
 
   const handleMouseLeave = () => {
-    setCopyButtonText("Copy");    
+    setCopyButtonText("Copy");
   };
 
   return (
@@ -52,7 +51,11 @@ const Chat: React.FC<ChatProps> = ({
               Retry
             </IconButton>
           )}
-          <IconButton icon={faCopy} onClick={handleCopy} onMouseLeave={handleMouseLeave}>
+          <IconButton
+            icon={faCopy}
+            onClick={handleCopy}
+            onMouseLeave={handleMouseLeave}
+          >
             {copyButtonText}
           </IconButton>
           <IconButton
