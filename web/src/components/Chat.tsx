@@ -13,6 +13,7 @@ type ChatProps = {
   onDelete?: (chatId: number) => void;
 };
 
+
 const Chat: React.FC<ChatProps> = ({
   chatId,
   prompt,
@@ -39,7 +40,7 @@ const Chat: React.FC<ChatProps> = ({
               Retry
             </IconButton>
           )}
-          <IconButton icon={faCopy} onClick={() => console.log("copy")}>
+          <IconButton icon={faCopy} onClick={() => navigator.clipboard.writeText(reply)}>
             Copy
           </IconButton>
           <IconButton
