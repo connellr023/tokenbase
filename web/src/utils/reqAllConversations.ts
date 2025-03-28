@@ -9,7 +9,7 @@ type AllConversationsResponse = {
 };
 
 export const reqAllConversations = async (
-  jwt: string
+  jwt: string,
 ): Promise<Conversation[] | null> => {
   try {
     const response = await fetch(getAllConversationsEndpoint, {

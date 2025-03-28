@@ -60,7 +60,7 @@ const RightDrawer: React.FC = () => {
     const selectedConversation = conversationRecords![conversationIndex];
     const chats = await reqConversationChats(
       bearer.token,
-      selectedConversation.id
+      selectedConversation.id,
     );
 
     if (chats === null) {

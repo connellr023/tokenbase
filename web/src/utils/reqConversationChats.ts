@@ -7,7 +7,7 @@ type ConversationChatsResponse = {
 
 export const reqConversationChats = async (
   jwt: string,
-  conversationId: string
+  conversationId: string,
 ) => {
   try {
     const result = await fetch(
@@ -18,7 +18,7 @@ export const reqConversationChats = async (
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
         },
-      }
+      },
     );
 
     if (!result.ok) {
