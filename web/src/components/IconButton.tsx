@@ -11,6 +11,7 @@ type IconButtonProps = {
   color?: IconButtonColor;
   children?: string;
   onClick: () => void;
+  onMouseLeave?: () => void;
 };
 
 const IconButton: React.FC<IconButtonProps> = ({
@@ -18,6 +19,7 @@ const IconButton: React.FC<IconButtonProps> = ({
   color,
   children,
   onClick,
+  onMouseLeave,
 }) => {
   let colorClassName = "";
 
@@ -31,7 +33,7 @@ const IconButton: React.FC<IconButtonProps> = ({
 
   return (
     <div className={`${styles.container} ${colorClassName}`}>
-      <button onClick={onClick}>
+      <button onClick={onClick} onMouseLeave={onMouseLeave}>
         <FontAwesomeIcon icon={icon} />
       </button>
       {children && <label>{children}</label>}
