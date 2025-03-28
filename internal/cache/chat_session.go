@@ -2,6 +2,8 @@ package cache
 
 import (
 	"context"
+	"strconv"
+	"time"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -17,6 +19,26 @@ func FmtConversationKey(conversationId string) string {
 	return "conversation:" + conversationId
 }
 
+// Format a guest session key for Redis
+//
+// Parameters:
+// - sessionId: The unique guest session ID
+//
+// Returns:
+// - The formatted guest session key
+func FmtGuestSessionKey(sessionId string) string {
+	return "guest_session:" + sessionId
+}
+
+// Generate a unique guest session ID
+//
+// Returns:
+// - The generated guest session ID
+func GenerateGuestSessionID() string {
+	id := strconv.FormatInt(time.Now().UnixNano(), 16)
+	return id
+}
+
 // Cache a conversation in Redis
 //
 // Parameters:
@@ -25,7 +47,7 @@ func FmtConversationKey(conversationId string) string {
 //
 // Returns:
 // - Any error that occurred
-func NewConversation(rdb *redis.Client, key string) error {
+func NewChatSession(rdb *redis.Client, key string) error {
 	ctx := context.Background()
 
 	// Start a transaction

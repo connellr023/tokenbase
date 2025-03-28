@@ -13,10 +13,11 @@ type postGuestSessionResponse struct {
 // Endpoint requesting a new guest session be created
 // Guest sessions will only live in Redis
 func (i *Injection) PostGuestSession(w http.ResponseWriter, r *http.Request) {
-	// Generate guest session ID
-	id, err := cache.NewGuestSession(i.Rdb)
+	// Generate guest session ID and create a new chat session in cache
+	id := cache.GenerateGuestSessionID()
+	key := cache.FmtGuestSessionKey(id)
 
-	if err != nil {
+	if err := cache.NewChatSession(i.Rdb, key); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

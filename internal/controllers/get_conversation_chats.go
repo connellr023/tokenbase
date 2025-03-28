@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
@@ -23,13 +22,7 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 	conversationKey := cache.FmtConversationKey(conversationID)
 
 	// Check if cache contains the client chat records
-	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey); err != nil && !errors.Is(err, cache.ErrCacheMiss) {
-		// Create a new conversation in cache
-		if err := cache.NewConversation(i.Rdb, conversationKey); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-	} else if err == nil {
+	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey); err == nil {
 		// Respond with the cached client chat records
 		response := getConversationChatsResponse{
 			Chats: cacheClientChats,
@@ -40,6 +33,12 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 		}
 
 		return
+	} else {
+		// Create a new conversation in cache
+		if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	// Get all conversation chats from the database

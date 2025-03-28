@@ -44,10 +44,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	guestSessionKey := cache.FmtGuestSessionKey(token)
 	prevChatRecords, err := cache.GetAllChats(i.Rdb, guestSessionKey)
 
-	if errors.Is(err, cache.ErrCacheMiss) {
-		http.Error(w, err.Error(), http.StatusNotFound)
-		return
-	} else if err != nil {
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

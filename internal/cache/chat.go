@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -27,16 +26,17 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 	existsCmd := pipe.Exists(ctx, key)
 
 	// Fetch all messages from most recent creation time to oldest
-	// Keep the number of messages to a maximum
-	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, utils.MaxChatsInAContext-1)
+	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, -1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
 		return nil, err
 	}
 
 	// Ensure session exists
-	if exists, err := existsCmd.Result(); err != nil || exists == 0 {
-		return nil, ErrCacheMiss
+	if exists, err := existsCmd.Result(); err != nil {
+		return nil, err
+	} else if exists == 0 {
+		return nil, ErrKeyNotFound
 	}
 
 	// Deserialize chat records
@@ -70,6 +70,11 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 // Returns:
 // - Any error that occurred
 func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChatRecord) error {
+	// No records to save
+	if len(records) == 0 {
+		return nil
+	}
+
 	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
