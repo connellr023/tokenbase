@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	"time"
+	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -65,7 +66,7 @@ func NewChatSession(rdb *redis.Client, key string) error {
 	if created, err := zaddnxCmd.Result(); err != nil {
 		return err
 	} else if created == 0 {
-		return ErrConversationExists
+		return utils.ErrConversationExists
 	}
 
 	return nil

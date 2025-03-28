@@ -27,12 +27,13 @@ func NewConversation(sdb *surrealdb.DB, name string, userID string) (models.DbCo
 		return models.DbConversation{}, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return models.DbConversation{}, ErrQueryFailed
+	conversations, err := ValidateArrayQueryResult(res)
+
+	if err != nil {
+		return models.DbConversation{}, err
 	}
 
-	conversation := (*res)[0].Result[0]
-	return conversation, nil
+	return conversations[0], nil
 }
 
 // Gets all conversations for a user
@@ -54,10 +55,5 @@ func GetAllConversations(sdb *surrealdb.DB, userID string) ([]models.DbConversat
 		return nil, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return nil, ErrNoResults
-	}
-
-	conversations := (*res)[0].Result
-	return conversations, nil
+	return ValidateArrayQueryResult(res)
 }

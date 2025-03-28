@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"time"
 	"tokenbase/internal/models"
 
@@ -12,10 +11,6 @@ import (
 const (
 	jwtLifetime  = time.Hour * 24
 	jwtSecretKey = "supersecretkey" // Hardcoded for now
-)
-
-var (
-	ErrInvalidJwt = errors.New("invalid JWT")
 )
 
 // Generates a JWT for a user

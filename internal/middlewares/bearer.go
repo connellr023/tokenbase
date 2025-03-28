@@ -29,7 +29,7 @@ func bearerExtractorMiddleware(next http.Handler) http.Handler {
 		parts := strings.Split(authHeader, " ")
 
 		if len(parts) != 2 || parts[0] != "Bearer" {
-			http.Error(w, ErrInvalidAuthHeader.Error(), http.StatusUnauthorized)
+			http.Error(w, utils.ErrInvalidAuthHeader.Error(), http.StatusUnauthorized)
 			return
 		}
 
@@ -51,7 +51,7 @@ func GetUserFromJwt(ctx context.Context) (models.ClientUser, error) {
 	bearer, ok := GetBearerFromContext(ctx)
 
 	if !ok {
-		return models.ClientUser{}, ErrInvalidBearerToken
+		return models.ClientUser{}, utils.ErrInvalidBearerToken
 	}
 
 	user, err := utils.ValidateJwt(bearer)

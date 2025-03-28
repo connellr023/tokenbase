@@ -25,7 +25,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	token, ok := middlewares.GetBearerFromContext(r.Context())
 
 	if !ok {
-		http.Error(w, ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
+		http.Error(w, utils.ErrBearerTokenNotFound.Error(), http.StatusUnauthorized)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the system prompt
-	systemPrompt, err := utils.FetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := FetchSystemPrompt(i.Sdb, i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -87,7 +87,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Stream the response to the client
 	{
-		err := utils.MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
+		err := MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
 			replyBuilder.WriteString(data.Message.Content)
 
 			return models.ChatToken{
@@ -97,7 +97,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		})
 
 		if err != nil && !errors.Is(err, utils.ErrStreamAborted) {
-			utils.WriteStreamError(w, err)
+			WriteStreamError(w, err)
 			return
 		}
 	}
@@ -121,7 +121,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {
-		utils.WriteStreamError(w, err)
+		WriteStreamError(w, err)
 		return
 	}
 }

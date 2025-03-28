@@ -27,12 +27,7 @@ func GetAllChatRecordsFromConversation(sdb *surrealdb.DB, conversationID string)
 		return nil, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return nil, ErrNoResults
-	}
-
-	chats := (*res)[0].Result
-	return chats, nil
+	return ValidateArrayQueryResult(res)
 }
 
 // Save a chat record to the database
@@ -62,18 +57,9 @@ func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, rep
 		return models.DbChatRecord{}, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return models.DbChatRecord{}, ErrQueryFailed
-	}
-
-	data := (*res)[0].Result
-
-	if len(data) == 0 {
-		return models.DbChatRecord{}, ErrNoResults
-	}
-
-	chat := data[0]
-	return chat, nil
+	var chat models.DbChatRecord
+	err = ValidateSingleQueryResult(res, &chat)
+	return chat, err
 }
 
 // Delete a chat record from the database by its creation time
@@ -99,16 +85,7 @@ func DeleteChatRecordByCreationTime(sdb *surrealdb.DB, createdAt int64, userID s
 		return models.DbChatRecord{}, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return models.DbChatRecord{}, ErrQueryFailed
-	}
-
-	data := (*res)[0].Result
-
-	if len(data) == 0 {
-		return models.DbChatRecord{}, ErrNoResults
-	}
-
-	chat := data[0]
-	return chat, nil
+	var chat models.DbChatRecord
+	err = ValidateSingleQueryResult(res, &chat)
+	return chat, err
 }
