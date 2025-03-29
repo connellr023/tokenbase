@@ -71,6 +71,12 @@ div.container {
       flex-direction: column;
       gap: 0.15rem;
 
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
       button {
         cursor: pointer;
         width: 100%;
