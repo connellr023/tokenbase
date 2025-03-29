@@ -5,10 +5,18 @@ import (
 	"net/http"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
+	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
 )
 
 func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
+	// Verify the current user has admin privileges
+	user, err := middlewares.GetUserFromJwt(r.Context())
+
+	if err != nil || !user.IsAdmin {
+		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
 
 	// Parse request
 	var req models.ClientSystemPrompt
@@ -19,7 +27,7 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Send the request to the database
-	_, err := db.SetSystemPrompt(i.Sdb, req.Prompt)
+	_, err = db.SetSystemPrompt(i.Sdb, req.Prompt)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
