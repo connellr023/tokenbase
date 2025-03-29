@@ -31,6 +31,15 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (step: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (step === 1 && isStepValid(step)) {
+          handleSubmit();
+      }
+    }
+  }
+
   const handleSubmit = async () => {
     const loginRequest: LoginRequest = {
       email,
@@ -77,6 +86,7 @@ const Login: React.FC = () => {
         onChange={(e) => {
           setEmail(e.target.value);
         }}
+        onKeyDown={(e) => handleKeyDown(0, e)}
       />
     </div>,
     <div key="step2">
@@ -89,6 +99,7 @@ const Login: React.FC = () => {
         onChange={(e) => {
           setPassword(e.target.value);
         }}
+        onKeyDown={(e) => handleKeyDown(1, e)}
       />
     </div>,
   ];
