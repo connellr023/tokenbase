@@ -3,6 +3,7 @@ import StandardButton from "./StandardButton";
 import React, { useState } from "react";
 import { merriweather500 } from "@/utils/fonts";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
+import ErrorMessage from "./ErrorMessage";
 
 type TextareaFormProps = {
   placeholder: string;
@@ -11,7 +12,7 @@ type TextareaFormProps = {
   header?: string;
   desc?: string;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onSubmit?: () => void;
+  onSubmit: () => Promise<string | void>;
 };
 
 const TextareaForm: React.FC<TextareaFormProps> = ({
@@ -24,10 +25,22 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
   onSubmit,
 }) => {
   const [charsLeft, setCharsLeft] = useState(max);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCharsLeft(max - event.target.value.length);
-    onChange;
+    if (onChange) {
+      onChange(event);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setError(null);
+    const error = await onSubmit();
+
+    if (error) {
+      setError(error);
+    }
   };
 
   return (
@@ -49,12 +62,18 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
         <StandardButton
           icon={faSync}
           isDisabled={charsLeft >= max}
-          onClick={() => onSubmit}
+          onClick={handleSubmit}
         >
           Update
         </StandardButton>
+        {error && (
+          <div className={styles.errorContainer}>
+            <ErrorMessage error={error} />
+          </div>
+        )}
       </div>
     </div>
+    
   );
 };
 

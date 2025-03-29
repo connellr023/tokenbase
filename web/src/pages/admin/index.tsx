@@ -11,8 +11,8 @@ const Admin: React.FC = () => {
     const fetchPrompt = async () => {
       try {
         const res = await fetch(adminEndpoint, {method: "GET"});
-        const data = await res.text();
-        setPrompt(data || "Enter prompt.");
+        const data = await res.json();
+        setPrompt(data.prompt || "Enter prompt.");
       } catch (error) {
         console.error("Failed to fetch system prompt:", error);
         setPrompt("Enter prompt.");
@@ -33,11 +33,14 @@ const Admin: React.FC = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify(prompt),
+        body: JSON.stringify({ prompt }),
       });
 
-      const responseBody = await res.text();
-      return responseBody
+      if (!res.ok) {
+        const responseHeader = await res.text();
+        return `System prompt was not updated: ${responseHeader}`
+      }
+
     } catch {
       return "An error has occured updating the system prompt";
     };
