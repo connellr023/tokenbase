@@ -2,6 +2,7 @@ package db
 
 import (
 	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 
 	"github.com/surrealdb/surrealdb.go"
 	sdbModels "github.com/surrealdb/surrealdb.go/pkg/models"
@@ -42,7 +43,7 @@ func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (string, error) {
 	}
 
 	if len((*res)[0].Result) == 0 {
-		return "", ErrQueryFailed
+		return "", utils.ErrQueryFailed
 	}
 
 	return (*res)[0].Result[0].Prompt, nil

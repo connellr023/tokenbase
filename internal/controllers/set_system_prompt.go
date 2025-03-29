@@ -29,7 +29,7 @@ func (i *Injection) PostSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	// Update the system prompt in the cache
 	err = cache.SetSystemPrompt(i.Rdb, req.Prompt)
 	if err != nil {
-		http.Error(w, "Failed to store prompt in Redis: "+err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	// Respond to the client
