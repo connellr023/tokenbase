@@ -5,16 +5,13 @@ import (
 	"net/http"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
+	"tokenbase/internal/models"
 )
-
-type postSystemPrompt struct {
-	Prompt string `json:"prompt"`
-}
 
 func (i *Injection) PostSystemPrompt(w http.ResponseWriter, r *http.Request) {
 
 	// Parse request
-	var req postSystemPrompt
+	var req models.ClientSystemPrompt
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)

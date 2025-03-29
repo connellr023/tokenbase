@@ -3,12 +3,9 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"tokenbase/internal/models"
 	"tokenbase/internal/utils"
 )
-
-type SystemPromptResponse struct {
-	Prompt string `json:"prompt"`
-}
 
 func (i *Injection) GetSystemPrompt(w http.ResponseWriter, r *http.Request) {
 
@@ -22,7 +19,7 @@ func (i *Injection) GetSystemPrompt(w http.ResponseWriter, r *http.Request) {
 
 	// The ID is unecessary
 	// This is to avoid making a new model
-	response := SystemPromptResponse{
+	response := models.ClientSystemPrompt{
 		Prompt: systemPrompt,
 	}
 
