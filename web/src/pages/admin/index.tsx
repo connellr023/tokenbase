@@ -39,7 +39,7 @@ const Admin: React.FC = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer.token}`
+          Authorization: `Bearer ${bearer.token}`,
         },
         body: JSON.stringify({ prompt }),
       });
