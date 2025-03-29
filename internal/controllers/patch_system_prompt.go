@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
@@ -26,19 +27,33 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Send the request to the database
-	_, err = db.SetSystemPrompt(i.Sdb, req.Prompt)
+	// Aggregate saving the chat record in the database and cache
+	wg := sync.WaitGroup{}
+	wg.Add(2)
+	errorChan := make(chan error, 2)
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// Send the request to the database
+	go func() {
+		defer wg.Done()
+
+		if _, err = db.SetSystemPrompt(i.Sdb, req.Prompt); err != nil {
+			errorChan <- err
+		}
+	}()
 
 	// Update the system prompt in the cache
-	err = cache.SetSystemPrompt(i.Rdb, req.Prompt)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
+	go func() {
+		defer wg.Done()
+		if err = cache.SetSystemPrompt(i.Rdb, req.Prompt); err != nil {
+			errorChan <- err
+		}
+
+	}()
+
+	go func() {
+		wg.Wait()
+		close(errorChan)
+	}()
 
 	// Respond to the client
 	w.WriteHeader(http.StatusOK)
