@@ -204,12 +204,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* Render all finished chats */}
             {chats.map((chat, i) => (
               <Chat
-                key={chat.createdAt}
+                key={i}
                 createdAt={chat.createdAt ?? -1}
                 prompt={chat.prompt}
                 reply={chat.reply}
                 isComplete={true}
-                isMostRecent={i === chats.length - 1}
                 onDelete={onChatDelete}
               />
             ))}
@@ -217,11 +216,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             {/* If a chat reply is being streamed back, render it here */}
             {streamingChat && (
               <Chat
-                key={streamingChat.createdAt ?? -1}
                 createdAt={streamingChat.createdAt ?? -1}
                 prompt={streamingChat.prompt}
                 reply={streamingChat.reply}
-                isMostRecent={true}
                 isComplete={false}
               />
             )}
