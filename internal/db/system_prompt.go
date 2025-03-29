@@ -2,7 +2,6 @@ package db
 
 import (
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/surrealdb/surrealdb.go"
 	sdbModels "github.com/surrealdb/surrealdb.go/pkg/models"
@@ -31,20 +30,19 @@ func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
 	return res.Prompt, nil
 }
 
-func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (string, error) {
+func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (models.DbSystemPrompt, error) {
 	const query = "UPDATE system_prompt SET prompt = $prompt"
 
 	// Use a slice to handle the array response
-	res, err := surrealdb.Query[[]models.ClientSystemPrompt](sdb, query, map[string]interface{}{
+	res, err := surrealdb.Query[[]models.DbSystemPrompt](sdb, query, map[string]interface{}{
 		"prompt": prompt,
 	})
+
 	if err != nil {
-		return "", err
+		return models.DbSystemPrompt{}, err
 	}
 
-	if len((*res)[0].Result) == 0 {
-		return "", utils.ErrQueryFailed
-	}
-
-	return (*res)[0].Result[0].Prompt, nil
+	var promptRes models.DbSystemPrompt
+	err = validateSingleQueryResult(res, &promptRes)
+	return promptRes, err
 }

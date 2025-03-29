@@ -1,11 +1,18 @@
 import TextareaForm from "@/components/TextareaForm";
 import React, { useState, useEffect } from "react";
 import { backendEndpoint } from "@/utils/constants";
+import { useBearerContext } from "@/contexts/BearerContext";
 
 const adminEndpoint = backendEndpoint + "api/admin";
 
 const Admin: React.FC = () => {
   const [prompt, setPrompt] = useState("");
+  const { bearer } = useBearerContext();
+
+  if (!bearer) {
+    console.error("Bearer is undefined");
+    return;
+  }
 
   useEffect(() => {
     const fetchPrompt = async () => {
@@ -32,6 +39,7 @@ const Admin: React.FC = () => {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`
         },
         body: JSON.stringify({ prompt }),
       });
