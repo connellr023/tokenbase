@@ -32,11 +32,18 @@ func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
 
 func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (string, error) {
 	const query = "UPDATE system_prompt SET prompt = $prompt"
-	_, err := surrealdb.Query[string](sdb, query, map[string]interface{}{
+
+	// Use a slice to handle the array response
+	res, err := surrealdb.Query[[]models.ClientSystemPrompt](sdb, query, map[string]interface{}{
 		"prompt": prompt,
 	})
 	if err != nil {
 		return "", err
 	}
-	return prompt, nil
+
+	if len((*res)[0].Result) == 0 {
+		return "", ErrQueryFailed
+	}
+
+	return (*res)[0].Result[0].Prompt, nil
 }
