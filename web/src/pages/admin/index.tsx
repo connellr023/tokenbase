@@ -10,7 +10,7 @@ const Admin: React.FC = () => {
   useEffect(() => {
     const fetchPrompt = async () => {
       try {
-        const res = await fetch(adminEndpoint, {method: "GET"});
+        const res = await fetch(adminEndpoint, { method: "GET" });
         const data = await res.json();
         setPrompt(data.prompt || "Enter prompt.");
       } catch (error) {
@@ -27,24 +27,23 @@ const Admin: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    try{
+    try {
       const res = await fetch(adminEndpoint, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ prompt }),
       });
 
       if (!res.ok) {
         const responseHeader = await res.text();
-        return `System prompt was not updated: ${responseHeader}`
+        return `System prompt was not updated: ${responseHeader}`;
       }
-
     } catch {
       return "An error has occured updating the system prompt";
-    };
-  }
+    }
+  };
 
   return (
     <>
