@@ -117,7 +117,7 @@ func main() {
 
 		r.Post("/login", inj.PostLogin)
 		r.Post("/register", inj.PostRegister)
-		r.Post("/admin", inj.PostSystemPrompt)
+		r.Patch("/admin", inj.PatchSystemPrompt)
 
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)

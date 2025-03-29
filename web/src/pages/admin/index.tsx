@@ -29,7 +29,7 @@ const Admin: React.FC = () => {
   const handleSubmit = async () => {
     try {
       const res = await fetch(adminEndpoint, {
-        method: "POST",
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },

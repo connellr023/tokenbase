@@ -8,7 +8,7 @@ import (
 	"tokenbase/internal/models"
 )
 
-func (i *Injection) PostSystemPrompt(w http.ResponseWriter, r *http.Request) {
+func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 
 	// Parse request
 	var req models.ClientSystemPrompt
