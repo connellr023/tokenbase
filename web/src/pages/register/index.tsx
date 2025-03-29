@@ -43,6 +43,15 @@ const Register: React.FC = () => {
     }
   };
 
+  const handleKeyDown = (step: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (step === 2 && isStepValid(step)) {
+          handleSubmit();
+      }
+    }
+  }
+
   const handleSubmit = async () => {
     const registerRequest: RegisterRequest = {
       username,
@@ -98,6 +107,7 @@ const Register: React.FC = () => {
         value={username}
         isValid={() => isStepValid(0)}
         onChange={(e) => setUsername(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(0, e)}
       />
     </div>,
     <div key="step2">
@@ -108,6 +118,7 @@ const Register: React.FC = () => {
         value={email}
         isValid={() => isStepValid(1)}
         onChange={(e) => setEmail(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(1, e)}
       />
     </div>,
     <div key="step3">
@@ -118,6 +129,7 @@ const Register: React.FC = () => {
         value={password}
         isValid={() => isStepValid(2)}
         onChange={(e) => setPassword(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(2, e)}
       />
     </div>,
   ];
