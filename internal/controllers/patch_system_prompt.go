@@ -8,14 +8,20 @@ import (
 	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 )
 
 func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	// Verify the current user has admin privileges
 	user, err := middlewares.GetUserFromJwt(r.Context())
 
-	if err != nil || !user.IsAdmin {
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
+		return
+	}
+
+	if !user.IsAdmin {
+		http.Error(w, utils.ErrForbidden.Error(), http.StatusForbidden)
 		return
 	}
 
