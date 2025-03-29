@@ -3,30 +3,39 @@ import React, { useState, useEffect } from "react";
 import { backendEndpoint } from "@/utils/constants";
 import { useBearerContext } from "@/contexts/BearerContext";
 
-const adminEndpoint = backendEndpoint + "api/admin";
+const adminPromptEndpoint = backendEndpoint + "api/admin/prompt";
 
 const Admin: React.FC = () => {
-  const [prompt, setPrompt] = useState("");
   const { bearer } = useBearerContext();
+  const [prompt, setPrompt] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!bearer) {
-    console.error("Bearer is undefined");
-    return;
+    throw new Error("Bearer token is not available");
   }
 
   useEffect(() => {
-    const fetchPrompt = async () => {
+    (async () => {
       try {
-        const res = await fetch(adminEndpoint, { method: "GET" });
-        const data = await res.json();
-        setPrompt(data.prompt || "Enter prompt.");
-      } catch (error) {
-        console.error("Failed to fetch system prompt:", error);
-        setPrompt("Enter prompt.");
-      }
-    };
+        setIsLoading(true);
 
-    fetchPrompt();
+        const res = await fetch(adminPromptEndpoint, {
+          method: "GET",
+          headers: { Authorization: `Bearer ${bearer.token}` },
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch prompt");
+        }
+
+        const data = await res.json();
+        setPrompt(data.prompt ?? "");
+      } catch (error) {
+        setPrompt("Failed to fetch prompt");
+      } finally {
+        setIsLoading(false);
+      }
+    })();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -35,7 +44,9 @@ const Admin: React.FC = () => {
 
   const handleSubmit = async () => {
     try {
-      const res = await fetch(adminEndpoint, {
+      setIsLoading(true);
+
+      const res = await fetch(adminPromptEndpoint, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -50,6 +61,8 @@ const Admin: React.FC = () => {
       }
     } catch {
       return "An error has occured updating the system prompt";
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -61,6 +74,7 @@ const Admin: React.FC = () => {
         placeholder="Enter prompt."
         value={prompt}
         max={200}
+        isDisabled={isLoading}
         onChange={handleChange}
         onSubmit={handleSubmit}
       />

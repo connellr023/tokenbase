@@ -117,11 +117,17 @@ func main() {
 
 		r.Post("/login", inj.PostLogin)
 		r.Post("/register", inj.PostRegister)
-		r.Patch("/admin", inj.PatchSystemPrompt)
-
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)
-		r.Get("/admin", inj.GetSystemPrompt)
+
+		// Admin sub-routes
+		r.Route("/admin", func(r chi.Router) {
+			// Prompt sub-routes
+			r.Route("/prompt", func(r chi.Router) {
+				r.Get("/", inj.GetSystemPrompt)
+				r.Patch("/", inj.PatchSystemPrompt)
+			})
+		})
 
 		// Guest sub-routes
 		r.Route("/guest", func(r chi.Router) {

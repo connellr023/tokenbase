@@ -50,6 +50,7 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	// Update the system prompt in the cache
 	go func() {
 		defer wg.Done()
+
 		if err = cache.SetSystemPrompt(i.Rdb, req.Prompt); err != nil {
 			errorChan <- err
 		}
@@ -61,7 +62,14 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 		close(errorChan)
 	}()
 
+	// Check for errors
+	for err := range errorChan {
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
 	// Respond to the client
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("System prompt updated successfully"))
 }
