@@ -2,8 +2,9 @@
 
 div.container {
   width: 100%;
+  position: relative;
 
-  button {
+  button.dropdownButton {
     width: 100%;
     color: $transparent-color-white;
     border-radius: $border-radius-2;
@@ -33,6 +34,37 @@ div.container {
     &:active {
       background: $bg-color-5;
       transform: scale(0.97);
+    }
+  }
+
+  div.dropdown {
+    position: absolute;
+    right: 0;
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: $border-radius-2;
+    z-index: 1000;
+
+    button {
+      border-radius: 0;
+      background: $bg-color-5;
+      font-size: 0.96rem;
+      padding: 0.7rem;
+      color: $transparent-color-white;
+      transition: $transition-2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      flex-direction: row;
+      cursor: pointer;
+
+      &:hover {
+        background: $bg-color-4;
+        color: $txt-color-1;
+      }
     }
   }
 }

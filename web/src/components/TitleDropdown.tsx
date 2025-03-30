@@ -17,10 +17,24 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
 }: TitleDropdownProps) => {
   return (
     <div className={styles.container}>
-      <button className={merriweather400.className}>
+      <button
+        className={`${styles.dropdownButton} ${merriweather400.className}`}
+      >
         <i>{children}</i>
         <FontAwesomeIcon icon={faChevronDown} />
       </button>
+      <div className={styles.dropdown}>
+        {items.map(([icon, text], index) => (
+          <button
+            key={index}
+            className={merriweather400.className}
+            onClick={() => onSelect(index)}
+          >
+            <FontAwesomeIcon icon={icon} />
+            {text}
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
