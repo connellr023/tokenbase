@@ -2,7 +2,7 @@ import styles from "@/styles/components/NavBar.module.scss";
 import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
-import { merriweather400 } from "@/utils/fonts";
+import TitleDropdown from "./TitleDropdown";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
@@ -11,10 +11,10 @@ import {
   faAnglesLeft,
   faArrowLeft,
   faBolt,
+  faPencil,
   faSignIn,
-  faSignOut,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useBearerContext } from "@/contexts/BearerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
@@ -64,9 +64,15 @@ const NavBar: React.FC = () => {
         conversationRecords !== null &&
         pathname === "/" && (
           <div className={styles.conversationInfo}>
-            <h3 className={merriweather400.className}>
+            <TitleDropdown
+              items={[
+                [faPencil, "Rename"],
+                [faTrash, "Delete"],
+              ]}
+              onSelect={(index) => {}}
+            >
               {conversationRecords[selectedConversationIndex].name}
-            </h3>
+            </TitleDropdown>
           </div>
         )}
 
