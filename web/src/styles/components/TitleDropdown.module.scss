@@ -3,11 +3,36 @@
 div.container {
   width: 100%;
 
-  h3 {
-    color: $txt-color-1;
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  button {
+    width: 100%;
+    color: $transparent-color-white;
+    border-radius: $border-radius-2;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.55rem 0.7rem;
+    transition: $transition-2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-direction: row;
+    font-size: 0.85rem;
+
+    & > i {
+      font-size: 1rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      color: $txt-color-1;
+      background: $bg-color-4;
+    }
+
+    &:active {
+      background: $bg-color-5;
+      transform: scale(0.97);
+    }
   }
 }
