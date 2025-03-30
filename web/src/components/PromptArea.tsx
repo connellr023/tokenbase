@@ -38,8 +38,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
         handleSend();
       }
     }
-  }
-
+  };
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);

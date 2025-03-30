@@ -49,17 +49,13 @@ const MultistepForm: React.FC<MultistepFormProps> = ({
     if (e.key === "Enter") {
       e.preventDefault();
       if (isStepValid(currentStep) && currentStep + 1 <= steps.length - 1) {
-          setCurrentStep(currentStep + 1);
+        setCurrentStep(currentStep + 1);
       }
     }
-  }
+  };
 
   return (
-    <div 
-      className={styles.container}
-      onKeyDown={handleKeyDown}
-      tabIndex={0}
-    >
+    <div className={styles.container} onKeyDown={handleKeyDown} tabIndex={0}>
       <div>
         <h1>{title}</h1>
         <div className={styles.stepIndicator}>

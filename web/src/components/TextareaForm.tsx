@@ -43,7 +43,7 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
         onSubmit?.();
       }
     }
-  }
+  };
 
   const handleSubmit = async () => {
     setError(null);

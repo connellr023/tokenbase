@@ -31,14 +31,17 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleKeyDown = (step: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (
+    step: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (step === 1 && isStepValid(step)) {
-          handleSubmit();
+        handleSubmit();
       }
     }
-  }
+  };
 
   const handleSubmit = async () => {
     const loginRequest: LoginRequest = {
