@@ -8,6 +8,7 @@ type StandardInputProps = {
   value?: string;
   isValid?: () => boolean;
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 const StandardInput: React.FC<StandardInputProps> = ({
@@ -16,6 +17,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
   value,
   isValid,
   onChange,
+  onKeyDown,
 }) => {
   const [hasError, setError] = useState(false);
 
@@ -36,6 +38,7 @@ const StandardInput: React.FC<StandardInputProps> = ({
       placeholder={placeholder}
       value={value}
       onChange={onChange}
+      onKeyDown={onKeyDown}
     />
   );
 };

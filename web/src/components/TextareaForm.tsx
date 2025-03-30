@@ -14,6 +14,7 @@ type TextareaFormProps = {
   isDisabled?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onSubmit: () => Promise<string | void>;
+  onKeyDown?: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 
 const TextareaForm: React.FC<TextareaFormProps> = ({
@@ -32,6 +33,15 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (onChange) {
       onChange(event);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (value && value.trim().length > 0 && !(charsLeft >= max)) {
+        onSubmit?.();
+      }
     }
   };
 
@@ -63,6 +73,7 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
             value={value}
             onChange={handleChange}
             disabled={isDisabled}
+            onKeyDown={handleKeyDown}
           />
           <p className={styles.count}>{charsLeft}</p>
         </div>

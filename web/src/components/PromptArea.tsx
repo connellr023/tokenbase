@@ -31,6 +31,15 @@ const PromptArea: React.FC<PromptAreaProps> = ({
     setPrompt("");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (prompt.trim().length > 0 && !isDisabled) {
+        handleSend();
+      }
+    }
+  };
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
   };
@@ -62,6 +71,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           ref={textareaRef}
           value={prompt}
           onChange={handleInput}
+          onKeyDown={handleKeyDown}
           placeholder="What's on your mind?"
           rows={1}
           spellCheck={false}
