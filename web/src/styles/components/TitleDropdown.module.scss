@@ -21,6 +21,7 @@ div.container {
 
     & > i {
       font-size: 1rem;
+      padding-right: 0.4rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -34,6 +35,10 @@ div.container {
     &:active {
       background: $bg-color-5;
       transform: scale(0.97);
+    }
+
+    &.active {
+      background-color: $bg-color-5;
     }
   }
 
@@ -51,7 +56,7 @@ div.container {
       border-radius: 0;
       background: $bg-color-5;
       font-size: 0.96rem;
-      padding: 0.7rem;
+      padding: 0.7rem 1.2rem;
       color: $transparent-color-white;
       transition: $transition-2;
       display: flex;
