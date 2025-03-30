@@ -17,4 +17,5 @@ var (
 	ErrTooManyResults         = errors.New("too many results found")
 	ErrQueryFailed            = errors.New("query failed")
 	ErrInvalidJwt             = errors.New("invalid JWT")
+	ErrForbidden              = errors.New("insufficient privileges")
 )
