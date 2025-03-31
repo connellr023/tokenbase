@@ -3,7 +3,7 @@ enum ButtonColor {
 }
 
 export const ButtonColorToClassName = (
-  scopedStyle: { readonly [key: string]: string },
+  scopedStyle: Readonly<{ [key: string]: string }>,
   color?: ButtonColor,
 ) => {
   switch (color) {

@@ -4,6 +4,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useState,
 } from "react";
@@ -30,12 +31,20 @@ export const ConversationRecordsProvider: React.FC<{ children: ReactNode }> = ({
     Conversation[] | null
   >([]);
 
-  const clearConversationRecords = () => setConversationRecords([]);
+  const clearConversationRecords = useCallback(
+    () => setConversationRecords([]),
+    [],
+  );
 
-  const selectConversation = (index: number) =>
-    setSelectedConversationIndex(index);
+  const selectConversation = useCallback(
+    (index: number) => setSelectedConversationIndex(index),
+    [],
+  );
 
-  const unselectConversation = () => setSelectedConversationIndex(null);
+  const unselectConversation = useCallback(
+    () => setSelectedConversationIndex(null),
+    [],
+  );
 
   return (
     <ConversationRecordsContext.Provider

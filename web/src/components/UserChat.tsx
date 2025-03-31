@@ -108,7 +108,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const conversations = await reqAllConversations(bearer.token);
       setConversationRecords(conversations);
     })();
-  }, []);
+  }, [bearer.token, setConversationRecords]);
 
   return (
     <ChatContainer

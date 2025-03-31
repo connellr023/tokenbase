@@ -11,7 +11,7 @@ import {
   faAnglesLeft,
   faArrowLeft,
   faBolt,
-  faPencil,
+  faEdit,
   faSignIn,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
@@ -30,7 +30,7 @@ const NavBar: React.FC = () => {
         <TitleDropdown
           items={availableModels.map((model) => {
             const split = model.tag.split(":");
-            return [undefined, undefined, `${split[0]} (${split[1]})`];
+            return { text: `${split[0]} (${split[1]})` };
           })}
           onSelect={setSelectedModel}
         />
@@ -67,10 +67,10 @@ const NavBar: React.FC = () => {
             <TitleDropdown
               title={conversationRecords[selectedConversationIndex].name}
               items={[
-                [faPencil, undefined, "Rename"],
-                [faTrash, ButtonColor.Red, "Delete"],
+                { icon: faEdit, text: "Rename" },
+                { icon: faTrash, text: "Delete", color: ButtonColor.Red },
               ]}
-              onSelect={(index) => {}}
+              onSelect={() => {}}
             />
           </div>
         )}

@@ -1,18 +1,18 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { emailRegex } from "@/utils/regexps";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
+import { useBearerContext } from "@/contexts/BearerContext";
+import { useRouter } from "next/router";
+import { AuthResponse, RegisterRequest } from "@/models/Auth";
 import {
   backendEndpoint,
   maxUsernameLength,
   minPasswordLength,
   minUsernameLength,
 } from "@/utils/constants";
-import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
-import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
-import { useBearerContext } from "@/contexts/BearerContext";
-import { useRouter } from "next/router";
-import { AuthResponse, RegisterRequest } from "@/models/Auth";
 
 const registerEndpont = backendEndpoint + "api/register";
 
@@ -26,22 +26,25 @@ const Register: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isStepValid = (step: number) => {
-    switch (step) {
-      case 0:
-        const trimmedUsername = username.trim();
-        return (
-          trimmedUsername.length >= minUsernameLength &&
-          trimmedUsername.length <= maxUsernameLength
-        );
-      case 1:
-        return email.trim() !== "" && emailRegex.test(email);
-      case 2:
-        return password.length >= minPasswordLength;
-      default:
-        return true;
-    }
-  };
+  const isStepValid = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 0:
+          const trimmedUsername = username.trim();
+          return (
+            trimmedUsername.length >= minUsernameLength &&
+            trimmedUsername.length <= maxUsernameLength
+          );
+        case 1:
+          return email.trim() !== "" && emailRegex.test(email);
+        case 2:
+          return password.length >= minPasswordLength;
+        default:
+          return true;
+      }
+    },
+    [username, email, password],
+  );
 
   const handleKeyDown = (
     step: number,
@@ -55,7 +58,7 @@ const Register: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const registerRequest: RegisterRequest = {
       username,
       email,
@@ -99,7 +102,16 @@ const Register: React.FC = () => {
     } catch {
       return "An error has occurred during registration";
     }
-  };
+  }, [
+    username,
+    email,
+    password,
+    push,
+    setBearer,
+    clearChats,
+    clearConversationRecords,
+    unselectConversation,
+  ]);
 
   const steps = [
     <div key="step1">

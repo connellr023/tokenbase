@@ -3,7 +3,7 @@ import ButtonColor from "@/models/ButtonColor";
 import IconButton from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
-import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 type ChatProps = {

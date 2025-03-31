@@ -34,7 +34,7 @@ div.container {
 
     &:active {
       background: $bg-color-5;
-      transform: scale(0.97);
+      transform: scale(0.95);
     }
 
     &.active {
@@ -52,7 +52,6 @@ div.container {
     border-radius: $border-radius-2;
     z-index: 1000;
     width: min-content;
-    max-width: 100%;
 
     button {
       --color: #{$txt-color-1};

@@ -6,9 +6,15 @@ import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
+type DropdownItem = {
+  icon?: IconDefinition;
+  color?: ButtonColor;
+  text: string;
+};
+
 type TitleDropdownProps = {
   title?: string;
-  items: [IconDefinition | undefined, ButtonColor | undefined, string][];
+  items: DropdownItem[];
   onSelect: (index: number) => void;
 };
 
@@ -18,7 +24,7 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
   onSelect,
 }) => {
   if (items.length === 0) {
-    items = [[undefined, undefined, "None"]];
+    items = [{ text: "None" }];
   }
 
   const [isHidden, setHidden] = useState(true);
@@ -63,7 +69,7 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
         {title !== undefined ? (
           <i>{title}</i>
         ) : (
-          <span>{items[selectedIndex][2]}</span>
+          <span>{items[selectedIndex].text}</span>
         )}
         {isHidden ? (
           <FontAwesomeIcon icon={faChevronDown} />
@@ -73,7 +79,7 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
       </button>
       {!isHidden && (
         <div className={`${styles.dropdown}`}>
-          {items.map(([icon, color, text], index) => (
+          {items.map(({ icon, color, text }, index) => (
             <button
               key={index}
               className={`${ButtonColorToClassName(styles, color)} ${
