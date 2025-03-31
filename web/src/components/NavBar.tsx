@@ -1,5 +1,4 @@
 import styles from "@/styles/components/NavBar.module.scss";
-import StandardDropdown from "./StandardDropdown";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
 import TitleDropdown from "./TitleDropdown";
@@ -27,10 +26,10 @@ const NavBar: React.FC = () => {
     <nav className={styles.container}>
       {/* Render model selection */}
       {pathname === "/" && (
-        <StandardDropdown
+        <TitleDropdown
           items={availableModels.map((model) => {
             const split = model.tag.split(":");
-            return `${split[0]} (${split[1]})`;
+            return [null, `${split[0]} (${split[1]})`];
           })}
           onSelect={setSelectedModel}
         />
@@ -65,14 +64,13 @@ const NavBar: React.FC = () => {
         pathname === "/" && (
           <div className={styles.conversationInfo}>
             <TitleDropdown
+              title={conversationRecords[selectedConversationIndex].name}
               items={[
                 [faPencil, "Rename"],
                 [faTrash, "Delete"],
               ]}
               onSelect={(index) => {}}
-            >
-              {conversationRecords[selectedConversationIndex].name}
-            </TitleDropdown>
+            />
           </div>
         )}
 

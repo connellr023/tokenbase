@@ -6,16 +6,20 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 type TitleDropdownProps = {
-  children: string;
+  title?: string;
   items: [IconDefinition | null, string][];
   onSelect: (index: number) => void;
 };
 
 const TitleDropdown: React.FC<TitleDropdownProps> = ({
-  children,
+  title,
   items,
   onSelect,
 }: TitleDropdownProps) => {
+  if (items.length === 0) {
+    items = [[null, "None"]];
+  }
+
   const [isHidden, setHidden] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -55,7 +59,11 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
         } ${merriweather400.className}`}
         onClick={toggleDropdown}
       >
-        <i>{children}</i>
+        {title !== undefined ? (
+          <i>{title}</i>
+        ) : (
+          <span>{items[selectedIndex][1]}</span>
+        )}
         {isHidden ? (
           <FontAwesomeIcon icon={faChevronDown} />
         ) : (
@@ -67,7 +75,11 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
           {items.map(([icon, text], index) => (
             <button
               key={index}
-              className={merriweather400.className}
+              className={`${merriweather400.className} ${
+                title === undefined && index === selectedIndex
+                  ? styles.active
+                  : ""
+              }`}
               onClick={() => handleSelect(index)}
             >
               {icon && <FontAwesomeIcon icon={icon} />}
