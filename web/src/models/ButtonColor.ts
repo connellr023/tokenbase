@@ -4,7 +4,7 @@ enum ButtonColor {
 
 export const ButtonColorToClassName = (
   scopedStyle: { readonly [key: string]: string },
-  color?: ButtonColor
+  color?: ButtonColor,
 ) => {
   switch (color) {
     case ButtonColor.Red:
