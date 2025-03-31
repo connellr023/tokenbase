@@ -1,0 +1,90 @@
+@use "../variables.scss" as *;
+
+div.container {
+  position: relative;
+
+  button.dropdownButton {
+    width: 100%;
+    color: $transparent-color-white;
+    border-radius: $border-radius-2;
+    background: transparent;
+    cursor: pointer;
+    padding: 0.55rem 0.7rem;
+    transition: $transition-2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    flex-direction: row;
+    font-size: 0.85rem;
+
+    & > span,
+    & > i {
+      font-size: 1rem;
+      padding-right: 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    &:hover {
+      color: $txt-color-1;
+      background: $bg-color-4;
+    }
+
+    &:active {
+      background: $bg-color-5;
+      transform: scale(0.97);
+    }
+
+    &.active {
+      background-color: $bg-color-5;
+    }
+  }
+
+  div.dropdown {
+    position: absolute;
+    right: 0;
+    margin-top: 0.2rem;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: $border-radius-2;
+    z-index: 1000;
+    width: min-content;
+    max-width: 100%;
+
+    button {
+      --color: #{$txt-color-1};
+
+      &.red {
+        --color: #{$red-color-1};
+      }
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border-radius: 0;
+      background: $bg-color-5;
+      font-size: inherit;
+      padding: 0.55rem 1.1rem;
+      color: color-mix(in srgb, var(--color) 65%, transparent);
+      transition: $transition-2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.6rem;
+      flex-direction: row;
+      cursor: pointer;
+
+      &:hover {
+        background: $bg-color-4;
+        color: var(--color);
+      }
+
+      &.active {
+        color: var(--color);
+      }
+    }
+  }
+}
