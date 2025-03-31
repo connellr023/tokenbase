@@ -1,4 +1,5 @@
 import styles from "@/styles/components/TitleDropdown.module.scss";
+import ButtonColor, { ButtonColorToClassName } from "@/models/ButtonColor";
 import { useEffect, useRef, useState } from "react";
 import { merriweather400 } from "@/utils/fonts";
 import { IconDefinition } from "@fortawesome/fontawesome-svg-core";
@@ -7,7 +8,7 @@ import { faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 
 type TitleDropdownProps = {
   title?: string;
-  items: [IconDefinition | null, string][];
+  items: [IconDefinition | undefined, ButtonColor | undefined, string][];
   onSelect: (index: number) => void;
 };
 
@@ -15,9 +16,9 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
   title,
   items,
   onSelect,
-}: TitleDropdownProps) => {
+}) => {
   if (items.length === 0) {
-    items = [[null, "None"]];
+    items = [[undefined, undefined, "None"]];
   }
 
   const [isHidden, setHidden] = useState(true);
@@ -62,7 +63,7 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
         {title !== undefined ? (
           <i>{title}</i>
         ) : (
-          <span>{items[selectedIndex][1]}</span>
+          <span>{items[selectedIndex][2]}</span>
         )}
         {isHidden ? (
           <FontAwesomeIcon icon={faChevronDown} />
@@ -72,10 +73,12 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
       </button>
       {!isHidden && (
         <div className={`${styles.dropdown}`}>
-          {items.map(([icon, text], index) => (
+          {items.map(([icon, color, text], index) => (
             <button
               key={index}
-              className={`${merriweather400.className} ${
+              className={`${ButtonColorToClassName(styles, color)} ${
+                merriweather400.className
+              } ${
                 title === undefined && index === selectedIndex
                   ? styles.active
                   : ""

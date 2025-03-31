@@ -1,4 +1,5 @@
 import styles from "@/styles/components/NavBar.module.scss";
+import ButtonColor from "@/models/ButtonColor";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
 import TitleDropdown from "./TitleDropdown";
@@ -29,7 +30,7 @@ const NavBar: React.FC = () => {
         <TitleDropdown
           items={availableModels.map((model) => {
             const split = model.tag.split(":");
-            return [null, `${split[0]} (${split[1]})`];
+            return [undefined, undefined, `${split[0]} (${split[1]})`];
           })}
           onSelect={setSelectedModel}
         />
@@ -66,8 +67,8 @@ const NavBar: React.FC = () => {
             <TitleDropdown
               title={conversationRecords[selectedConversationIndex].name}
               items={[
-                [faPencil, "Rename"],
-                [faTrash, "Delete"],
+                [faPencil, undefined, "Rename"],
+                [faTrash, ButtonColor.Red, "Delete"],
               ]}
               onSelect={(index) => {}}
             />

@@ -55,6 +55,12 @@ div.container {
     max-width: 100%;
 
     button {
+      --color: #{$txt-color-1};
+
+      &.red {
+        --color: #{$red-color-1};
+      }
+
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -62,7 +68,7 @@ div.container {
       background: $bg-color-5;
       font-size: inherit;
       padding: 0.55rem 1.1rem;
-      color: $transparent-color-white;
+      color: color-mix(in srgb, var(--color) 65%, transparent);
       transition: $transition-2;
       display: flex;
       align-items: center;
@@ -73,11 +79,11 @@ div.container {
 
       &:hover {
         background: $bg-color-4;
-        color: $txt-color-1;
+        color: var(--color);
       }
 
       &.active {
-        color: $txt-color-1;
+        color: var(--color);
       }
     }
   }
