@@ -2,7 +2,6 @@ package db
 
 import (
 	"tokenbase/internal/models"
-	"tokenbase/internal/utils"
 
 	"github.com/surrealdb/surrealdb.go"
 )
@@ -18,7 +17,12 @@ import (
 // - The created conversation
 // - An error if the conversation could not be created
 func NewConversation(sdb *surrealdb.DB, name string, userID string) (models.DbConversation, error) {
-	const query = "INSERT INTO conversations (name, user_id) VALUES ($name, <record>$user_id) RETURN AFTER"
+	const query = `
+		INSERT INTO conversations (name, user_id)
+		VALUES ($name, <record>$user_id)
+		RETURN AFTER
+	`
+
 	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
 		"name":    name,
 		"user_id": userID,
@@ -28,13 +32,10 @@ func NewConversation(sdb *surrealdb.DB, name string, userID string) (models.DbCo
 		return models.DbConversation{}, err
 	}
 
-	conversations, err := validateArrayQueryResult(res)
+	var conversation models.DbConversation
+	err = validateSingleQueryResult(res, &conversation)
 
-	if err != nil {
-		return models.DbConversation{}, err
-	}
-
-	return conversations[0], nil
+	return conversation, err
 }
 
 // Gets all conversations for a user
@@ -47,7 +48,12 @@ func NewConversation(sdb *surrealdb.DB, name string, userID string) (models.DbCo
 // - A list of conversations
 // - An error if the conversations could not be retrieved
 func GetAllConversations(sdb *surrealdb.DB, userID string) ([]models.DbConversation, error) {
-	const query = "SELECT * FROM conversations WHERE user_id = <record>$user_id ORDER BY updated_at DESC"
+	const query = `
+		SELECT * FROM conversations
+		WHERE user_id = <record>$user_id
+		ORDER BY updated_at DESC
+	`
+
 	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
 		"user_id": userID,
 	})
@@ -71,39 +77,30 @@ func GetAllConversations(sdb *surrealdb.DB, userID string) ([]models.DbConversat
 // - The deleted conversation
 // - An error if the conversation or its chats could not be deleted
 func DeleteConversation(sdb *surrealdb.DB, conversationID, userID string) (models.DbConversation, error) {
-	// Use an IF check so only the conversation owner can delete.
-	// If the conversation belongs to the user, we delete all associated chat records,
-	// then delete the conversation itself, returning the deleted record(s).
+	// Ownership of the conversation is checked in the first query.
+	// If the user is not the owner, the transaction will fail.
+	// The transaction will also delete all chat records associated with the conversation.
 	const query = `
+		BEGIN TRANSACTION;
 		DELETE FROM conversations 
-		WHERE id = <record>$conversation_id 
-			AND user_id = <record>$user_id
-		RETURN BEFORE;
+		WHERE id = <record>$conversation_id AND user_id = <record>$user_id
+		RETURN AFTER;
 		DELETE FROM chat_records 
 		WHERE conversation_id = <record>$conversation_id;
+		COMMIT TRANSACTION;
 	`
 
 	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
 		"conversation_id": conversationID,
 		"user_id":         userID,
 	})
+
 	if err != nil {
 		return models.DbConversation{}, err
 	}
 
-	// If the query response is missing or malformed, treat it as a failure.
-	if res == nil || len(*res) == 0 {
-		return models.DbConversation{}, utils.ErrQueryFailed
-	}
+	var conversation models.DbConversation
+	err = validateSingleQueryResult(res, &conversation)
 
-	data := (*res)[0].Result
-
-	// If no conversation was deleted, return ErrNoResults.
-	if len(data) == 0 {
-		return models.DbConversation{}, utils.ErrNoResults
-	}
-
-	// Return the first (and only) deleted conversation.
-	deletedConversation := data[0]
-	return deletedConversation, nil
+	return conversation, err
 }

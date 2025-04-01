@@ -8,6 +8,8 @@ import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useState } from "react";
+import { reqConversationChats } from "@/utils/reqConversationChats";
 import { firaMono400, merriweather400 } from "@/utils/fonts";
 import {
   faAnglesRight,
@@ -18,11 +20,7 @@ import {
   faSignIn,
   faSignOut,
   faBox,
-  faEllipsisV,
 } from "@fortawesome/free-solid-svg-icons";
-import { reqConversationChats } from "@/utils/reqConversationChats";
-import { useCallback, useState } from "react";
-import { backendEndpoint } from "@/utils/constants";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
@@ -37,10 +35,6 @@ const RightDrawer: React.FC = () => {
     unselectConversation,
   } = useConversationRecordsContext();
   const [isError, setError] = useState(false);
-  // State to manage which conversation's dropdown is open
-  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
-    null,
-  );
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -66,7 +60,7 @@ const RightDrawer: React.FC = () => {
     const selectedConversation = conversationRecords![conversationIndex];
     const chats = await reqConversationChats(
       bearer.token,
-      selectedConversation.id,
+      selectedConversation.id
     );
 
     if (chats === null) {
@@ -81,42 +75,6 @@ const RightDrawer: React.FC = () => {
     unselectConversation();
     setChats([]);
   }, [unselectConversation, setChats]);
-
-  const deleteConversation = async (conversationIndex: number) => {
-    if (!bearer?.token) return;
-    const conversationToDelete = conversationRecords![conversationIndex];
-    try {
-      const res = await fetch(
-        backendEndpoint + "api/user/conversation/delete",
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${bearer.token}`,
-          },
-          body: JSON.stringify({ conversationId: conversationToDelete.id }),
-        },
-      );
-      if (!res.ok) {
-        throw new Error("Failed to delete conversation");
-      }
-      // If the deleted conversation is selected, clear chats and unselect it.
-      if (selectedConversationIndex === conversationIndex) {
-        unselectConversation();
-        clearChats();
-      }
-      // Update the conversation list (for now we call clearConversationRecords
-      // so that the conversation list is refetched later).
-      clearConversationRecords();
-    } catch (error) {
-      console.error(error);
-      // Optionally set error state here to display feedback to the user.
-    }
-  };
-
-  const toggleDropdown = (i: number) => {
-    setOpenDropdownIndex((prev) => (prev === i ? null : i));
-  };
 
   return (
     <>
@@ -175,30 +133,10 @@ const RightDrawer: React.FC = () => {
                                 : ""
                             }`}
                             onClick={() => updateConversationChats(i)}
+                            key={i}
                           >
                             {record.name}
                           </button>
-                          <button
-                            className={styles.dropdownToggle}
-                            onClick={() => toggleDropdown(i)}
-                            style={{ width: "auto" }}
-                          >
-                            <FontAwesomeIcon icon={faEllipsisV} />
-                          </button>
-                          {openDropdownIndex === i && (
-                            <div className={styles.dropdownMenu}>
-                              <button
-                                onClick={() => {
-                                  console.log("Delete conversation", i);
-                                  deleteConversation(i);
-                                  setOpenDropdownIndex(null);
-                                }}
-                                style={{ color: "red" }}
-                              >
-                                Delete Conversation
-                              </button>
-                            </div>
-                          )}
                         </li>
                       ))}
                     </ul>

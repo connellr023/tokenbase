@@ -7,6 +7,9 @@ import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
+import { useBearerContext } from "@/contexts/BearerContext";
+import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { backendEndpoint } from "@/utils/constants";
 import {
   faAnglesLeft,
   faArrowLeft,
@@ -15,24 +18,82 @@ import {
   faSignIn,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { useCallback } from "react";
+
+const deleteConversationEndpoint =
+  backendEndpoint + "api/user/conversation/delete";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
   const { availableModels, setSelectedModel } = useModelsContext();
   const { openDrawer } = useRightDrawerContext();
-  const { conversationRecords, selectedConversationIndex } =
-    useConversationRecordsContext();
+  const { clearChats } = useChatRecordsContext();
+  const { bearer } = useBearerContext();
+  const {
+    conversationRecords,
+    selectedConversationIndex,
+    setConversationRecords,
+    unselectConversation,
+  } = useConversationRecordsContext();
+
+  const deleteCurrentConversation = useCallback(async () => {
+    if (
+      bearer?.token === undefined ||
+      conversationRecords === null ||
+      selectedConversationIndex === null
+    ) {
+      return;
+    }
+
+    try {
+      const conversationToDelete =
+        conversationRecords[selectedConversationIndex];
+
+      const res = await fetch(deleteConversationEndpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`,
+        },
+        body: JSON.stringify({ conversationId: conversationToDelete.id }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete conversation");
+      }
+
+      // If the conversation is deleted, remove it from the records.
+      clearChats();
+      unselectConversation();
+      setConversationRecords(
+        conversationRecords.filter(
+          (_, index) => index !== selectedConversationIndex
+        )
+      );
+    } catch (err) {
+      console.error("Error deleting conversation:", err);
+    }
+  }, [
+    bearer?.token,
+    conversationRecords,
+    selectedConversationIndex,
+    clearChats,
+    unselectConversation,
+    setConversationRecords,
+  ]);
 
   return (
     <nav className={styles.container}>
       {/* Render model selection */}
       {pathname === "/" && (
         <TitleDropdown
-          items={availableModels.map((model) => {
+          items={availableModels.map((model, i) => {
             const split = model.tag.split(":");
-            return { text: `${split[0]} (${split[1]})` };
+            return {
+              text: `${split[0]} (${split[1]})`,
+              onSelect: () => setSelectedModel(i),
+            };
           })}
-          onSelect={setSelectedModel}
         />
       )}
 
@@ -68,9 +129,13 @@ const NavBar: React.FC = () => {
               title={conversationRecords[selectedConversationIndex].name}
               items={[
                 { icon: faEdit, text: "Rename" },
-                { icon: faTrash, text: "Delete", color: ButtonColor.Red },
+                {
+                  icon: faTrash,
+                  text: "Delete",
+                  color: ButtonColor.Red,
+                  onSelect: deleteCurrentConversation,
+                },
               ]}
-              onSelect={() => {}}
             />
           </div>
         )}

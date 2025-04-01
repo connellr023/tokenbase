@@ -10,19 +10,15 @@ type DropdownItem = {
   icon?: IconDefinition;
   color?: ButtonColor;
   text: string;
+  onSelect?: () => void;
 };
 
 type TitleDropdownProps = {
   title?: string;
   items: DropdownItem[];
-  onSelect: (index: number) => void;
 };
 
-const TitleDropdown: React.FC<TitleDropdownProps> = ({
-  title,
-  items,
-  onSelect,
-}) => {
+const TitleDropdown: React.FC<TitleDropdownProps> = ({ title, items }) => {
   if (items.length === 0) {
     items = [{ text: "None" }];
   }
@@ -36,7 +32,7 @@ const TitleDropdown: React.FC<TitleDropdownProps> = ({
   };
 
   const handleSelect = (index: number) => {
-    onSelect(index);
+    items[index].onSelect?.();
     setSelectedIndex(index);
     setHidden(true);
   };
