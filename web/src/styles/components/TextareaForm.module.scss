@@ -18,6 +18,10 @@ div.container {
     font-size: 15px;
     box-sizing: border-box;
 
+    &.disabled {
+      cursor: not-allowed;
+    }
+
     &::placeholder {
       color: $transparent-color-black;
     }
@@ -66,5 +70,10 @@ div.container {
     position: absolute;
     bottom: -0.3rem;
     right: 0.8rem;
+  }
+
+  div.errorContainer {
+    width: 100%;
+    margin-top: 0.8rem;
   }
 }

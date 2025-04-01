@@ -22,8 +22,8 @@ class RootApp extends App<RootAppProps> {
     const appProps = await App.getInitialProps(appContext);
 
     return {
-      ...appProps,
       availableModels: await getAvailableModels(),
+      ...appProps,
     };
   }
 

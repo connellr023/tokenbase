@@ -21,7 +21,7 @@ import {
   faEllipsisV
 } from "@fortawesome/free-solid-svg-icons";
 import { reqConversationChats } from "@/utils/reqConversationChats";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { backendEndpoint } from "@/utils/constants";
 
 const RightDrawer: React.FC = () => {
@@ -75,10 +75,10 @@ const RightDrawer: React.FC = () => {
     setChats(chats);
   };
 
-  const newConversation = () => {
+  const newConversation = useCallback(() => {
     unselectConversation();
     setChats([]);
-  };
+  }, [unselectConversation, setChats]);
 
   const deleteConversation = async (conversationIndex: number) => {
     if (!bearer?.token) return;

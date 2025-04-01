@@ -1,5 +1,5 @@
 import styles from "@/styles/components/PromptArea.module.scss";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { merriweather500 } from "@/utils/fonts";
 import {
@@ -31,20 +31,29 @@ const PromptArea: React.FC<PromptAreaProps> = ({
     setPrompt("");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      if (prompt.trim().length > 0 && !isDisabled) {
+        handleSend();
+      }
+    }
+  };
+
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
   };
 
-  const adjustTextareaHeight = () => {
+  const adjustTextareaHeight = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  };
+  }, []);
 
   useEffect(() => {
     adjustTextareaHeight();
-  }, [prompt]);
+  }, [prompt, adjustTextareaHeight]);
 
   useEffect(() => {
     window.addEventListener("resize", adjustTextareaHeight);
@@ -52,7 +61,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
     return () => {
       window.removeEventListener("resize", adjustTextareaHeight);
     };
-  }, []);
+  }, [adjustTextareaHeight]);
 
   return (
     <div className={styles.container}>
@@ -62,6 +71,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           ref={textareaRef}
           value={prompt}
           onChange={handleInput}
+          onKeyDown={handleKeyDown}
           placeholder="What's on your mind?"
           rows={1}
           spellCheck={false}

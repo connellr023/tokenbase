@@ -1,5 +1,5 @@
 import styles from "@/styles/components/Modal.module.scss";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 type ModalProps = {
   isOpen: boolean;
@@ -10,14 +10,17 @@ type ModalProps = {
 const Modal: React.FC<ModalProps> = ({ isOpen, children, onClickOutside }) => {
   const windowRef = useRef<HTMLDivElement | null>(null);
 
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      windowRef.current &&
-      !windowRef.current.contains(event.target as Node)
-    ) {
-      onClickOutside?.();
-    }
-  };
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      if (
+        windowRef.current &&
+        !windowRef.current.contains(event.target as Node)
+      ) {
+        onClickOutside?.();
+      }
+    },
+    [onClickOutside],
+  );
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
@@ -25,7 +28,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, children, onClickOutside }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [handleClickOutside]);
 
   return (
     <div className={`${styles.container}  ${isOpen ? styles.visible : ""}`}>

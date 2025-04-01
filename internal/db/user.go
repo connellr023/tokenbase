@@ -27,17 +27,9 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 		return models.DbUser{}, err
 	}
 
-	if len(*res) == 0 {
-		return models.DbUser{}, ErrNoResults
-	}
-
-	data := (*res)[0]
-
-	if len(data.Result) == 0 {
-		return models.DbUser{}, ErrNoResults
-	}
-
-	return data.Result[0], nil
+	var user models.DbUser
+	err = validateSingleQueryResult(res, &user)
+	return user, err
 }
 
 // Inserts a newly registered user's credentials into the DB
@@ -64,10 +56,7 @@ func RegisterUser(sdb *surrealdb.DB, username string, email string, password str
 		return models.DbUser{}, err
 	}
 
-	if res == nil || len(*res) == 0 {
-		return models.DbUser{}, ErrQueryFailed
-	}
-
-	user := (*res)[0].Result[0]
-	return user, nil
+	var user models.DbUser
+	err = validateSingleQueryResult(res, &user)
+	return user, err
 }

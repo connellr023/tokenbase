@@ -1,7 +1,7 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import React, { useState } from "react";
-import { LoginRequest, LoginResponse } from "@/models/Login";
+import React, { useCallback, useState } from "react";
+import { LoginRequest, AuthResponse } from "@/models/Auth";
 import { emailRegex } from "@/utils/regexps";
 import { backendEndpoint, minPasswordLength } from "@/utils/constants";
 import { useBearerContext } from "@/contexts/BearerContext";
@@ -20,18 +20,33 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isStepValid = (step: number) => {
-    switch (step) {
-      case 0:
-        return email.trim() !== "" && emailRegex.test(email);
-      case 1:
-        return password.length >= minPasswordLength;
-      default:
-        return true;
+  const isStepValid = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 0:
+          return email.trim() !== "" && emailRegex.test(email);
+        case 1:
+          return password.length >= minPasswordLength;
+        default:
+          return true;
+      }
+    },
+    [email, password],
+  );
+
+  const handleKeyDown = (
+    step: number,
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (step === 1 && isStepValid(step)) {
+        handleSubmit();
+      }
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const loginRequest: LoginRequest = {
       email,
       password,
@@ -50,7 +65,7 @@ const Login: React.FC = () => {
         return "Check your email and password.";
       }
 
-      const data = (await res.json()) as LoginResponse;
+      const data = (await res.json()) as AuthResponse;
 
       clearChats();
       clearConversationRecords();
@@ -61,10 +76,18 @@ const Login: React.FC = () => {
       });
 
       push("/");
-    } catch (_) {
+    } catch {
       return "An error occurred while logging in.";
     }
-  };
+  }, [
+    email,
+    password,
+    clearChats,
+    clearConversationRecords,
+    unselectConversation,
+    setBearer,
+    push,
+  ]);
 
   const steps = [
     <div key="step1">
@@ -77,6 +100,7 @@ const Login: React.FC = () => {
         onChange={(e) => {
           setEmail(e.target.value);
         }}
+        onKeyDown={(e) => handleKeyDown(0, e)}
       />
     </div>,
     <div key="step2">
@@ -89,6 +113,7 @@ const Login: React.FC = () => {
         onChange={(e) => {
           setPassword(e.target.value);
         }}
+        onKeyDown={(e) => handleKeyDown(1, e)}
       />
     </div>,
   ];

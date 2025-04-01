@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 
 	"github.com/redis/go-redis/v9"
 )
@@ -36,7 +37,7 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 	if exists, err := existsCmd.Result(); err != nil {
 		return nil, err
 	} else if exists == 0 {
-		return nil, ErrKeyNotFound
+		return nil, utils.ErrKeyNotFound
 	}
 
 	// Deserialize chat records
@@ -129,7 +130,7 @@ func DeleteChatRecord(rdb *redis.Client, key string, createdAt int64) error {
 
 	// Ensure a chat record was deleted
 	if count, err := zremrangebyrankCmd.Result(); err != nil || count == 0 {
-		return ErrChatRecordNotFound
+		return utils.ErrChatRecordNotFound
 	}
 
 	return nil

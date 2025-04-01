@@ -2,6 +2,7 @@ import User from "@/models/User";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -27,19 +28,19 @@ export const BearerProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [bearer, setBearerState] = useState<Bearer | undefined>(undefined);
 
-  const setBearer = (newBearer: Bearer) => {
+  const setBearer = useCallback((newBearer: Bearer) => {
     setBearerState(newBearer);
 
     // Only store in local storage if the token belongs to a user (not a guest)
     if (newBearer.user) {
       localStorage.setItem(localStorageBearerKey, JSON.stringify(newBearer));
     }
-  };
+  }, []);
 
-  const clearBearer = () => {
+  const clearBearer = useCallback(() => {
     setBearerState(undefined);
     localStorage.removeItem(localStorageBearerKey);
-  };
+  }, []);
 
   // Retrieve bearer from local storage on mount
   useEffect(() => {

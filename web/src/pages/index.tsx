@@ -8,9 +8,7 @@ type HomeProps = {
   chatSuggestions: string[];
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async ({
-  req,
-}) => {
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   return {
     props: {
       chatSuggestions: await getChatSuggestions(),

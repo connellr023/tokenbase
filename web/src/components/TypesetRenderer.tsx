@@ -11,19 +11,23 @@ type TypesetRendererProps = {
   children?: string;
 };
 
-const extractLanguageName = (className: string) => {
-  const split = className.split("-");
-
-  if (split.length === 1) {
-    return null;
-  }
-
-  return split[1];
-};
-
 const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
+  const extractLanguageName = (className: string) => {
+    const split = className.split("-");
+
+    if (split.length === 1) {
+      return null;
+    }
+
+    return split[1];
+  };
+
   const renderers = {
-    code({ className, children, ...props }: PropsWithChildren<any>) {
+    code({
+      className,
+      children,
+      ...props
+    }: PropsWithChildren<{ className?: string }>) {
       const lang = extractLanguageName(className || "");
 
       if (!lang) {
@@ -48,7 +52,7 @@ const TypesetRenderer: React.FC<TypesetRendererProps> = ({ children }) => {
         </div>
       );
     },
-    think({ children }: PropsWithChildren<any>) {
+    think({ children }: PropsWithChildren) {
       return <>{children}</>;
     },
   };

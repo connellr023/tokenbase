@@ -1,8 +1,8 @@
 import styles from "@/styles/components/NavBar.module.scss";
-import StandardDropdown from "./StandardDropdown";
+import ButtonColor from "@/models/ButtonColor";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
-import { merriweather400 } from "@/utils/fonts";
+import TitleDropdown from "./TitleDropdown";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
@@ -11,10 +11,10 @@ import {
   faAnglesLeft,
   faArrowLeft,
   faBolt,
+  faEdit,
   faSignIn,
-  faSignOut,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useBearerContext } from "@/contexts/BearerContext";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
@@ -27,10 +27,10 @@ const NavBar: React.FC = () => {
     <nav className={styles.container}>
       {/* Render model selection */}
       {pathname === "/" && (
-        <StandardDropdown
+        <TitleDropdown
           items={availableModels.map((model) => {
             const split = model.tag.split(":");
-            return `${split[0]} (${split[1]})`;
+            return { text: `${split[0]} (${split[1]})` };
           })}
           onSelect={setSelectedModel}
         />
@@ -64,9 +64,14 @@ const NavBar: React.FC = () => {
         conversationRecords !== null &&
         pathname === "/" && (
           <div className={styles.conversationInfo}>
-            <h3 className={merriweather400.className}>
-              {conversationRecords[selectedConversationIndex].name}
-            </h3>
+            <TitleDropdown
+              title={conversationRecords[selectedConversationIndex].name}
+              items={[
+                { icon: faEdit, text: "Rename" },
+                { icon: faTrash, text: "Delete", color: ButtonColor.Red },
+              ]}
+              onSelect={() => {}}
+            />
           </div>
         )}
 

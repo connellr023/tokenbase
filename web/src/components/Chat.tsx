@@ -1,8 +1,9 @@
 import styles from "@/styles/components/Chat.module.scss";
-import IconButton, { IconButtonColor } from "./IconButton";
+import ButtonColor from "@/models/ButtonColor";
+import IconButton from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
-import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faCopy, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 type ChatProps = {
@@ -10,7 +11,6 @@ type ChatProps = {
   prompt: string;
   reply: string;
   isComplete: boolean;
-  isMostRecent: boolean;
   onDelete?: (createdAt: number) => void;
 };
 
@@ -19,7 +19,6 @@ const Chat: React.FC<ChatProps> = ({
   prompt,
   reply,
   isComplete,
-  isMostRecent,
   onDelete,
 }) => {
   const [copyButtonText, setCopyButtonText] = useState("Copy");
@@ -46,11 +45,6 @@ const Chat: React.FC<ChatProps> = ({
       )}
       {isComplete && (
         <div className={`${styles.chatOptions} fade-in`}>
-          {isMostRecent && (
-            <IconButton icon={faRefresh} onClick={() => console.log("retry")}>
-              Retry
-            </IconButton>
-          )}
           <IconButton
             icon={faCopy}
             onClick={handleCopy}
@@ -60,7 +54,7 @@ const Chat: React.FC<ChatProps> = ({
           </IconButton>
           <IconButton
             icon={faTrash}
-            color={IconButtonColor.Red}
+            color={ButtonColor.Red}
             onClick={() => onDelete?.(createdAt)}
           >
             Delete
