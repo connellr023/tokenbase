@@ -78,10 +78,12 @@ func DeleteConversation(sdb *surrealdb.DB, conversationID, userID string) (model
 	// If the conversation belongs to the user, we delete all associated chat records,
 	// then delete the conversation itself, returning the deleted record(s).
 	const query = `
-		IF (<record>$conversation_id).user_id = <record>$user_id THEN (
-			DELETE FROM chat_records WHERE conversation_id = <record>$conversation_id;
-			DELETE FROM conversations WHERE id = <record>$conversation_id RETURN AFTER
-		) ELSE ([]) END
+		DELETE FROM conversations 
+		WHERE id = <record>$conversation_id 
+			AND user_id = <record>$user_id
+		RETURN BEFORE;
+		DELETE FROM chat_records 
+		WHERE conversation_id = <record>$conversation_id;
 	`
 
 	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
