@@ -67,8 +67,8 @@ const NavBar: React.FC = () => {
       unselectConversation();
       setConversationRecords(
         conversationRecords.filter(
-          (_, index) => index !== selectedConversationIndex
-        )
+          (_, index) => index !== selectedConversationIndex,
+        ),
       );
     } catch (err) {
       console.error("Error deleting conversation:", err);
