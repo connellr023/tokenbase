@@ -150,17 +150,17 @@ const Register: React.FC = () => {
         onKeyDown={(e) => handleKeyDown(2, e)}
       />
     </div>,
-        <div key="step4">
-        <p>Confirm your password below.</p>
-        <StandardInput
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          isValid={() => isStepValid(3)}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          onKeyDown={(e) => handleKeyDown(3, e)}
-        />
-      </div>,
+    <div key="step4">
+      <p>Confirm your password below.</p>
+      <StandardInput
+        type="password"
+        placeholder="Confirm Password"
+        value={confirmPassword}
+        isValid={() => isStepValid(3)}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+        onKeyDown={(e) => handleKeyDown(3, e)}
+      />
+    </div>,
   ];
 
   return (
