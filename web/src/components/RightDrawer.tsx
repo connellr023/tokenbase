@@ -18,7 +18,7 @@ import {
   faSignIn,
   faSignOut,
   faBox,
-  faEllipsisV
+  faEllipsisV,
 } from "@fortawesome/free-solid-svg-icons";
 import { reqConversationChats } from "@/utils/reqConversationChats";
 import { useCallback, useState } from "react";
@@ -38,7 +38,9 @@ const RightDrawer: React.FC = () => {
   } = useConversationRecordsContext();
   const [isError, setError] = useState(false);
   // State to manage which conversation's dropdown is open
-  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(null);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
+    null,
+  );
 
   const pushAndClose = async (path: Url) => {
     await push(path);
@@ -84,14 +86,17 @@ const RightDrawer: React.FC = () => {
     if (!bearer?.token) return;
     const conversationToDelete = conversationRecords![conversationIndex];
     try {
-      const res = await fetch(backendEndpoint + "api/user/conversation/delete", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${bearer.token}`,
+      const res = await fetch(
+        backendEndpoint + "api/user/conversation/delete",
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${bearer.token}`,
+          },
+          body: JSON.stringify({ conversationId: conversationToDelete.id }),
         },
-        body: JSON.stringify({ conversationId: conversationToDelete.id }),
-      });
+      );
       if (!res.ok) {
         throw new Error("Failed to delete conversation");
       }
@@ -110,7 +115,7 @@ const RightDrawer: React.FC = () => {
   };
 
   const toggleDropdown = (i: number) => {
-    setOpenDropdownIndex(prev => (prev === i ? null : i));
+    setOpenDropdownIndex((prev) => (prev === i ? null : i));
   };
 
   return (
@@ -188,7 +193,7 @@ const RightDrawer: React.FC = () => {
                                   deleteConversation(i);
                                   setOpenDropdownIndex(null);
                                 }}
-                                style={{color: "red"}}
+                                style={{ color: "red" }}
                               >
                                 Delete Conversation
                               </button>
