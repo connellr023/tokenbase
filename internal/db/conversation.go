@@ -2,6 +2,7 @@ package db
 
 import (
 	"tokenbase/internal/models"
+	"tokenbase/internal/utils"
 
 	"github.com/surrealdb/surrealdb.go"
 )
@@ -92,14 +93,14 @@ func DeleteConversation(sdb *surrealdb.DB, conversationID, userID string) (model
 
 	// If the query response is missing or malformed, treat it as a failure.
 	if res == nil || len(*res) == 0 {
-		return models.DbConversation{}, ErrQueryFailed
+		return models.DbConversation{}, utils.ErrQueryFailed
 	}
 
 	data := (*res)[0].Result
 
 	// If no conversation was deleted, return ErrNoResults.
 	if len(data) == 0 {
-		return models.DbConversation{}, ErrNoResults
+		return models.DbConversation{}, utils.ErrNoResults
 	}
 
 	// Return the first (and only) deleted conversation.
