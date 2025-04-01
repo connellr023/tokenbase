@@ -71,3 +71,18 @@ func NewChatSession(rdb *redis.Client, key string) error {
 
 	return nil
 }
+
+// Delete a chat session in Redis
+//
+// Parameters:
+// - rdb: Redis client
+// - key: The key for the chat session
+//
+// Returns:
+// - Any error that occurred
+func DeleteChatSession(rdb *redis.Client, key string) error {
+	ctx := context.Background()
+	_, err := rdb.Del(ctx, key).Result()
+
+	return err
+}

@@ -17,7 +17,13 @@ import (
 // - The user's data
 // - Any error that occurred
 func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (models.DbUser, error) {
-	const query = "SELECT * FROM users WHERE email = $email AND crypto::bcrypt::compare(password_hash, $password)"
+	const query = `
+		SELECT * 
+		FROM users 
+		WHERE email = $email 
+		AND crypto::bcrypt::compare(password_hash, $password)
+	`
+
 	res, err := surrealdb.Query[[]models.DbUser](sdb, query, map[string]any{
 		"email":    email,
 		"password": password,
@@ -29,6 +35,7 @@ func ValidateUserCredentials(sdb *surrealdb.DB, email string, password string) (
 
 	var user models.DbUser
 	err = validateSingleQueryResult(res, &user)
+
 	return user, err
 }
 
@@ -58,5 +65,6 @@ func RegisterUser(sdb *surrealdb.DB, username string, email string, password str
 
 	var user models.DbUser
 	err = validateSingleQueryResult(res, &user)
+
 	return user, err
 }

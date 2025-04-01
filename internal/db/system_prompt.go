@@ -31,7 +31,10 @@ func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
 }
 
 func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (models.DbSystemPrompt, error) {
-	const query = "UPDATE system_prompt SET prompt = $prompt"
+	const query = `
+		UPDATE system_prompt
+		SET prompt = $prompt
+	`
 
 	// Use a slice to handle the array response
 	res, err := surrealdb.Query[[]models.DbSystemPrompt](sdb, query, map[string]interface{}{
@@ -44,5 +47,6 @@ func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (models.DbSystemPrompt, e
 
 	var promptRes models.DbSystemPrompt
 	err = validateSingleQueryResult(res, &promptRes)
+
 	return promptRes, err
 }

@@ -18,7 +18,12 @@ import (
 //	A list of chat records
 //	An error if the chat records could not be retrieved
 func GetAllChatRecordsFromConversation(sdb *surrealdb.DB, conversationID string) ([]models.DbChatRecord, error) {
-	const query = "SELECT * FROM chat_records WHERE conversation_id = <record>$conversation_id ORDER BY CREATED_AT DESC"
+	const query = `
+		SELECT * FROM chat_records
+		WHERE conversation_id = <record>$conversation_id
+		ORDER BY created_at DESC
+	`
+
 	res, err := surrealdb.Query[[]models.DbChatRecord](sdb, query, map[string]any{
 		"conversation_id": conversationID,
 	})
@@ -43,7 +48,23 @@ func GetAllChatRecordsFromConversation(sdb *surrealdb.DB, conversationID string)
 // - The saved chat record
 // - An error if the chat record could not be saved
 func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, reply string, createdAt int64, userID string, conversationID string) (models.DbChatRecord, error) {
-	const query = "IF (<record>$conversation_id).user_id = <record>$user_id THEN (INSERT INTO chat_records (conversation_id, prompt, prompt_images, reply, created_at) VALUES (<record>$conversation_id, $prompt, $prompt_images, $reply, $created_at) RETURN AFTER) ELSE ([]) END"
+	const query = `
+		IF (<record>$conversation_id).user_id = <record>$user_id THEN (
+			INSERT INTO chat_records (
+				conversation_id, 
+				prompt, 
+				prompt_images, 
+				reply, 
+				created_at
+			) VALUES (
+				<record>$conversation_id, 
+				$prompt, 
+				$prompt_images, 
+				$reply, 
+				$created_at
+			) RETURN AFTER
+		) ELSE ([]) END
+	`
 	res, err := surrealdb.Query[[]models.DbChatRecord](sdb, query, map[string]any{
 		"conversation_id": conversationID,
 		"user_id":         userID,
@@ -74,7 +95,15 @@ func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, rep
 // - The deleted chat record
 // - An error if the chat record could not be deleted
 func DeleteChatRecordByCreationTime(sdb *surrealdb.DB, createdAt int64, userID string, conversationID string) (models.DbChatRecord, error) {
-	const query = "IF (<record>$conversation_id).user_id = <record>$user_id THEN (DELETE FROM chat_records WHERE conversation_id = <record>$conversation_id AND created_at = $created_at RETURN AFTER) ELSE ([]) END"
+	const query = `
+		IF (<record>$conversation_id).user_id = <record>$user_id THEN (
+			DELETE FROM chat_records 
+			WHERE conversation_id = <record>$conversation_id 
+			AND created_at = $created_at 
+			RETURN AFTER
+		) ELSE ([]) END
+	`
+
 	res, err := surrealdb.Query[[]models.DbChatRecord](sdb, query, map[string]any{
 		"conversation_id": conversationID,
 		"user_id":         userID,
