@@ -6,6 +6,7 @@ import TitleDropdown from "./TitleDropdown";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { useHomeModalContext } from "@/contexts/HomeModalContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
@@ -18,10 +19,13 @@ import {
   faSignIn,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 const deleteConversationEndpoint =
   backendEndpoint + "api/user/conversation/delete";
+
+  const renameConversationEndpoint =
+  backendEndpoint + "api/user/conversation/rename";
 
 const NavBar: React.FC = () => {
   const { pathname } = useRouter();
@@ -35,6 +39,10 @@ const NavBar: React.FC = () => {
     setConversationRecords,
     unselectConversation,
   } = useConversationRecordsContext();
+  const { openRenameModal } = useHomeModalContext();
+
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState("");
 
   const deleteCurrentConversation = useCallback(async () => {
     if (
@@ -128,7 +136,13 @@ const NavBar: React.FC = () => {
             <TitleDropdown
               title={conversationRecords[selectedConversationIndex].name}
               items={[
-                { icon: faEdit, text: "Rename" },
+                { icon: faEdit, 
+                  text: "Rename", 
+                  onSelect: () => 
+                    openRenameModal(
+                      conversationRecords[selectedConversationIndex].id
+                    ),
+                },
                 {
                   icon: faTrash,
                   text: "Delete",

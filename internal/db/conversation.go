@@ -104,3 +104,37 @@ func DeleteConversation(sdb *surrealdb.DB, conversationID, userID string) (model
 
 	return conversation, err
 }
+
+// Renames a conversation if owned by the user
+//
+// Parameters:
+// - sdb: A pointer to the surrealdb.DB instance
+// - conversationID: The ID of the conversation to rename
+// - userID: The user ID of the conversation owner
+// - newName: The new name of the conversation
+//
+// Returns:
+// - The renamed conversation
+// - An error if the conversation or its chats could not be renamed
+func RenameConversation(sdb *surrealdb.DB, conversationID, userID string, newName string) (models.DbConversation, error) {
+	const query = `
+		UPDATE conversations
+		SET name = $name
+		WHERE id = <record>$conversation_id AND user_id = <record>$user_id;
+	`
+
+	res, err := surrealdb.Query[[]models.DbConversation](sdb, query, map[string]any{
+		"name":            newName,
+		"conversation_id": conversationID,
+		"user_id":         userID,
+	})
+
+	if err != nil {
+		return models.DbConversation{}, err
+	}
+
+	var conversation models.DbConversation
+	err = validateSingleQueryResult(res, &conversation)
+
+	return conversation, err
+}
