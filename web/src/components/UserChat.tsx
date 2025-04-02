@@ -8,10 +8,10 @@ import { reqNewConversation } from "@/utils/reqNewConversation";
 import { useEffect, useState } from "react";
 import { reqAllConversations } from "@/utils/reqAllConversations";
 
-
 const userPromptEndpoint = backendEndpoint + "api/user/chat/prompt";
 const userDeleteChatEndpoint = backendEndpoint + "api/user/chat/delete";
-const renameConversationEndpoint = backendEndpoint + "api/user/conversation/rename";
+const renameConversationEndpoint =
+  backendEndpoint + "api/user/conversation/rename";
 
 type UserChatProps = {
   chatSuggestions: string[];
@@ -104,8 +104,6 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       },
     };
   };
-
-
 
   useEffect(() => {
     // Fetch all conversations when the component mounts

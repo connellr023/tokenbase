@@ -23,7 +23,6 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
 
   const close = useCallback(() => setOpen(false), []);
 
-
   useEffect(() => {
     if (bearer) {
       setOpen(false);
@@ -31,11 +30,12 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   }, [bearer]);
 
   return (
-    <HomeModalContext.Provider 
-      value={{ 
+    <HomeModalContext.Provider
+      value={{
         isOpen,
         close,
-      }}>
+      }}
+    >
       {children}
     </HomeModalContext.Provider>
   );

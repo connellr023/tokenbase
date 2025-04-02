@@ -29,7 +29,7 @@ import ErrorMessage from "./ErrorMessage";
 const deleteConversationEndpoint =
   backendEndpoint + "api/user/conversation/delete";
 
-  const renameConversationEndpoint =
+const renameConversationEndpoint =
   backendEndpoint + "api/user/conversation/rename";
 
 const NavBar: React.FC = () => {
@@ -46,7 +46,9 @@ const NavBar: React.FC = () => {
   } = useConversationRecordsContext();
 
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false); // Modal open state
-  const [renameConversationId, setRenameConversationId] = useState<string | null>(null); // ID of the conversation being renamed
+  const [renameConversationId, setRenameConversationId] = useState<
+    string | null
+  >(null); // ID of the conversation being renamed
   const [error, setError] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
 
@@ -62,10 +64,7 @@ const NavBar: React.FC = () => {
     setNewName(""); // Reset the input field
   };
 
-  
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
       if (!(newName.trim() === "")) {
@@ -103,12 +102,13 @@ const NavBar: React.FC = () => {
       const data = await res.json();
       const updatedRecords = conversationRecords
         ? conversationRecords.map((conversation) =>
-            conversation.id === conversationRecords[selectedConversationIndex]?.id
-              ? { 
-                  ...conversation, 
+            conversation.id ===
+            conversationRecords[selectedConversationIndex]?.id
+              ? {
+                  ...conversation,
                   name: data.conversation.name,
                   updated_at: data.conversation.updated_at,
-              }
+                }
               : conversation,
           )
         : [];
@@ -118,7 +118,11 @@ const NavBar: React.FC = () => {
       setNewName("");
     } catch (err) {
       console.error("Error renaming conversation:", err);
-      setError((err instanceof Error ? err.message : "An unexpected error occurred. Please try again."));
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again.",
+      );
     }
   }, [
     bearer?.token,
@@ -180,14 +184,14 @@ const NavBar: React.FC = () => {
   ]);
 
   return (
-    <>      
-    <Modal isOpen={isRenameModalOpen} onClickOutside={closeModal}>
-      <h2 className={styles.modalTitle}>Rename Conversation</h2>
-        <StandardInput 
+    <>
+      <Modal isOpen={isRenameModalOpen} onClickOutside={closeModal}>
+        <h2 className={styles.modalTitle}>Rename Conversation</h2>
+        <StandardInput
           type="text"
           placeholder="Enter new name"
           value={newName}
-          isValid={() => !(newName.trim() === "")} 
+          isValid={() => !(newName.trim() === "")}
           onChange={(e) => setNewName(e.target.value)}
           onKeyDown={(e) => handleKeyDown(e)}
         />
@@ -195,14 +199,11 @@ const NavBar: React.FC = () => {
           <StandardButton
             icon={faCheck}
             onClick={handleRename}
-            isDisabled={(newName.trim() === "")}
+            isDisabled={newName.trim() === ""}
           >
             Rename
           </StandardButton>
-          <StandardButton
-            icon={faArrowLeft}
-            onClick={closeModal}
-          >
+          <StandardButton icon={faArrowLeft} onClick={closeModal}>
             Cancel
           </StandardButton>
         </div>
@@ -257,11 +258,12 @@ const NavBar: React.FC = () => {
               <TitleDropdown
                 title={conversationRecords[selectedConversationIndex].name}
                 items={[
-                  { icon: faEdit, 
-                    text: "Rename", 
-                    onSelect: () => 
+                  {
+                    icon: faEdit,
+                    text: "Rename",
+                    onSelect: () =>
                       openModal(
-                        conversationRecords[selectedConversationIndex].id
+                        conversationRecords[selectedConversationIndex].id,
                       ),
                   },
                   {
