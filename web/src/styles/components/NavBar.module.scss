@@ -48,3 +48,16 @@ nav.container {
     gap: 0.55rem;
   }
 }
+
+h2.modalTitle {
+  margin: 0;
+}
+
+div.modalButtonContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.3rem;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 13rem;
+}

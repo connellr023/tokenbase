@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"net/http"
+	"time"
 	"tokenbase/internal/db"
 	"tokenbase/internal/middlewares"
 	"tokenbase/internal/models"
@@ -36,7 +37,7 @@ func (i *Injection) RenameUserConversation(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	dbConversation, err := db.RenameConversation(i.Sdb, req.ConversationID, user.ID, req.Name)
+	dbConversation, err := db.RenameConversation(i.Sdb, req.ConversationID, user.ID, req.Name, time.Now().UnixMilli())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

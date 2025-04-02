@@ -18,8 +18,13 @@ import {
   faEdit,
   faSignIn,
   faTrash,
+  faCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useState } from "react";
+import Modal from "./Modal";
+import StandardInput from "./StandardInput";
+import StandardButton from "./StandardButton";
+import ErrorMessage from "./ErrorMessage";
 
 const deleteConversationEndpoint =
   backendEndpoint + "api/user/conversation/delete";
@@ -39,10 +44,94 @@ const NavBar: React.FC = () => {
     setConversationRecords,
     unselectConversation,
   } = useConversationRecordsContext();
-  const { openRenameModal } = useHomeModalContext();
 
-  const [isRenaming, setIsRenaming] = useState(false);
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState(false); // Modal open state
+  const [renameConversationId, setRenameConversationId] = useState<string | null>(null); // ID of the conversation being renamed
+  const [error, setError] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
+
+  const openModal = (conversationId: string) => {
+    setRenameConversationId(conversationId);
+    setIsRenameModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setRenameConversationId(null);
+    setIsRenameModalOpen(false);
+    setError(null); // Clear any previous errors
+    setNewName(""); // Reset the input field
+  };
+
+  
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!(newName.trim() === "")) {
+        handleRename();
+      }
+    }
+  };
+
+  const handleRename = useCallback(async () => {
+    if (
+      bearer?.token === undefined ||
+      conversationRecords === null ||
+      selectedConversationIndex === null ||
+      newName.trim() === ""
+    ) {
+      return;
+    }
+
+    try {
+      const res = await fetch(renameConversationEndpoint, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${bearer.token}`,
+        },
+        body: JSON.stringify({
+          conversationId: conversationRecords[selectedConversationIndex]?.id,
+          name: newName,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("Failed to rename conversation");
+      }
+
+      const data = await res.json();
+      const updatedRecords = conversationRecords
+        ? conversationRecords.map((conversation) =>
+            conversation.id === conversationRecords[selectedConversationIndex]?.id
+              ? { 
+                  ...conversation, 
+                  name: data.conversation.name,
+                  updated_at: data.conversation.updated_at,
+              }
+              : conversation,
+          )
+        : [];
+      updatedRecords.sort((a, b) => b.createdAt - a.createdAt);
+      setConversationRecords(updatedRecords);
+      closeModal();
+      setNewName("");
+    } catch (err) {
+      console.error("Error renaming conversation:", err);
+      setError((err instanceof Error ? err.message : "An unexpected error occurred. Please try again."));
+    }
+  }, [
+    bearer?.token,
+    conversationRecords,
+    selectedConversationIndex,
+    newName,
+    renameConversationEndpoint,
+    renameConversationId,
+    setConversationRecords,
+    closeModal,
+    setNewName,
+    setError,
+  ]);
 
   const deleteCurrentConversation = useCallback(async () => {
     if (
@@ -91,81 +180,114 @@ const NavBar: React.FC = () => {
   ]);
 
   return (
-    <nav className={styles.container}>
-      {/* Render model selection */}
-      {pathname === "/" && (
-        <TitleDropdown
-          items={availableModels.map((model, i) => {
-            const split = model.tag.split(":");
-            return {
-              text: `${split[0]} (${split[1]})`,
-              onSelect: () => setSelectedModel(i),
-            };
-          })}
+    <>      
+    <Modal isOpen={isRenameModalOpen} onClickOutside={closeModal}>
+      <h2 className={styles.modalTitle}>Rename Conversation</h2>
+        <StandardInput 
+          type="text"
+          placeholder="Enter new name"
+          value={newName}
+          isValid={() => !(newName.trim() === "")} 
+          onChange={(e) => setNewName(e.target.value)}
+          onKeyDown={(e) => handleKeyDown(e)}
         />
-      )}
-
-      <div className={styles.linksContainer}>
-        {/* Render navigation back to main chat page */}
-        {pathname !== "/" && (
-          <StandardLink icon={faArrowLeft} href="/">
-            Chat
-          </StandardLink>
-        )}
-
-        {/* Render navigation button back to register page */}
-        {pathname === "/login" && (
-          <StandardLink icon={faBolt} href="/register">
-            Register
-          </StandardLink>
-        )}
-
-        {/* Render navigation button back to login page */}
-        {pathname === "/register" && (
-          <StandardLink icon={faSignIn} href="/login">
-            Login
-          </StandardLink>
-        )}
-      </div>
-
-      {/* Render current conversations information */}
-      {selectedConversationIndex !== null &&
-        conversationRecords !== null &&
-        pathname === "/" && (
-          <div className={styles.conversationInfo}>
-            <TitleDropdown
-              title={conversationRecords[selectedConversationIndex].name}
-              items={[
-                { icon: faEdit, 
-                  text: "Rename", 
-                  onSelect: () => 
-                    openRenameModal(
-                      conversationRecords[selectedConversationIndex].id
-                    ),
-                },
-                {
-                  icon: faTrash,
-                  text: "Delete",
-                  color: ButtonColor.Red,
-                  onSelect: deleteCurrentConversation,
-                },
-              ]}
-            />
+        <div className={styles.modalButtonContainer}>
+          <StandardButton
+            icon={faCheck}
+            onClick={handleRename}
+            isDisabled={(newName.trim() === "")}
+          >
+            Rename
+          </StandardButton>
+          <StandardButton
+            icon={faArrowLeft}
+            onClick={closeModal}
+          >
+            Cancel
+          </StandardButton>
+        </div>
+        {error && (
+          <div className={styles.errorContainer}>
+            <ErrorMessage error={error} />
           </div>
         )}
-
-      {/* Render logo */}
-      <div className={styles.logo}>
-        <b>
-          <i>tokenbase</i>
-        </b>
+      </Modal>
+      <nav className={styles.container}>
+        {/* Render model selection */}
         {pathname === "/" && (
-          <IconButton icon={faAnglesLeft} onClick={openDrawer}>
-            Open
-          </IconButton>
+          <TitleDropdown
+            items={availableModels.map((model, i) => {
+              const split = model.tag.split(":");
+              return {
+                text: `${split[0]} (${split[1]})`,
+                onSelect: () => setSelectedModel(i),
+              };
+            })}
+          />
         )}
-      </div>
-    </nav>
+
+        <div className={styles.linksContainer}>
+          {/* Render navigation back to main chat page */}
+          {pathname !== "/" && (
+            <StandardLink icon={faArrowLeft} href="/">
+              Chat
+            </StandardLink>
+          )}
+
+          {/* Render navigation button back to register page */}
+          {pathname === "/login" && (
+            <StandardLink icon={faBolt} href="/register">
+              Register
+            </StandardLink>
+          )}
+
+          {/* Render navigation button back to login page */}
+          {pathname === "/register" && (
+            <StandardLink icon={faSignIn} href="/login">
+              Login
+            </StandardLink>
+          )}
+        </div>
+
+        {/* Render current conversations information */}
+        {selectedConversationIndex !== null &&
+          conversationRecords !== null &&
+          pathname === "/" && (
+            <div className={styles.conversationInfo}>
+              <TitleDropdown
+                title={conversationRecords[selectedConversationIndex].name}
+                items={[
+                  { icon: faEdit, 
+                    text: "Rename", 
+                    onSelect: () => 
+                      openModal(
+                        conversationRecords[selectedConversationIndex].id
+                      ),
+                  },
+                  {
+                    icon: faTrash,
+                    text: "Delete",
+                    color: ButtonColor.Red,
+                    onSelect: deleteCurrentConversation,
+                  },
+                ]}
+              />
+            </div>
+          )}
+
+        {/* Render logo */}
+        <div className={styles.logo}>
+          <b>
+            <i>tokenbase</i>
+          </b>
+          {pathname === "/" && (
+            <IconButton icon={faAnglesLeft} onClick={openDrawer}>
+              Open
+            </IconButton>
+          )}
+        </div>
+      </nav>
+    </>
   );
 };
 
