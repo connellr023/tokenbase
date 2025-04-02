@@ -2,16 +2,13 @@ import ChatContainer from "./ChatContainer";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
-import { useHomeModalContext } from "@/contexts/HomeModalContext";
+import { useEffect } from "react";
 import { backendEndpoint } from "@/utils/constants";
 import { reqNewConversation } from "@/utils/reqNewConversation";
-import { useEffect, useState } from "react";
 import { reqAllConversations } from "@/utils/reqAllConversations";
-
 
 const userPromptEndpoint = backendEndpoint + "api/user/chat/prompt";
 const userDeleteChatEndpoint = backendEndpoint + "api/user/chat/delete";
-const renameConversationEndpoint = backendEndpoint + "api/user/conversation/rename";
 
 type UserChatProps = {
   chatSuggestions: string[];
@@ -63,7 +60,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag,
         prompt,
-        bearer.token,
+        bearer.token
       );
 
       if (!newConversation) {
@@ -104,8 +101,6 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       },
     };
   };
-
-
 
   useEffect(() => {
     // Fetch all conversations when the component mounts

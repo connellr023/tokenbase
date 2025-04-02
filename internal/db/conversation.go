@@ -116,10 +116,10 @@ func DeleteConversation(sdb *surrealdb.DB, conversationID, userID string) (model
 // Returns:
 // - The renamed conversation
 // - An error if the conversation or its chats could not be renamed
-func RenameConversation(sdb *surrealdb.DB, conversationID, userID string, newName string, updated_at int64) (models.DbConversation, error) {
+func RenameConversation(sdb *surrealdb.DB, conversationID, userID string, newName string) (models.DbConversation, error) {
 	const query = `
 		UPDATE conversations
-		SET name = $name, updated_at = $updated_at
+		SET name = $name, updated_at = time::millis()
 		WHERE id = <record>$conversation_id AND user_id = <record>$user_id;
 	`
 

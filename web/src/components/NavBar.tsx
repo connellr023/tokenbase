@@ -3,13 +3,17 @@ import ButtonColor from "@/models/ButtonColor";
 import StandardLink from "./StandardLink";
 import IconButton from "./IconButton";
 import TitleDropdown from "./TitleDropdown";
+import Modal from "./Modal";
+import StandardInput from "./StandardInput";
+import StandardButton from "./StandardButton";
+import ErrorMessage from "./ErrorMessage";
 import { useRouter } from "next/router";
 import { useRightDrawerContext } from "@/contexts/RightDrawerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
-import { useHomeModalContext } from "@/contexts/HomeModalContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
+import { useCallback, useState } from "react";
 import { backendEndpoint } from "@/utils/constants";
 import {
   faAnglesLeft,
@@ -19,17 +23,14 @@ import {
   faSignIn,
   faTrash,
   faCheck,
+  faCancel,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useState } from "react";
-import Modal from "./Modal";
-import StandardInput from "./StandardInput";
-import StandardButton from "./StandardButton";
-import ErrorMessage from "./ErrorMessage";
+import Conversation from "@/models/Conversation";
 
 const deleteConversationEndpoint =
   backendEndpoint + "api/user/conversation/delete";
 
-  const renameConversationEndpoint =
+const renameConversationEndpoint =
   backendEndpoint + "api/user/conversation/rename";
 
 const NavBar: React.FC = () => {
@@ -46,40 +47,21 @@ const NavBar: React.FC = () => {
   } = useConversationRecordsContext();
 
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false); // Modal open state
-  const [renameConversationId, setRenameConversationId] = useState<string | null>(null); // ID of the conversation being renamed
   const [error, setError] = useState<string | null>(null);
   const [newName, setNewName] = useState("");
 
-  const openModal = (conversationId: string) => {
-    setRenameConversationId(conversationId);
-    setIsRenameModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setRenameConversationId(null);
+  const closeModal = useCallback(() => {
     setIsRenameModalOpen(false);
-    setError(null); // Clear any previous errors
-    setNewName(""); // Reset the input field
-  };
-
-  
-  const handleKeyDown = (
-    e: React.KeyboardEvent<HTMLInputElement>,
-  ) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      if (!(newName.trim() === "")) {
-        handleRename();
-      }
-    }
-  };
+    setError(null);
+    setNewName("");
+  }, []);
 
   const handleRename = useCallback(async () => {
     if (
       bearer?.token === undefined ||
       conversationRecords === null ||
       selectedConversationIndex === null ||
-      newName.trim() === ""
+      newName.trim().length === 0
     ) {
       return;
     }
@@ -96,37 +78,38 @@ const NavBar: React.FC = () => {
           name: newName,
         }),
       });
+
       if (!res.ok) {
         throw new Error("Failed to rename conversation");
       }
 
-      const data = await res.json();
-      const updatedRecords = conversationRecords
-        ? conversationRecords.map((conversation) =>
-            conversation.id === conversationRecords[selectedConversationIndex]?.id
-              ? { 
-                  ...conversation, 
-                  name: data.conversation.name,
-                  updated_at: data.conversation.updated_at,
+      const data = (await res.json()) as { conversation: Conversation };
+      const updatedRecords = conversationRecords.map<Conversation>(
+        (conversation) =>
+          conversation.id === conversationRecords[selectedConversationIndex].id
+            ? {
+                ...conversation,
+                name: data.conversation.name,
+                updated_at: data.conversation.updatedAt,
               }
-              : conversation,
-          )
-        : [];
-      updatedRecords.sort((a, b) => b.createdAt - a.createdAt);
+            : conversation
+      );
+
       setConversationRecords(updatedRecords);
       closeModal();
       setNewName("");
     } catch (err) {
-      console.error("Error renaming conversation:", err);
-      setError((err instanceof Error ? err.message : "An unexpected error occurred. Please try again."));
+      setError(
+        err instanceof Error
+          ? err.message
+          : "An unexpected error occurred. Please try again."
+      );
     }
   }, [
     bearer?.token,
     conversationRecords,
     selectedConversationIndex,
     newName,
-    renameConversationEndpoint,
-    renameConversationId,
     setConversationRecords,
     closeModal,
     setNewName,
@@ -164,8 +147,8 @@ const NavBar: React.FC = () => {
       unselectConversation();
       setConversationRecords(
         conversationRecords.filter(
-          (_, index) => index !== selectedConversationIndex,
-        ),
+          (_, index) => index !== selectedConversationIndex
+        )
       );
     } catch (err) {
       console.error("Error deleting conversation:", err);
@@ -179,38 +162,48 @@ const NavBar: React.FC = () => {
     setConversationRecords,
   ]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+
+        if (!(newName.trim() === "")) {
+          handleRename();
+        }
+      }
+    },
+    [handleRename, newName]
+  );
+
   return (
-    <>      
-    <Modal isOpen={isRenameModalOpen} onClickOutside={closeModal}>
-      <h2 className={styles.modalTitle}>Rename Conversation</h2>
-        <StandardInput 
-          type="text"
-          placeholder="Enter new name"
-          value={newName}
-          isValid={() => !(newName.trim() === "")} 
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => handleKeyDown(e)}
-        />
-        <div className={styles.modalButtonContainer}>
+    <>
+      <Modal isOpen={isRenameModalOpen} onClickOutside={closeModal}>
+        <h1 className={styles.modalTitle}>Edit Name.</h1>
+        <div className={styles.contentContainer}>
+          <StandardInput
+            type="text"
+            placeholder="Enter new name"
+            value={newName}
+            isValid={() => !(newName.trim().length === 0)}
+            onChange={(e) => setNewName(e.target.value)}
+            onKeyDown={handleKeyDown}
+          />
           <StandardButton
             icon={faCheck}
             onClick={handleRename}
-            isDisabled={(newName.trim() === "")}
+            isDisabled={newName.trim().length === 0}
           >
             Rename
           </StandardButton>
-          <StandardButton
-            icon={faArrowLeft}
-            onClick={closeModal}
-          >
+          <StandardButton icon={faCancel} onClick={closeModal}>
             Cancel
           </StandardButton>
+          {error && (
+            <div className={styles.errorContainer}>
+              <ErrorMessage error={error} />
+            </div>
+          )}
         </div>
-        {error && (
-          <div className={styles.errorContainer}>
-            <ErrorMessage error={error} />
-          </div>
-        )}
       </Modal>
       <nav className={styles.container}>
         {/* Render model selection */}
@@ -257,12 +250,10 @@ const NavBar: React.FC = () => {
               <TitleDropdown
                 title={conversationRecords[selectedConversationIndex].name}
                 items={[
-                  { icon: faEdit, 
-                    text: "Rename", 
-                    onSelect: () => 
-                      openModal(
-                        conversationRecords[selectedConversationIndex].id
-                      ),
+                  {
+                    icon: faEdit,
+                    text: "Rename",
+                    onSelect: () => setIsRenameModalOpen(true),
                   },
                   {
                     icon: faTrash,
