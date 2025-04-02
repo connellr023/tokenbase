@@ -92,7 +92,7 @@ const NavBar: React.FC = () => {
                 name: data.conversation.name,
                 updated_at: data.conversation.updatedAt,
               }
-            : conversation
+            : conversation,
       );
 
       setConversationRecords(updatedRecords);
@@ -102,7 +102,7 @@ const NavBar: React.FC = () => {
       setError(
         err instanceof Error
           ? err.message
-          : "An unexpected error occurred. Please try again."
+          : "An unexpected error occurred. Please try again.",
       );
     }
   }, [
@@ -147,8 +147,8 @@ const NavBar: React.FC = () => {
       unselectConversation();
       setConversationRecords(
         conversationRecords.filter(
-          (_, index) => index !== selectedConversationIndex
-        )
+          (_, index) => index !== selectedConversationIndex,
+        ),
       );
     } catch (err) {
       console.error("Error deleting conversation:", err);
@@ -172,7 +172,7 @@ const NavBar: React.FC = () => {
         }
       }
     },
-    [handleRename, newName]
+    [handleRename, newName],
   );
 
   return (
