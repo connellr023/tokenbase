@@ -30,7 +30,12 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   }, [bearer]);
 
   return (
-    <HomeModalContext.Provider value={{ isOpen, close }}>
+    <HomeModalContext.Provider
+      value={{
+        isOpen,
+        close,
+      }}
+    >
       {children}
     </HomeModalContext.Provider>
   );

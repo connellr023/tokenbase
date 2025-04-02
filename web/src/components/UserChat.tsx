@@ -2,9 +2,9 @@ import ChatContainer from "./ChatContainer";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { useEffect } from "react";
 import { backendEndpoint } from "@/utils/constants";
 import { reqNewConversation } from "@/utils/reqNewConversation";
-import { useEffect } from "react";
 import { reqAllConversations } from "@/utils/reqAllConversations";
 
 const userPromptEndpoint = backendEndpoint + "api/user/chat/prompt";
@@ -60,7 +60,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag,
         prompt,
-        bearer.token,
+        bearer.token
       );
 
       if (!newConversation) {

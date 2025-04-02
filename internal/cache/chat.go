@@ -27,7 +27,7 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 	existsCmd := pipe.Exists(ctx, key)
 
 	// Fetch all messages from most recent creation time to oldest
-	zrevrangeCmd := pipe.ZRevRange(ctx, key, 0, -1)
+	zrangeCmd := pipe.ZRange(ctx, key, 0, -1)
 
 	if _, err := pipe.Exec(ctx); err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 	}
 
 	// Deserialize chat records
-	serializedRecords, err := zrevrangeCmd.Result()
+	serializedRecords, err := zrangeCmd.Result()
 
 	if err != nil {
 		return nil, err

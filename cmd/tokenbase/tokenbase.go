@@ -147,6 +147,7 @@ func main() {
 				r.Get("/all", inj.GetConversations)
 				r.Post("/new", inj.PostConversation)
 				r.Delete("/delete", inj.DeleteUserConversation)
+				r.Patch("/rename", inj.PatchRenameUserConversation)
 			})
 
 			// User chat sub-routes

@@ -48,3 +48,24 @@ nav.container {
     gap: 0.55rem;
   }
 }
+
+h1.modalTitle {
+  margin: 0;
+}
+
+div.contentContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.4rem;
+  flex-direction: column;
+  gap: 0.6rem;
+  width: 100%;
+
+  input {
+    margin-bottom: 0.4rem;
+  }
+
+  div {
+    margin-top: 0.3rem;
+  }
+}
