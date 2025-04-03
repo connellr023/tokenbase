@@ -19,7 +19,7 @@ type postLoginResponse struct {
 }
 
 func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
-	// Parse request body
+	// Parse request body.
 	var req postLoginRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -27,7 +27,7 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate dbUser credentials
+	// Validate user credentials.
 	dbUser, err := db.ValidateUserCredentials(i.Sdb, req.Email, req.Password)
 
 	if err != nil {
@@ -37,7 +37,7 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 
 	clientUser := dbUser.ToClientUser()
 
-	// Generate token
+	// Generate token.
 	jwt, err := utils.GenerateJwt(clientUser)
 
 	if err != nil {
@@ -45,7 +45,7 @@ func (i *Injection) PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Send response
+	// Send response.
 	res := postLoginResponse{
 		Jwt:  jwt,
 		User: clientUser,

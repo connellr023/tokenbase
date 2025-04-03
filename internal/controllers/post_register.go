@@ -14,7 +14,7 @@ type postRegisterRequest struct {
 }
 
 func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
-	// Parse request body
+	// Parse request body.
 	var req postRegisterRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -22,13 +22,13 @@ func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Validate account constraints
+	// Validate account constraints.
 	if len(req.Password) < utils.MinPasswordLength || len(req.Username) < utils.MinUsernameLength || len(req.Username) > utils.MaxUsernameLength {
 		http.Error(w, utils.ErrBadData.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Register user in the DB
+	// Register user in the DB.
 	user, err := db.RegisterUser(i.Sdb, req.Username, req.Email, req.Password)
 
 	if err != nil {
@@ -38,7 +38,7 @@ func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
 
 	clientUser := user.ToClientUser()
 
-	// Generate token
+	// Generate token.
 	jwt, err := utils.GenerateJwt(clientUser)
 
 	if err != nil {
@@ -46,7 +46,7 @@ func (i *Injection) PostRegister(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Send response (Can use postLoginResponse as this is the same functionality)
+	// Send response.
 	res := postLoginResponse{
 		Jwt:  jwt,
 		User: clientUser,

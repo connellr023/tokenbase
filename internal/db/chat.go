@@ -35,18 +35,18 @@ func GetAllChatRecordsFromConversation(sdb *surrealdb.DB, conversationID string)
 	return validateArrayQueryResult(res)
 }
 
-// Save a chat record to the database
+// Save a chat record to the database.
 //
 // Parameters:
-// - sdb: a surrealdb database instance
-// - prompt: the prompt of the chat record
-// - promptImages: the images associated with the prompt
-// - reply: the reply to the prompt
-// - conversationID: the ID of the conversation
+// - sdb: a surrealdb database instance.
+// - prompt: the prompt of the chat record.
+// - promptImages: the images associated with the prompt.
+// - reply: the reply to the prompt.
+// - conversationID: the ID of the conversation.
 //
 // Returns:
-// - The saved chat record
-// - An error if the chat record could not be saved
+// - The saved chat record.
+// - An error if the chat record could not be saved.
 func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, reply string, createdAt int64, userID string, conversationID string) (models.DbChatRecord, error) {
 	const query = `
 		IF (<record>$conversation_id).user_id = <record>$user_id THEN (
@@ -83,17 +83,17 @@ func SaveChatRecord(sdb *surrealdb.DB, prompt string, promptImages []string, rep
 	return chat, err
 }
 
-// Delete a chat record from the database by its creation time
+// Delete a chat record from the database by its creation time.
 //
 // Parameters:
-// - sdb: a surrealdb database instance
-// - createdAt: the creation time of the chat record
-// - userID: the ID of the user
-// - conversationID: the ID of the conversation
+// - sdb: a surrealdb database instance.
+// - createdAt: the creation time of the chat record.
+// - userID: the ID of the user.
+// - conversationID: the ID of the conversation.
 //
 // Returns:
-// - The deleted chat record
-// - An error if the chat record could not be deleted
+// - The deleted chat record.
+// - An error if the chat record could not be deleted.
 func DeleteChatRecordByCreationTime(sdb *surrealdb.DB, createdAt int64, userID string, conversationID string) (models.DbChatRecord, error) {
 	const query = `
 		IF (<record>$conversation_id).user_id = <record>$user_id THEN (
