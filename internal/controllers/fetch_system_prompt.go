@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"tokenbase/internal/cache"
 	"tokenbase/internal/db"
 
@@ -13,13 +14,14 @@ import (
 // Parameters:
 // - sdb: a surrealdb database instance
 // - rdb: a redis client instance
+// - ctx: context for request-scoped values
 //
 // Returns:
 // - The system prompt
 // - An error if the system prompt could not be retrieved or cached
-func fetchSystemPrompt(sdb *surrealdb.DB, rdb *redis.Client) (string, error) {
+func fetchSystemPrompt(sdb *surrealdb.DB, rdb *redis.Client, ctx context.Context) (string, error) {
 	// Check cache for system prompt
-	systemPrompt, err := cache.GetSystemPrompt(rdb)
+	systemPrompt, err := cache.GetSystemPrompt(rdb, ctx)
 
 	if err != nil {
 		// Try to get the system prompt from the database
@@ -28,7 +30,7 @@ func fetchSystemPrompt(sdb *surrealdb.DB, rdb *redis.Client) (string, error) {
 		}
 
 		// Cache the system prompt
-		if err := cache.SetSystemPrompt(rdb, systemPrompt); err != nil {
+		if err := cache.SetSystemPrompt(rdb, systemPrompt, ctx); err != nil {
 			return "", err
 		}
 	}

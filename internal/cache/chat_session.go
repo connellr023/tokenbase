@@ -46,12 +46,11 @@ func GenerateGuestSessionID() string {
 // Parameters:
 // - rdb: Redis client
 // - conversationId: The unique conversation ID
+// - userId: The unique user ID
 //
 // Returns:
 // - Any error that occurred
-func NewChatSession(rdb *redis.Client, key string) error {
-	ctx := context.Background()
-
+func NewChatSession(rdb *redis.Client, key string, ctx context.Context) error {
 	// Start a transaction
 	pipe := rdb.TxPipeline()
 	zaddnxCmd := pipe.ZAddNX(ctx, key, redis.Z{Score: -1, Member: dummySortedSetMember})
@@ -80,9 +79,7 @@ func NewChatSession(rdb *redis.Client, key string) error {
 //
 // Returns:
 // - Any error that occurred
-func DeleteChatSession(rdb *redis.Client, key string) error {
-	ctx := context.Background()
+func DeleteChatSession(rdb *redis.Client, key string, ctx context.Context) error {
 	_, err := rdb.Del(ctx, key).Result()
-
 	return err
 }

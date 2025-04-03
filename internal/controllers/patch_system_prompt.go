@@ -51,7 +51,7 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		defer wg.Done()
 
-		if err = cache.SetSystemPrompt(i.Rdb, req.Prompt); err != nil {
+		if err = cache.SetSystemPrompt(i.Rdb, req.Prompt, r.Context()); err != nil {
 			errorChan <- err
 		}
 

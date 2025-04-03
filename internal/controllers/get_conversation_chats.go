@@ -31,7 +31,7 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 	conversationKey := cache.FmtConversationKey(user.ID, conversationID)
 
 	// Check if cache contains the client chat records
-	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey); err == nil {
+	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey, r.Context()); err == nil {
 		// Respond with the cached client chat records
 		response := getConversationChatsResponse{
 			Chats: cacheClientChats,
@@ -44,7 +44,7 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 		return
 	} else {
 		// Create a new conversation in cache
-		if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
+		if err := cache.NewChatSession(i.Rdb, conversationKey, r.Context()); err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -66,7 +66,7 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Cache the client chat records in Redis
-	if err := cache.SaveChatRecords(i.Rdb, conversationKey, clientChats...); err != nil {
+	if err := cache.SaveChatRecords(i.Rdb, conversationKey, r.Context(), clientChats...); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

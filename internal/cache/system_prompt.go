@@ -12,11 +12,11 @@ import (
 // Parameters:
 // - rdb: Redis client
 // - systemPrompt: The new system prompt
+// - ctx: Context for the operation
 //
 // Returns:
 // - Any error that occurred
-func SetSystemPrompt(rdb *redis.Client, systemPrompt string) error {
-	ctx := context.Background()
+func SetSystemPrompt(rdb *redis.Client, systemPrompt string, ctx context.Context) error {
 	return rdb.Set(ctx, globalSystemPromptKey, systemPrompt, 0).Err()
 }
 
@@ -24,11 +24,11 @@ func SetSystemPrompt(rdb *redis.Client, systemPrompt string) error {
 //
 // Parameters:
 // - rdb: Redis client
+// - ctx: Context for the operation
 //
 // Returns:
 // - The system prompt
 // - Any error that occurred
-func GetSystemPrompt(rdb *redis.Client) (string, error) {
-	ctx := context.Background()
+func GetSystemPrompt(rdb *redis.Client, ctx context.Context) (string, error) {
 	return rdb.Get(ctx, globalSystemPromptKey).Result()
 }

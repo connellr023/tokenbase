@@ -52,7 +52,7 @@ func (i *Injection) DeleteUserConversation(w http.ResponseWriter, r *http.Reques
 
 		conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
 
-		if err := cache.DeleteChatSession(i.Rdb, conversationKey); err != nil {
+		if err := cache.DeleteChatSession(i.Rdb, conversationKey, r.Context()); err != nil {
 			errorChan <- err
 		}
 	}()

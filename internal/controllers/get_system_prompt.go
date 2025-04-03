@@ -23,7 +23,7 @@ func (i *Injection) GetSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the system prompt
-	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb, r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -40,7 +40,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 
 	// Check context of conversation (expected to be cached)
 	conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
-	prevChatRecords, err := cache.GetAllChats(i.Rdb, conversationKey)
+	prevChatRecords, err := cache.GetAllChats(i.Rdb, conversationKey, r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,7 +48,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get the system prompt
-	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb, r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -78,7 +78,9 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	defer ollamaRes.Body.Close()
+	defer func() {
+		_ = ollamaRes.Body.Close()
+	}()
 
 	// Set creation time of the chat
 	creationTime := time.Now().UnixMilli()
@@ -136,7 +138,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 			Reply:        replyBuilder.String(),
 		}
 
-		if err := cache.SaveChatRecords(i.Rdb, conversationKey, record); err != nil {
+		if err := cache.SaveChatRecords(i.Rdb, conversationKey, r.Context(), record); err != nil {
 			errorChan <- err
 		}
 	}()

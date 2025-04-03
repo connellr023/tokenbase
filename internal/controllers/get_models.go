@@ -16,6 +16,10 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	defer func() {
+		_ = res.Body.Close()
+	}()
+
 	// Decode the response
 	var tags models.OllamaTagsResponse
 

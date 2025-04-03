@@ -85,6 +85,7 @@ func MapHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, reqCtx cont
 }
 
 // Utility function to write a stream error as a JSON string to the response writer
+// It is expected that this function is always called in the context of an error and an HTTP stream
 //
 // Parameters:
 // w - The response writer
@@ -92,6 +93,8 @@ func MapHttpStream[U any, V any](w http.ResponseWriter, r io.Reader, reqCtx cont
 func WriteStreamError(w http.ResponseWriter, err error) {
 	json := models.NewStreamError(err).ToJson()
 
-	w.Write(json)
-	w.Write([]byte("\n"))
+	// Ignore errors writing the error response as there is
+	// nothing we can do since we are already in an error state
+	_, _ = w.Write(json)
+	_, _ = w.Write([]byte("\n"))
 }

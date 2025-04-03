@@ -51,7 +51,7 @@ func (i *Injection) DeleteConversationChat(w http.ResponseWriter, r *http.Reques
 
 		conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
 
-		if err := cache.DeleteChatRecord(i.Rdb, conversationKey, req.CreatedAt); err != nil {
+		if err := cache.DeleteChatRecord(i.Rdb, conversationKey, req.CreatedAt, r.Context()); err != nil {
 			errorChan <- err
 		}
 	}()

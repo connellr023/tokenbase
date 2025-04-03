@@ -39,7 +39,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 
 	// Check context of conversation
 	guestSessionKey := cache.FmtGuestSessionKey(token)
-	prevChatRecords, err := cache.GetAllChats(i.Rdb, guestSessionKey)
+	prevChatRecords, err := cache.GetAllChats(i.Rdb, guestSessionKey, r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -47,7 +47,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the system prompt
-	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb)
+	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb, r.Context())
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -77,7 +77,9 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer ollamaRes.Body.Close()
+	defer func() {
+		_ = ollamaRes.Body.Close()
+	}()
 
 	// Set creation time of the chat
 	creationTime := time.Now().UnixMilli()
@@ -120,7 +122,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		Reply:        replyBuilder.String(),
 	}
 
-	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, record); err != nil {
+	if err := cache.SaveChatRecords(i.Rdb, guestSessionKey, r.Context(), record); err != nil {
 		WriteStreamError(w, err)
 		return
 	}

@@ -32,7 +32,7 @@ func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Delete chat record
 	guestSessionKey := cache.FmtGuestSessionKey(token)
 
-	if err := cache.DeleteChatRecord(i.Rdb, guestSessionKey, req.CreatedAt); err != nil {
+	if err := cache.DeleteChatRecord(i.Rdb, guestSessionKey, req.CreatedAt, r.Context()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

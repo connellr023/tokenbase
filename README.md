@@ -67,11 +67,11 @@ The `frontend` for this project uses [ESLint](https://eslint.org/) for linting.
 - Cache service (**Redis**)
 - Database service (**SurrealDB**)
 - LLM service (**Ollama**)
-- Frontend service (**Next.js**) (_Production Only_)
+- Frontend service (**Next.js**)
 
 ## Adding Models
 
-To add a new model, simply add it to `models.txt` in the root directory. The model will be automatically downloaded and added to the `ollama` container.
+To add a new model, simply add it to `configs/models.txt`. The model will be automatically downloaded and added to the `ollama` container.
 
 ## Development
 

@@ -15,12 +15,12 @@ import (
 // Parameters:
 // - rdb: Redis client
 // - key: The key for the guest/user session
+// - ctx: Context for the Redis operations
 //
 // Returns:
 // - All previous chat records
 // - Any error that occurred
-func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, error) {
-	ctx := context.Background()
+func GetAllChats(rdb *redis.Client, key string, ctx context.Context) ([]models.ClientChatRecord, error) {
 	pipe := rdb.TxPipeline()
 
 	// Check if session exists
@@ -66,17 +66,17 @@ func GetAllChats(rdb *redis.Client, key string) ([]models.ClientChatRecord, erro
 // Parameters:
 // - rdb: Redis client
 // - key: The key for the guest/user session
+// - ctx: Context for the Redis operations
 // - record: The chat record to save
 //
 // Returns:
 // - Any error that occurred
-func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChatRecord) error {
+func SaveChatRecords(rdb *redis.Client, key string, ctx context.Context, records ...models.ClientChatRecord) error {
 	// No records to save
 	if len(records) == 0 {
 		return nil
 	}
 
-	ctx := context.Background()
 	pipe := rdb.TxPipeline()
 
 	// Map chat records to sorted set members
@@ -112,11 +112,11 @@ func SaveChatRecords(rdb *redis.Client, key string, records ...models.ClientChat
 // - rdb: Redis client
 // - key: The key for the guest/user session
 // - createdAt: The creation time of the chat record to delete
+// - ctx: Context for the Redis operations
 //
 // Returns:
 // - Any error that occurred
-func DeleteChatRecord(rdb *redis.Client, key string, createdAt int64) error {
-	ctx := context.Background()
+func DeleteChatRecord(rdb *redis.Client, key string, createdAt int64, ctx context.Context) error {
 	pipe := rdb.TxPipeline()
 
 	// Remove the chat record from the sorted set by creation time

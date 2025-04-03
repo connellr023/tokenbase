@@ -17,7 +17,7 @@ func (i *Injection) PostGuestSession(w http.ResponseWriter, r *http.Request) {
 	id := cache.GenerateGuestSessionID()
 	key := cache.FmtGuestSessionKey(id)
 
-	if err := cache.NewChatSession(i.Rdb, key); err != nil {
+	if err := cache.NewChatSession(i.Rdb, key, r.Context()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

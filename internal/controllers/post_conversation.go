@@ -60,7 +60,9 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	defer ollamaRes.Body.Close()
+	defer func() {
+		_ = ollamaRes.Body.Close()
+	}()
 
 	// Parse response
 	res := models.OllamaGenerateResponse{}
@@ -91,7 +93,7 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 
 	// Create conversation in cache
 	conversationKey := cache.FmtConversationKey(user.ID, clientConversation.ID)
-	if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
+	if err := cache.NewChatSession(i.Rdb, conversationKey, r.Context()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
