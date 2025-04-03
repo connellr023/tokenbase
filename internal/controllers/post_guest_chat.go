@@ -15,6 +15,7 @@ import (
 
 type postGuestChatRequest struct {
 	Prompt string `json:"prompt"`
+	Images  []string `json:"images"`
 	Model  string `json:"model"`
 }
 
@@ -57,7 +58,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
 		Model:    req.Model,
-		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
+		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, req.Images, prevChatRecords),
 		Stream:   true,
 	}
 

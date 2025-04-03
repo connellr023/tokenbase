@@ -8,6 +8,7 @@ import { useState } from "react";
 type ChatProps = {
   createdAt: number;
   prompt: string;
+  images: string[];
   reply: string;
   isComplete: boolean;
   onDelete?: (createdAt: number) => void;
@@ -16,6 +17,7 @@ type ChatProps = {
 const Chat: React.FC<ChatProps> = ({
   createdAt,
   prompt,
+  images,
   reply,
   isComplete,
   onDelete,
@@ -35,6 +37,7 @@ const Chat: React.FC<ChatProps> = ({
     <div className={styles.container}>
       <div className={styles.promptContainer}>
         <TypesetRenderer>{prompt}</TypesetRenderer>
+        {images.map((img) => <img src={img+""} className={styles.imgPrompt}/>)}
       </div>
       {reply.length > 0 && (
         <div className={styles.replyContainer}>

@@ -28,7 +28,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
     throw new Error("Bearer token is not available");
   }
 
-  const constructUserPromptRequest = async (prompt: string) => {
+  const constructUserPromptRequest = async (prompt: string, images: string[]) => {
     if (conversationRecords === null) {
       return {
         error: "Cannot create prompt request without conversation records",
@@ -49,6 +49,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
         },
         body: JSON.stringify({
           prompt,
+          images,
           model: availableModels[selectedModelIndex].tag,
           conversationId,
         }),
@@ -60,6 +61,7 @@ const UserChat: React.FC<UserChatProps> = ({ chatSuggestions }) => {
       const newConversation = await reqNewConversation(
         availableModels[selectedModelIndex].tag,
         prompt,
+        images,
         bearer.token,
       );
 

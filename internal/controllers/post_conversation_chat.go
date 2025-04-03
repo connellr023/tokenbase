@@ -17,6 +17,7 @@ import (
 
 type postConversationChatRequest struct {
 	Prompt         string `json:"prompt"`
+	Images		   []string `json:"images"`
 	Model          string `json:"model"`
 	ConversationID string `json:"conversationId"`
 }
@@ -58,7 +59,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
 		Model:    req.Model,
-		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
+		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, req.Images, prevChatRecords),
 		Stream:   true,
 	}
 
@@ -132,7 +133,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		record := models.ClientChatRecord{
 			CreatedAt:    creationTime,
 			Prompt:       req.Prompt,
-			PromptImages: promptImages,
+			PromptImages: req.Images,
 			Reply:        replyBuilder.String(),
 		}
 

@@ -32,7 +32,7 @@ div.container {
     }
 
     textarea {
-      padding-top: 0.5rem;
+      padding-top: 1rem;
       padding-bottom: 0.8rem;
       color: $txt-color-2;
       background: none;
@@ -89,6 +89,24 @@ div.container {
           }
         }
       }
+
+      input.fileUpload{
+        display: none;
+      }
+    }
+  }
+
+  div.images{
+    color: $txt-color-2;
+    position: relative;
+    top: 1.3rem;
+    display: flex;
+
+    img.imgPreview{
+      height: 5rem;
+      float: left;
+      margin-right: 3rem;
     }
   }
 }
+
