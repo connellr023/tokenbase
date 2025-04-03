@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# List of models to pull and run
-MODELS=("tinyllama:1.1b" "qwen2.5:0.5b")
+# Path to the models file
+MODELS_FILE="$(dirname "$0")/models.txt"
 
 echo "Starting Ollama server..."
 ollama serve &
@@ -20,10 +20,22 @@ while [ "$(ollama list | grep 'NAME')" == "" ]; do
   sleep 1
 done
 
-for model in "${MODELS[@]}"; do
+# Check if models file exists
+if [ ! -f "$MODELS_FILE" ]; then
+  echo "Error: Models file not found at $MODELS_FILE"
+  exit 1
+fi
+
+# Read models from file
+while IFS= read -r model || [[ -n "$model" ]]; do
+  # Skip empty lines and comments
+  if [[ -z "$model" ]] || [[ "$model" == \#* ]]; then
+    continue
+  fi
+  
   echo "Pulling model: $model"
   ollama pull "$model"
-done
+done < "$MODELS_FILE"
 
 touch "$FLAG_FILE"
 
