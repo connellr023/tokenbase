@@ -7,8 +7,8 @@ import (
 	"tokenbase/internal/utils"
 )
 
-func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
-	// Get the models from the Ollama API
+func (i *Injection) GetModels(w http.ResponseWriter, _ *http.Request) {
+	// Get the models from the Ollama API.
 	res, err := http.Get(utils.OllamaDockerTagsEndpoint)
 
 	if err != nil {
@@ -20,7 +20,7 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		_ = res.Body.Close()
 	}()
 
-	// Decode the response
+	// Decode the response.
 	var tags models.OllamaTagsResponse
 
 	if err := json.NewDecoder(res.Body).Decode(&tags); err != nil {
@@ -28,7 +28,7 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Map the response to just a list of model info
+	// Map the response to just a list of model info.
 	modelList := make([]models.ModelInfo, len(tags.Models))
 
 	for i, model := range tags.Models {
@@ -37,7 +37,7 @@ func (i *Injection) GetModels(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Write the JSON to the response
+	// Write the JSON to the response.
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(modelList); err != nil {

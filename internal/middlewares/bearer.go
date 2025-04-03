@@ -20,12 +20,12 @@ func bearerExtractorMiddleware(next http.Handler) http.Handler {
 		authHeader := r.Header.Get("Authorization")
 
 		if authHeader == "" {
-			// No token provided, continue
+			// No token provided, continue.
 			next.ServeHTTP(w, r)
 			return
 		}
 
-		// Expect: "Bearer <token>"
+		// Expect: "Bearer <token>".
 		parts := strings.Split(authHeader, " ")
 
 		if len(parts) != 2 || parts[0] != "Bearer" {
@@ -33,11 +33,11 @@ func bearerExtractorMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// Extract token and create context
+		// Extract token and create context.
 		token := parts[1]
 		ctx := context.WithValue(r.Context(), bearerKey, token)
 
-		// Call next middleware
+		// Call next middleware.
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

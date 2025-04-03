@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"sync"
@@ -47,15 +48,15 @@ func (i *Injection) DeleteUserConversation(w http.ResponseWriter, r *http.Reques
 	}()
 
 	// Delete conversation cache (its chat records) from Redis.
-	go func() {
+	go func(ctx context.Context) {
 		defer wg.Done()
 
 		conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
 
-		if err := cache.DeleteChatSession(i.Rdb, conversationKey, r.Context()); err != nil {
+		if err := cache.DeleteChatSession(ctx, i.Rdb, conversationKey); err != nil {
 			errorChan <- err
 		}
-	}()
+	}(r.Context())
 
 	// Wait for both deletions to finish and close errorChan.
 	go func() {

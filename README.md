@@ -42,7 +42,7 @@ If these formatters are not used, the CI pipeline will create a commit with the 
 
 ### Code Linting
 
-The `frontend` for this project uses [ESLint](https://eslint.org/) for linting.
+The `frontend` for this project uses [ESLint](https://eslint.org/) for linting. The `backend` uses [GolangCI](https://golangci-lint.run/) for linting.
 
 ## Structure
 

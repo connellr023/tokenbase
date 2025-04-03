@@ -23,14 +23,14 @@ func (i *Injection) GetSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Get the system prompt
-	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb, r.Context())
+	systemPrompt, err := fetchSystemPrompt(r.Context(), i.Sdb, i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// The ID is unecessary
+	// The ID is unnecessary
 	// This is to avoid making a new model
 	response := models.ClientSystemPrompt{
 		Prompt: systemPrompt,

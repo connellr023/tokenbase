@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"sync"
@@ -48,14 +49,14 @@ func (i *Injection) PatchSystemPrompt(w http.ResponseWriter, r *http.Request) {
 	}()
 
 	// Update the system prompt in the cache
-	go func() {
+	go func(ctx context.Context) {
 		defer wg.Done()
 
-		if err = cache.SetSystemPrompt(i.Rdb, req.Prompt, r.Context()); err != nil {
+		if err = cache.SetSystemPrompt(ctx, i.Rdb, req.Prompt); err != nil {
 			errorChan <- err
 		}
 
-	}()
+	}(r.Context())
 
 	go func() {
 		wg.Wait()

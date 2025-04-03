@@ -21,7 +21,7 @@ type postConversationResponse struct {
 }
 
 func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
-	// Get user from JWT
+	// Get user from JWT.
 	user, err := middlewares.GetUserFromJwt(r.Context())
 
 	if err != nil {
@@ -29,7 +29,7 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse request
+	// Parse request.
 	var req postConversationRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -37,7 +37,7 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Ask Ollama to generate a name for the conversation based on the first prompt
+	// Ask Ollama to generate a name for the conversation based on the first prompt.
 	prompt := "Generate a concise title for this prompt and nothing else: " + req.FirstPrompt
 	ollamaReq := models.OllamaGenerateRequest{
 		Model:  req.Model,
@@ -45,15 +45,15 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		Stream: false,
 	}
 
-	// Serialize request
-	ollamaReqJson, err := json.Marshal(ollamaReq)
+	// Serialize request.
+	ollamaReqJSON, err := json.Marshal(ollamaReq)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ollamaRes, err := http.Post(utils.OllamaDockerGenerateEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
+	ollamaRes, err := http.Post(utils.OllamaDockerGenerateEndpoint, "application/json", bytes.NewBuffer(ollamaReqJSON))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -64,7 +64,7 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		_ = ollamaRes.Body.Close()
 	}()
 
-	// Parse response
+	// Parse response.
 	res := models.OllamaGenerateResponse{}
 
 	if err := json.NewDecoder(ollamaRes.Body).Decode(&res); err != nil {
@@ -72,12 +72,12 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Filter out quote characters from the generated name
+	// Filter out quote characters from the generated name.
 	filteredResponse := utils.FilterString(res.Response, func(r rune) bool {
 		return r != '"' && r != '“' && r != '”'
 	})
 
-	// Create conversation
+	// Create conversation.
 	dbConversation, err := db.NewConversation(i.Sdb, filteredResponse, user.ID)
 
 	if err != nil {
@@ -85,20 +85,20 @@ func (i *Injection) PostConversation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Compose response
+	// Compose response.
 	clientConversation := dbConversation.ToClientConversation()
 	clientRes := postConversationResponse{
 		Conversation: clientConversation,
 	}
 
-	// Create conversation in cache
+	// Create conversation in cache.
 	conversationKey := cache.FmtConversationKey(user.ID, clientConversation.ID)
-	if err := cache.NewChatSession(i.Rdb, conversationKey, r.Context()); err != nil {
+	if err := cache.NewChatSession(r.Context(), i.Rdb, conversationKey); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Send response
+	// Send response.
 	w.Header().Set("Content-Type", "application/json")
 
 	if err := json.NewEncoder(w).Encode(clientRes); err != nil {

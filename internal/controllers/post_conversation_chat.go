@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -40,7 +41,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 
 	// Check context of conversation (expected to be cached)
 	conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
-	prevChatRecords, err := cache.GetAllChats(i.Rdb, conversationKey, r.Context())
+	prevChatRecords, err := cache.GetAllChats(r.Context(), i.Rdb, conversationKey)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -48,7 +49,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Get the system prompt
-	systemPrompt, err := fetchSystemPrompt(i.Sdb, i.Rdb, r.Context())
+	systemPrompt, err := fetchSystemPrompt(r.Context(), i.Sdb, i.Rdb)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -63,7 +64,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Serialize request to Ollama API
-	ollamaReqJson, err := json.Marshal(ollamaReq)
+	ollamaReqJSON, err := json.Marshal(ollamaReq)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -71,7 +72,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}
 
 	// Send request to Ollama API
-	ollamaRes, err := http.Post(utils.OllamaDockerChatEndpoint, "application/json", bytes.NewBuffer(ollamaReqJson))
+	ollamaRes, err := http.Post(utils.OllamaDockerChatEndpoint, "application/json", bytes.NewBuffer(ollamaReqJSON))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,7 +91,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 
 	// Stream the response to the client
 	{
-		err := MapHttpStream(w, ollamaRes.Body, r.Context(), func(data models.OllamaChatResponse) models.ChatToken {
+		err := MapHTTPStream(r.Context(), w, ollamaRes.Body, func(data models.OllamaChatResponse) models.ChatToken {
 			replyBuilder.WriteString(data.Message.Content)
 
 			return models.ChatToken{
@@ -128,7 +129,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	}()
 
 	// Cache chat record
-	go func() {
+	go func(ctx context.Context) {
 		defer wg.Done()
 
 		record := models.ClientChatRecord{
@@ -138,10 +139,10 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 			Reply:        replyBuilder.String(),
 		}
 
-		if err := cache.SaveChatRecords(i.Rdb, conversationKey, r.Context(), record); err != nil {
+		if err := cache.SaveChatRecords(ctx, i.Rdb, conversationKey, record); err != nil {
 			errorChan <- err
 		}
-	}()
+	}(r.Context())
 
 	go func() {
 		wg.Wait()
