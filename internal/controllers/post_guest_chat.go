@@ -109,15 +109,11 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Images for now.
-	// TODO.
-	promptImages := []string{}
-
 	// Cache chat in Redis.
 	record := models.ClientChatRecord{
 		CreatedAt:    creationTime,
 		Prompt:       req.Prompt,
-		PromptImages: promptImages,
+		PromptImages: req.Images,
 		Reply:        replyBuilder.String(),
 	}
 

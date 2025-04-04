@@ -13,7 +13,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
-import { useModelsContext } from "@/contexts/ModelsContext";
 
 type HttpChatReq = {
   headers?: HeadersInit;
@@ -26,7 +25,7 @@ type ChatContainerProps = {
   suggestions: string[];
   constructPromptRequest: (
     prompt: string,
-    promptImages: string[],
+    promptImages: string[]
   ) => Promise<Result<HttpChatReq>>;
   constructDeleteRequest: (createdAt: number) => Promise<Result<HttpChatReq>>;
 };
@@ -40,7 +39,6 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const { chats, setChats } = useChatRecordsContext();
   const { bearer } = useBearerContext();
-  const { selectedModelIndex } = useModelsContext();
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -67,7 +65,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
       const { ok, error } = await constructPromptRequest(
         prompt,
-        promptImages.map((img) => img.substring(img.search(/,/) + 1)),
+        promptImages.map((img) => img.substring(img.search(/,/) + 1))
       );
 
       if (error) {
@@ -120,7 +118,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
             // Trigger a re-render
             setStreamingChat(newChat);
             setLoading(false);
-          },
+          }
         );
       } catch (err: unknown) {
         if (err instanceof Error && err.name !== "AbortError") {
@@ -144,7 +142,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
         }
       }, 200);
     },
-    [promptEndpoint, constructPromptRequest, setChats],
+    [promptEndpoint, constructPromptRequest, setChats]
   );
 
   const onChatDelete = useCallback(
@@ -174,13 +172,13 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
         // Remove the chat from the list
         setChats((prev) =>
-          prev.filter((chat) => chat.createdAt !== chatCreatedAt),
+          prev.filter((chat) => chat.createdAt !== chatCreatedAt)
         );
       } catch {
         setError("Failed to send delete request to backend");
       }
     },
-    [constructDeleteRequest, deleteEndpoint, setChats],
+    [constructDeleteRequest, deleteEndpoint, setChats]
   );
 
   useEffect(() => {

@@ -111,10 +111,6 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Images for now
-	// TODO
-	promptImages := []string{}
-
 	// Aggregate saving the chat record in the database and cache
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -124,7 +120,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	go func() {
 		defer wg.Done()
 
-		if _, err := db.SaveChatRecord(i.Sdb, req.Prompt, promptImages, replyBuilder.String(), creationTime, user.ID, req.ConversationID); err != nil {
+		if _, err := db.SaveChatRecord(i.Sdb, req.Prompt, req.Images, replyBuilder.String(), creationTime, user.ID, req.ConversationID); err != nil {
 			errorChan <- err
 		}
 	}()
