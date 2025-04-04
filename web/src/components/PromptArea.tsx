@@ -1,7 +1,7 @@
 import styles from "@/styles/components/PromptArea.module.scss";
-import { useState, useRef, useEffect} from "react";
+import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { merriweather500 } from "@/utils/fonts";
+import { merriweather400, merriweather500 } from "@/utils/fonts";
 import {
   faArrowUp,
   faPaperclip,
@@ -12,7 +12,7 @@ type PromptAreaProps = {
   isDisabled: boolean;
   canCancel: boolean;
   canAttach: boolean;
-  onSend: (prompt: string, promptImage: string[]) => void;
+  onSend: (prompt: string, promptImages: string[]) => void;
   onCancel: () => void;
 };
 
@@ -24,21 +24,19 @@ const PromptArea: React.FC<PromptAreaProps> = ({
   onCancel,
 }) => {
   const [prompt, setPrompt] = useState("");
-  const [images, setImages] = useState([""]);
-  const [prevImages, setPrevImages] = useState([""]);
+  const [attachedImages, setAttachedImages] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  let imgItems;
 
   const handleSend = () => {
-    onSend(prompt.trim(), prevImages.slice(1));
+    onSend(prompt.trim(), attachedImages);
+    setAttachedImages([]);
     setPrompt("");
-    setImages([""]);
-    setPrevImages([""]);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+
       if (prompt.trim().length > 0 && !isDisabled) {
         handleSend();
       }
@@ -49,26 +47,32 @@ const PromptArea: React.FC<PromptAreaProps> = ({
     setPrompt(e.target.value);
   };
 
-  const toggleUploadModal = () => {
-    const fileElem =  document.getElementById("myFile");
-    fileElem?.click();
-  }
-
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    function addImage(f: Blob){
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPrevImages([...prevImages, reader.result+""]);
-      }
-      reader.readAsDataURL(f);
-    }
-    let files = e.target.files;
+    const files = e.target.files;
+
     if (files) {
-      setPrevImages([""]);
-      Array.prototype.forEach.call(files, addImage);
-      
-    }    
-  }
+      const uploadedImages: string[] = [];
+
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const target = event.target;
+
+          if (target === null) {
+            return;
+          }
+
+          uploadedImages.push(target.result as string);
+          setAttachedImages((prev) => [...prev, target.result as string]);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // Reset the file input
+    e.target.value = "";
+  };
 
   const adjustTextareaHeight = () => {
     if (textareaRef.current) {
@@ -91,11 +95,6 @@ const PromptArea: React.FC<PromptAreaProps> = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.images}
-      style={prevImages.length > 1? {display: "inline"}: {display: "none"}}
-      >
-        {prevImages.slice(1).map((img) => <img src={img+""} className={styles.imgPreview}></img>)}
-      </div>
       <div>
         <textarea
           className={merriweather500.className}
@@ -108,22 +107,23 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           spellCheck={false}
         />
         <div className={styles.buttonContainer}>
-            <input type="file" 
+          <button type="button" disabled={isDisabled || !canAttach}>
+            {attachedImages.length > 0 && (
+              <span
+                className={`${styles.imageCount} ${merriweather400.className}`}
+              >
+                {Math.min(attachedImages.length, 99)}
+              </span>
+            )}
+            <FontAwesomeIcon icon={faPaperclip} />
+            <input
+              id="file-upload"
+              type="file"
               multiple
-              className={styles.fileUpload} 
-              id="myFile" 
-              name="filename"
-              onChange={
-                handleImageUpload
-              }
-            ></input>
-            <button 
-              type="button" 
-              disabled={isDisabled || !canAttach || prevImages.length > 3}
-              onClick={toggleUploadModal}
-            >
-              <FontAwesomeIcon icon={faPaperclip} />
-            </button>
+              accept="image/*"
+              onChange={handleImageUpload}
+            />
+          </button>
           {canCancel ? (
             <button onClick={onCancel}>
               <FontAwesomeIcon icon={faStop} />
@@ -131,7 +131,7 @@ const PromptArea: React.FC<PromptAreaProps> = ({
           ) : (
             <button
               onClick={handleSend}
-              disabled={isDisabled || prompt.trim().length === 0 && prevImages.length === 1}
+              disabled={isDisabled || prompt.trim().length === 0}
             >
               <FontAwesomeIcon icon={faArrowUp} />
             </button>

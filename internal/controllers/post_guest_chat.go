@@ -14,9 +14,9 @@ import (
 )
 
 type postGuestChatRequest struct {
-	Prompt string `json:"prompt"`
-	Images  []string `json:"images"`
-	Model  string `json:"model"`
+	Prompt string   `json:"prompt"`
+	Images []string `json:"images"`
+	Model  string   `json:"model"`
 }
 
 // Endpoint for sending a prompt on a guest chat

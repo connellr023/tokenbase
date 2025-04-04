@@ -2,8 +2,13 @@ import styles from "@/styles/components/Chat.module.scss";
 import IconButton, { IconButtonColor } from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
-import { faCopy, faRefresh, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCopy,
+  faPaperclip,
+  faTrash,
+} from "@fortawesome/free-solid-svg-icons";
 
 type ChatProps = {
   createdAt: number;
@@ -36,8 +41,13 @@ const Chat: React.FC<ChatProps> = ({
   return (
     <div className={styles.container}>
       <div className={styles.promptContainer}>
+        {images.length > 0 && (
+          <div className={styles.imageCount}>
+            <FontAwesomeIcon icon={faPaperclip} />
+            {images.length}
+          </div>
+        )}
         <TypesetRenderer>{prompt}</TypesetRenderer>
-        {images.map((img) => <img src={img+""} className={styles.imgPrompt}/>)}
       </div>
       {reply.length > 0 && (
         <div className={styles.replyContainer}>

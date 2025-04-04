@@ -13,7 +13,6 @@ import { useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
-import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
 
 type HttpChatReq = {
@@ -25,7 +24,10 @@ type ChatContainerProps = {
   promptEndpoint: string;
   deleteEndpoint: string;
   suggestions: string[];
-  constructPromptRequest: (prompt: string, promptImages: string[]) => Promise<Result<HttpChatReq>>;
+  constructPromptRequest: (
+    prompt: string,
+    promptImages: string[]
+  ) => Promise<Result<HttpChatReq>>;
   constructDeleteRequest: (createdAt: number) => Promise<Result<HttpChatReq>>;
 };
 
@@ -38,9 +40,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 }) => {
   const { chats, setChats } = useChatRecordsContext();
   const { bearer } = useBearerContext();
+  const { selectedModelIndex } = useModelsContext();
   const [isLoading, setLoading] = useState(false);
   const [streamingChat, setStreamingChat] = useState<ChatRecord | null>(null);
-  const { availableModels, selectedModelIndex } = useModelsContext();
   const [error, setError] = useState<string | null>(null);
   const abortPrompt = useRef<(() => void) | null>(null);
   const loadingIndicatorRef = useRef<HTMLDivElement | null>(null);
@@ -51,8 +53,8 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
     // Initialize a new chat entry
     let newChat: ChatRecord = {
-      prompt: prompt,
-      promptImages: promptImages,
+      prompt,
+      promptImages,
       reply: "",
     };
 
@@ -62,7 +64,9 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
     // Construct the request using the provided callback
     // Remove base64 prefix
-    const imgReq = promptImages.map((img) => img.substring(img.search(/,/)+1));
+    const imgReq = promptImages.map((img) =>
+      img.substring(img.search(/,/) + 1)
+    );
     const { ok, error } = await constructPromptRequest(prompt, imgReq);
     if (error) {
       setError(error);
@@ -114,7 +118,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           // Trigger a re-render
           setStreamingChat(newChat);
           setLoading(false);
-        },
+        }
       );
     } catch (err: any) {
       if (err.name !== "AbortError") {
@@ -165,7 +169,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
 
       // Remove the chat from the list
       setChats((prev) =>
-        prev.filter((chat) => chat.createdAt !== chatCreatedAt),
+        prev.filter((chat) => chat.createdAt !== chatCreatedAt)
       );
     } catch {
       setError("Failed to send delete request to backend");
@@ -196,7 +200,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           <div className={styles.suggestionsContainer}>
             {/* Render some random chat suggestions */}
             {suggestions?.map((suggestion, i) => (
-              <StandardButton key={i} onClick={() => onPromptSend(suggestion, [])}>
+              <StandardButton
+                key={i}
+                onClick={() => onPromptSend(suggestion, [])}
+              >
                 {suggestion}
               </StandardButton>
             ))}
@@ -248,7 +255,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <PromptArea
         isDisabled={error != null}
         onSend={onPromptSend}
-        canAttach={!streamingChat && selectedModelIndex==0}
+        canAttach={!streamingChat && selectedModelIndex == 0}
         canCancel={(isLoading || streamingChat != null) && !error}
         onCancel={() => abortPrompt.current?.()}
       />

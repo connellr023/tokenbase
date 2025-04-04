@@ -16,10 +16,10 @@ import (
 )
 
 type postConversationChatRequest struct {
-	Prompt         string `json:"prompt"`
-	Images		   []string `json:"images"`
-	Model          string `json:"model"`
-	ConversationID string `json:"conversationId"`
+	Prompt         string   `json:"prompt"`
+	Images         []string `json:"images"`
+	Model          string   `json:"model"`
+	ConversationID string   `json:"conversationId"`
 }
 
 func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request) {
