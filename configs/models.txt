@@ -1,0 +1,2 @@
+qwen2.5:0.5b
+llava-llama3:8b

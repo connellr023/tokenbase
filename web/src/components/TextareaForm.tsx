@@ -1,9 +1,9 @@
 import styles from "@/styles/components/TextareaForm.module.scss";
 import StandardButton from "./StandardButton";
-import React, { useEffect, useState } from "react";
+import ErrorMessage from "./ErrorMessage";
+import React, { useCallback, useEffect, useState } from "react";
 import { merriweather500 } from "@/utils/fonts";
 import { faSync } from "@fortawesome/free-solid-svg-icons";
-import ErrorMessage from "./ErrorMessage";
 
 type TextareaFormProps = {
   placeholder: string;
@@ -45,7 +45,7 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     setError(null);
 
     const error = await onSubmit();
@@ -53,7 +53,7 @@ const TextareaForm: React.FC<TextareaFormProps> = ({
     if (error) {
       setError(error);
     }
-  };
+  }, [onSubmit]);
 
   useEffect(() => {
     setCharsLeft(max - value.length);

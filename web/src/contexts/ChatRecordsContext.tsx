@@ -4,6 +4,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useState,
 } from "react";
@@ -20,7 +21,7 @@ export const ChatRecordsProvider: React.FC<{
   children: ReactNode;
 }> = ({ children }) => {
   const [chats, setChats] = useState<ChatRecord[]>([]);
-  const clearChats = () => setChats([]);
+  const clearChats = useCallback(() => setChats([]), []);
 
   return (
     <ChatRecordsContext.Provider value={{ chats, setChats, clearChats }}>

@@ -26,7 +26,10 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
   const { bearer, setBearer } = useBearerContext();
   const { availableModels, selectedModelIndex } = useModelsContext();
 
-  const constructGuestPromptRequest = async (prompt: string, images: string[]) => {
+  const constructGuestPromptRequest = async (
+    prompt: string,
+    images: string[],
+  ) => {
     const constructReq = (token: string) => {
       if (availableModels.length === 0) {
         return {

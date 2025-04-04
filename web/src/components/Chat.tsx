@@ -1,5 +1,6 @@
 import styles from "@/styles/components/Chat.module.scss";
-import IconButton, { IconButtonColor } from "./IconButton";
+import ButtonColor from "@/models/ButtonColor";
+import IconButton from "./IconButton";
 import TypesetRenderer from "./TypesetRenderer";
 import TypeCursor from "./TypeCursor";
 import { useState } from "react";
@@ -66,7 +67,7 @@ const Chat: React.FC<ChatProps> = ({
           </IconButton>
           <IconButton
             icon={faTrash}
-            color={IconButtonColor.Red}
+            color={ButtonColor.Red}
             onClick={() => onDelete?.(createdAt)}
           >
             Delete

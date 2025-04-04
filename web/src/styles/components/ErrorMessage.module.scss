@@ -8,4 +8,10 @@ div.container {
   padding: 1.3rem;
   border-radius: $border-radius-1;
   gap: 1rem;
+
+  & > span {
+    white-space: normal;
+    word-wrap: break-word;
+    overflow: auto;
+  }
 }

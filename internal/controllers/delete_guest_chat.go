@@ -13,7 +13,7 @@ type deleteGuestChatRequest struct {
 }
 
 func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
-	// Extract token (guest session ID) from request
+	// Extract token (guest session ID) from request.
 	token, ok := middlewares.GetBearerFromContext(r.Context())
 
 	if !ok {
@@ -21,7 +21,7 @@ func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Parse request body
+	// Parse request body.
 	var req deleteGuestChatRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -29,10 +29,10 @@ func (i *Injection) DeleteGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Delete chat record
+	// Delete chat record.
 	guestSessionKey := cache.FmtGuestSessionKey(token)
 
-	if err := cache.DeleteChatRecord(i.Rdb, guestSessionKey, req.CreatedAt); err != nil {
+	if err := cache.DeleteChatRecord(r.Context(), i.Rdb, guestSessionKey, req.CreatedAt); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

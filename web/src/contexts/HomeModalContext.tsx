@@ -2,6 +2,7 @@ import { useBearerContext } from "./BearerContext";
 import {
   createContext,
   ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -20,6 +21,8 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   const { bearer } = useBearerContext();
   const [isOpen, setOpen] = useState(true);
 
+  const close = useCallback(() => setOpen(false), []);
+
   useEffect(() => {
     if (bearer) {
       setOpen(false);
@@ -27,7 +30,12 @@ export const HomeModalProvider: React.FC<{ children: ReactNode }> = ({
   }, [bearer]);
 
   return (
-    <HomeModalContext.Provider value={{ isOpen, close: () => setOpen(false) }}>
+    <HomeModalContext.Provider
+      value={{
+        isOpen,
+        close,
+      }}
+    >
       {children}
     </HomeModalContext.Provider>
   );

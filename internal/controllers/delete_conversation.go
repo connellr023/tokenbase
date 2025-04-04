@@ -10,13 +10,14 @@ import (
 	"tokenbase/internal/middlewares"
 )
 
-type deleteConversationChatRequest struct {
-	CreatedAt      int64  `json:"createdAt"`
+type deleteConversationRequest struct {
 	ConversationID string `json:"conversationId"`
 }
 
-func (i *Injection) DeleteConversationChat(w http.ResponseWriter, r *http.Request) {
-	// Extract user from JWT
+// Handles deletion of a user's conversation and its associated chat records.
+// It deletes data both from the database and the Redis cache.
+func (i *Injection) DeleteUserConversation(w http.ResponseWriter, r *http.Request) {
+	// Extract user from JWT.
 	user, err := middlewares.GetUserFromJwt(r.Context())
 
 	if err != nil {
@@ -24,45 +25,46 @@ func (i *Injection) DeleteConversationChat(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	// Parse request
-	var req deleteConversationChatRequest
+	// Parse request payload.
+	var req deleteConversationRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	// Aggregate deletion of chat record in database and cache
+	// Aggregate deletion from the database and cache
 	wg := sync.WaitGroup{}
 	wg.Add(2)
 	errorChan := make(chan error, 2)
 
-	// Delete chat record in database
+	// Delete conversation in the database.
 	go func() {
 		defer wg.Done()
 
-		if _, err := db.DeleteChatRecordByCreationTime(i.Sdb, req.CreatedAt, user.ID, req.ConversationID); err != nil {
+		if _, err := db.DeleteConversation(i.Sdb, req.ConversationID, user.ID); err != nil {
 			errorChan <- err
 		}
 	}()
 
-	// Delete chat record in cache
+	// Delete conversation cache (its chat records) from Redis.
 	go func(ctx context.Context) {
 		defer wg.Done()
 
 		conversationKey := cache.FmtConversationKey(user.ID, req.ConversationID)
 
-		if err := cache.DeleteChatRecord(ctx, i.Rdb, conversationKey, req.CreatedAt); err != nil {
+		if err := cache.DeleteChatSession(ctx, i.Rdb, conversationKey); err != nil {
 			errorChan <- err
 		}
 	}(r.Context())
 
+	// Wait for both deletions to finish and close errorChan.
 	go func() {
 		wg.Wait()
 		close(errorChan)
 	}()
 
-	// Check for errors
+	// Check for any errors.
 	for err := range errorChan {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

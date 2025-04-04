@@ -7,20 +7,19 @@ import (
 	sdbModels "github.com/surrealdb/surrealdb.go/pkg/models"
 )
 
-var systemPromptRecordID = sdbModels.RecordID{
-	Table: "system_prompt",
-	ID:    "main",
-}
-
-// Gets the system prompt from persistent storage
+// Gets the system prompt from persistent storage.
 //
 // Parameters:
-// - sdb: SurrealDB client
+// - sdb: SurrealDB client.
 //
 // Returns:
-// - The system prompt
-// - Any error that occurred
+// - The system prompt.
+// - Any error that occurred.
 func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
+	systemPromptRecordID := sdbModels.RecordID{
+		Table: "system_prompt",
+		ID:    "main",
+	}
 	res, err := surrealdb.Select[models.DbSystemPrompt](sdb, systemPromptRecordID)
 
 	if err != nil {
@@ -31,9 +30,12 @@ func GetSystemPrompt(sdb *surrealdb.DB) (string, error) {
 }
 
 func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (models.DbSystemPrompt, error) {
-	const query = "UPDATE system_prompt SET prompt = $prompt"
+	const query = `
+		UPDATE system_prompt
+		SET prompt = $prompt
+	`
 
-	// Use a slice to handle the array response
+	// Use a slice to handle the array response.
 	res, err := surrealdb.Query[[]models.DbSystemPrompt](sdb, query, map[string]interface{}{
 		"prompt": prompt,
 	})
@@ -44,5 +46,6 @@ func SetSystemPrompt(sdb *surrealdb.DB, prompt string) (models.DbSystemPrompt, e
 
 	var promptRes models.DbSystemPrompt
 	err = validateSingleQueryResult(res, &promptRes)
+
 	return promptRes, err
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 	"tokenbase/internal/controllers"
@@ -13,12 +14,12 @@ import (
 	"github.com/surrealdb/surrealdb.go"
 )
 
-// Authenticate with SurrealDB
+// Authenticate with SurrealDB.
 //
 // Returns:
-// - A SurrealDB client
-// - A function to invalidate the authentication token
-// - An error if authentication fails
+// - A SurrealDB client.
+// - A function to invalidate the authentication token.
+// - An error if authentication fails.
 func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 	sdb, err := surrealdb.New(utils.SdbDockerEndpoint)
 
@@ -26,12 +27,12 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 		return nil, nil, err
 	}
 
-	// Set the namespace
+	// Set the namespace.
 	if err := sdb.Use(utils.SdbNamespace, utils.SdbName); err != nil {
 		return nil, nil, err
 	}
 
-	// Authenticate
+	// Authenticate.
 	token, err := sdb.SignIn(&surrealdb.Auth{
 		Username: utils.SdbUsername,
 		Password: utils.SdbPassword,
@@ -41,12 +42,12 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 		return nil, nil, err
 	}
 
-	// Check token validity
+	// Check token validity.
 	if err := sdb.Authenticate(token); err != nil {
 		return nil, nil, err
 	}
 
-	// Allow caller to invalidateToken the token later
+	// Allow caller to invalidateToken the token later.
 	invalidateToken := func() {
 		if err := sdb.Invalidate(); err != nil {
 			panic(err)
@@ -59,8 +60,8 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 // Authenticate with Redis
 //
 // Returns:
-// - A Redis client
-// - An error if authentication fails
+// - A Redis client.
+// - An error if authentication fails.
 func AuthRedis() (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     utils.RdbDockerEndpoint,
@@ -79,10 +80,10 @@ func AuthRedis() (*redis.Client, error) {
 }
 
 func main() {
-	// Sleep to wait for Docker containers to start
+	// Sleep to wait for Docker containers to start.
 	time.Sleep(5 * time.Second)
 
-	// Connect to SurrealDB over the Docker network
+	// Connect to SurrealDB over the Docker network.
 	println("Connecting to SurrealDB...")
 	sdb, invalidateToken, err := AuthSurrealDb()
 
@@ -92,7 +93,7 @@ func main() {
 
 	defer invalidateToken()
 
-	// Connect to Redis over the Docker network
+	// Connect to Redis over the Docker network.
 	println("Connecting to Redis...")
 	client, err := AuthRedis()
 
@@ -100,13 +101,13 @@ func main() {
 		panic(err)
 	}
 
-	// Create the controller injections
+	// Create the controller injections.
 	inj := controllers.Injection{
 		Sdb: sdb,
 		Rdb: client,
 	}
 
-	// Start the backend server
+	// Start the backend server.
 	println("Starting backend server...")
 
 	rootRouter := chi.NewRouter()
@@ -120,36 +121,37 @@ func main() {
 		r.Get("/suggestions", inj.GetChatSuggestions)
 		r.Get("/models", inj.GetModels)
 
-		// Admin sub-routes
+		// Admin sub-routes.
 		r.Route("/admin", func(r chi.Router) {
-			// Prompt sub-routes
+			// Prompt sub-routes.
 			r.Route("/prompt", func(r chi.Router) {
 				r.Get("/", inj.GetSystemPrompt)
 				r.Patch("/", inj.PatchSystemPrompt)
 			})
 		})
 
-		// Guest sub-routes
+		// Guest sub-routes.
 		r.Route("/guest", func(r chi.Router) {
 			r.Post("/new", inj.PostGuestSession)
 
-			// Guest chat sub-routes
+			// Guest chat sub-routes.
 			r.Route("/chat", func(r chi.Router) {
 				r.Post("/prompt", inj.PostGuestChat)
 				r.Delete("/delete", inj.DeleteGuestChat)
 			})
 		})
 
-		// User sub-routes
+		// User sub-routes.
 		r.Route("/user", func(r chi.Router) {
-			// User conversation sub-routes
+			// User conversation sub-routes.
 			r.Route("/conversation", func(r chi.Router) {
 				r.Get("/all", inj.GetConversations)
 				r.Post("/new", inj.PostConversation)
-				// r.Delete("/delete", inj.DeleteUserConversation)
+				r.Delete("/delete", inj.DeleteUserConversation)
+				r.Patch("/rename", inj.PatchRenameUserConversation)
 			})
 
-			// User chat sub-routes
+			// User chat sub-routes.
 			r.Route("/chat", func(r chi.Router) {
 				r.Get("/all/{conversation_id}", inj.GetConversationChats)
 				r.Post("/prompt", inj.PostConversationChat)
@@ -160,7 +162,15 @@ func main() {
 
 	println("Backend server started on " + utils.BackendEndpoint)
 
-	if err := http.ListenAndServe(utils.BackendEndpoint, rootRouter); err != nil {
+	server := &http.Server{
+		Addr:         utils.BackendEndpoint,
+		Handler:      rootRouter,
+		ReadTimeout:  15 * time.Second,
+		WriteTimeout: 15 * time.Second,
+		IdleTimeout:  60 * time.Second,
+	}
+
+	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		panic(err)
 	}
 }

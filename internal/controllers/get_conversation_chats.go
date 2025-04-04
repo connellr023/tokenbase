@@ -16,7 +16,7 @@ type getConversationChatsResponse struct {
 }
 
 func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request) {
-	// Extract user from JWT
+	// Extract user from JWT.
 	user, err := middlewares.GetUserFromJwt(r.Context())
 
 	if err != nil {
@@ -26,13 +26,13 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 
 	w.Header().Set("Content-Type", "application/json")
 
-	// Extract the conversation ID from the URL
+	// Extract the conversation ID from the URL.
 	conversationID := chi.URLParam(r, "conversation_id")
 	conversationKey := cache.FmtConversationKey(user.ID, conversationID)
 
-	// Check if cache contains the client chat records
-	if cacheClientChats, err := cache.GetAllChats(i.Rdb, conversationKey); err == nil {
-		// Respond with the cached client chat records
+	// Check if cache contains the client chat records.
+	if cacheClientChats, err := cache.GetAllChats(r.Context(), i.Rdb, conversationKey); err == nil {
+		// Respond with the cached client chat records.
 		response := getConversationChatsResponse{
 			Chats: cacheClientChats,
 		}
@@ -42,15 +42,15 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 		}
 
 		return
-	} else {
-		// Create a new conversation in cache
-		if err := cache.NewChatSession(i.Rdb, conversationKey); err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
 	}
 
-	// Get all conversation chats from the database
+	// Create a new conversation in cache.
+	if err := cache.NewChatSession(r.Context(), i.Rdb, conversationKey); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// Get all conversation chats from the database.
 	dbChats, err := db.GetAllChatRecordsFromConversation(i.Sdb, conversationID)
 
 	if err != nil {
@@ -58,20 +58,20 @@ func (i *Injection) GetConversationChats(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Convert the chat records to client chat records
+	// Convert the chat records to client chat records.
 	clientChats := make([]models.ClientChatRecord, 0, len(dbChats))
 
 	for _, dbChat := range dbChats {
 		clientChats = append(clientChats, dbChat.ToClientChatRecord())
 	}
 
-	// Cache the client chat records in Redis
-	if err := cache.SaveChatRecords(i.Rdb, conversationKey, clientChats...); err != nil {
+	// Cache the client chat records in Redis.
+	if err := cache.SaveChatRecords(r.Context(), i.Rdb, conversationKey, clientChats...); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	// Return the client chat records
+	// Return the client chat records.
 	response := getConversationChatsResponse{
 		Chats: clientChats,
 	}

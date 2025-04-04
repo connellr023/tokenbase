@@ -1,6 +1,6 @@
 import MultistepForm from "@/components/MultistepForm";
 import StandardInput from "@/components/StandardInput";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { LoginRequest, AuthResponse } from "@/models/Auth";
 import { emailRegex } from "@/utils/regexps";
 import { backendEndpoint, minPasswordLength } from "@/utils/constants";
@@ -20,16 +20,19 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const isStepValid = (step: number) => {
-    switch (step) {
-      case 0:
-        return email.trim() !== "" && emailRegex.test(email);
-      case 1:
-        return password.length >= minPasswordLength;
-      default:
-        return true;
-    }
-  };
+  const isStepValid = useCallback(
+    (step: number) => {
+      switch (step) {
+        case 0:
+          return email.trim() !== "" && emailRegex.test(email);
+        case 1:
+          return password.length >= minPasswordLength;
+        default:
+          return true;
+      }
+    },
+    [email, password],
+  );
 
   const handleKeyDown = (
     step: number,
@@ -43,7 +46,7 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     const loginRequest: LoginRequest = {
       email,
       password,
@@ -73,10 +76,18 @@ const Login: React.FC = () => {
       });
 
       push("/");
-    } catch (_) {
+    } catch {
       return "An error occurred while logging in.";
     }
-  };
+  }, [
+    email,
+    password,
+    clearChats,
+    clearConversationRecords,
+    unselectConversation,
+    setBearer,
+    push,
+  ]);
 
   const steps = [
     <div key="step1">

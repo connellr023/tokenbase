@@ -1,5 +1,5 @@
 import TextareaForm from "@/components/TextareaForm";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { backendEndpoint } from "@/utils/constants";
 import { useBearerContext } from "@/contexts/BearerContext";
 
@@ -30,19 +30,22 @@ const Admin: React.FC = () => {
 
         const data = await res.json();
         setPrompt(data.prompt ?? "");
-      } catch (error) {
+      } catch {
         setPrompt("Failed to fetch prompt");
       } finally {
         setIsLoading(false);
       }
     })();
-  }, []);
+  }, [bearer.token]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPrompt(e.target.value);
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      setPrompt(e.target.value);
+    },
+    [setPrompt],
+  );
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     try {
       setIsLoading(true);
 
@@ -64,7 +67,7 @@ const Admin: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [prompt, bearer.token]);
 
   return (
     <>

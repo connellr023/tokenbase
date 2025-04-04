@@ -5,7 +5,7 @@ import (
 	"github.com/surrealdb/surrealdb.go"
 )
 
-// Used for dependency injection in the controllers
+// Used for dependency injection in the controllers.
 type Injection struct {
 	Sdb *surrealdb.DB
 	Rdb *redis.Client

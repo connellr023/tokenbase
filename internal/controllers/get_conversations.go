@@ -13,7 +13,7 @@ type getConversationsResponse struct {
 }
 
 func (i *Injection) GetConversations(w http.ResponseWriter, r *http.Request) {
-	// Get user from JWT
+	// Get user from JWT.
 	user, err := middlewares.GetUserFromJwt(r.Context())
 
 	if err != nil {
@@ -21,7 +21,7 @@ func (i *Injection) GetConversations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Get all conversations for the user
+	// Get all conversations for the user.
 	conversations, err := db.GetAllConversations(i.Sdb, user.ID)
 
 	if err != nil {
@@ -29,14 +29,14 @@ func (i *Injection) GetConversations(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Convert to client conversations
+	// Convert to client conversations.
 	clientConversations := make([]models.ClientConversation, 0, len(conversations))
 
 	for _, conversation := range conversations {
 		clientConversations = append(clientConversations, conversation.ToClientConversation())
 	}
 
-	// Send the response
+	// Send the response.
 	response := getConversationsResponse{
 		Conversations: clientConversations,
 	}

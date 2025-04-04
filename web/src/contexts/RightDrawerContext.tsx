@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+} from "react";
 
 type RightDrawerContextType = {
   isDrawerOpen: boolean;
@@ -13,8 +19,8 @@ export const RightDrawerProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [isOpen, setOpen] = useState(false);
 
-  const openDrawer = () => setOpen(true);
-  const closeDrawer = () => setOpen(false);
+  const openDrawer = useCallback(() => setOpen(true), []);
+  const closeDrawer = useCallback(() => setOpen(false), []);
 
   return (
     <RightDrawerContext.Provider

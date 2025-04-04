@@ -9,7 +9,7 @@ import ErrorMessage from "./ErrorMessage";
 import TypesetRenderer from "./TypesetRenderer";
 import StandardButton from "./StandardButton";
 import Result from "@/utils/result";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { recvHttpStream } from "@/utils/recvHttpStream";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { useBearerContext } from "@/contexts/BearerContext";
@@ -26,7 +26,7 @@ type ChatContainerProps = {
   suggestions: string[];
   constructPromptRequest: (
     prompt: string,
-    promptImages: string[]
+    promptImages: string[],
   ) => Promise<Result<HttpChatReq>>;
   constructDeleteRequest: (createdAt: number) => Promise<Result<HttpChatReq>>;
 };
@@ -47,134 +47,141 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const abortPrompt = useRef<(() => void) | null>(null);
   const loadingIndicatorRef = useRef<HTMLDivElement | null>(null);
 
-  const onPromptSend = async (prompt: string, promptImages: string[]) => {
-    // Clear any previous error
-    setError(null);
+  const onPromptSend = useCallback(
+    async (prompt: string, promptImages: string[]) => {
+      // Clear any previous error
+      setError(null);
 
-    // Initialize a new chat entry
-    let newChat: ChatRecord = {
-      prompt,
-      promptImages,
-      reply: "",
-    };
+      // Initialize a new chat entry
+      let newChat: ChatRecord = {
+        prompt,
+        promptImages,
+        reply: "",
+      };
 
-    // Set loading state and show the new chat entry prompt
-    setLoading(true);
-    setStreamingChat(newChat);
+      // Set loading state and show the new chat entry prompt
+      setLoading(true);
+      setStreamingChat(newChat);
 
-    // Construct the request using the provided callback
-    // Remove base64 prefix
-    const imgReq = promptImages.map((img) =>
-      img.substring(img.search(/,/) + 1)
-    );
-    const { ok, error } = await constructPromptRequest(prompt, imgReq);
-    if (error) {
-      setError(error);
-      setLoading(false);
-      return;
-    }
+      // Construct the request using the provided callback
 
-    // Create an abort controller to cancel the request
-    const controller = new AbortController();
-    abortPrompt.current = () => controller.abort();
+      const { ok, error } = await constructPromptRequest(
+        prompt,
+        promptImages.map((img) => img.substring(img.search(/,/) + 1)),
+      );
 
-    try {
-      // Send the prompt to the backend
-      const res = await fetch(promptEndpoint, {
-        method: "POST",
-        signal: controller.signal,
-        ...ok,
-      });
-
-      if (!res.ok) {
-        setError("Failed to send prompt to backend");
+      if (error) {
+        setError(error);
         setLoading(false);
         return;
       }
 
-      // Stream the response
-      await recvHttpStream<ChatToken & ChatError>(
-        res,
-        controller.signal,
-        (chunk) => {
-          // Check if this chunk is an error
-          if (chunk.error) {
-            setError(chunk.error);
-            setLoading(false);
-            return;
-          }
+      // Create an abort controller to cancel the request
+      const controller = new AbortController();
+      abortPrompt.current = () => controller.abort();
 
-          // Check if this chunk contains the timestamp
-          if (chunk.createdAt) {
-            newChat.createdAt = chunk.createdAt;
-          }
+      try {
+        // Send the prompt to the backend
+        const res = await fetch(promptEndpoint, {
+          method: "POST",
+          signal: controller.signal,
+          ...ok,
+        });
 
-          // Construct the new chat entry
-          newChat = {
-            ...newChat,
-            reply: newChat.reply + chunk.token,
-          };
-
-          // Trigger a re-render
-          setStreamingChat(newChat);
+        if (!res.ok) {
+          setError("Failed to send prompt to backend");
           setLoading(false);
+          return;
         }
-      );
-    } catch (err: any) {
-      if (err.name !== "AbortError") {
-        setError("Failed to receive response from backend");
+
+        // Stream the response
+        await recvHttpStream<ChatToken & ChatError>(
+          res,
+          controller.signal,
+          (chunk) => {
+            // Check if this chunk is an error
+            if (chunk.error) {
+              setError(chunk.error);
+              setLoading(false);
+              return;
+            }
+
+            // Check if this chunk contains the timestamp
+            if (chunk.createdAt) {
+              newChat.createdAt = chunk.createdAt;
+            }
+
+            // Construct the new chat entry
+            newChat = {
+              ...newChat,
+              reply: newChat.reply + chunk.token,
+            };
+
+            // Trigger a re-render
+            setStreamingChat(newChat);
+            setLoading(false);
+          },
+        );
+      } catch (err: unknown) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          setError("Failed to receive response from backend");
+        }
+
+        setLoading(false);
+      } finally {
+        // Clear the abort callback
+        abortPrompt.current = null;
       }
 
-      setLoading(false);
-    } finally {
-      // Clear the abort callback
-      abortPrompt.current = null;
-    }
+      // Delay to let animation finish
+      setTimeout(() => {
+        // Stream is finished, so add the chat to the list
+        setStreamingChat(null);
 
-    // Delay to let animation finish
-    setTimeout(() => {
-      // Stream is finished, so add the chat to the list
-      setStreamingChat(null);
+        // Add the chat to the list if it has a timestamp
+        if (newChat.createdAt) {
+          setChats((prev) => [...prev, newChat]);
+        }
+      }, 200);
+    },
+    [promptEndpoint, constructPromptRequest, setChats],
+  );
 
-      // Add the chat to the list if it has a timestamp
-      if (newChat.createdAt) {
-        setChats((prev) => [...prev, newChat]);
-      }
-    }, 200);
-  };
+  const onChatDelete = useCallback(
+    async (chatCreatedAt: number) => {
+      // Clear any previous error
+      setError(null);
 
-  const onChatDelete = async (chatCreatedAt: number) => {
-    // Clear any previous error
-    setError(null);
+      // Construct the request using the provided callback
+      const { ok, error } = await constructDeleteRequest(chatCreatedAt);
 
-    // Construct the request using the provided callback
-    const { ok, error } = await constructDeleteRequest(chatCreatedAt);
-
-    if (error) {
-      setError(error);
-      return;
-    }
-
-    try {
-      // Send the delete request to the backend
-      const res = await fetch(deleteEndpoint, {
-        method: "DELETE",
-        ...ok,
-      });
-
-      if (!res.ok) {
-        setError("Failed to delete chat from backend");
+      if (error) {
+        setError(error);
         return;
       }
 
-      // Remove the chat from the list
-      setChats((prev) =>
-        prev.filter((chat) => chat.createdAt !== chatCreatedAt)
-      );
-    } catch {
-      setError("Failed to send delete request to backend");
-    }
-  };
+      try {
+        // Send the delete request to the backend
+        const res = await fetch(deleteEndpoint, {
+          method: "DELETE",
+          ...ok,
+        });
+
+        if (!res.ok) {
+          setError("Failed to delete chat from backend");
+          return;
+        }
+
+        // Remove the chat from the list
+        setChats((prev) =>
+          prev.filter((chat) => chat.createdAt !== chatCreatedAt),
+        );
+      } catch {
+        setError("Failed to send delete request to backend");
+      }
+    },
+    [constructDeleteRequest, deleteEndpoint, setChats],
+  );
 
   useEffect(() => {
     if (loadingIndicatorRef.current) {
@@ -255,7 +262,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       <PromptArea
         isDisabled={error != null}
         onSend={onPromptSend}
-        canAttach={!streamingChat && selectedModelIndex == 0}
+        canAttach={!streamingChat}
         canCancel={(isLoading || streamingChat != null) && !error}
         onCancel={() => abortPrompt.current?.()}
       />

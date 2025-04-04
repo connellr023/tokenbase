@@ -71,7 +71,7 @@ div.container {
         position: relative;
 
         span.imageCount {
-          $shift: ($size / 2) - 0.35rem;
+          $shift: calc($size / 2) - 0.35rem;
 
           position: absolute;
           bottom: $shift;
@@ -115,6 +115,10 @@ div.container {
 
           &:hover {
             background-color: color.adjust($bg-color-3, $lightness: -4%);
+          }
+
+          & > * {
+            pointer-events: none;
           }
         }
       }

@@ -8,6 +8,8 @@ import { useBearerContext } from "@/contexts/BearerContext";
 import { useConversationRecordsContext } from "@/contexts/ConversationRecordsContext";
 import { useChatRecordsContext } from "@/contexts/ChatRecordsContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useState } from "react";
+import { reqConversationChats } from "@/utils/reqConversationChats";
 import { firaMono400, merriweather400 } from "@/utils/fonts";
 import {
   faAnglesRight,
@@ -19,8 +21,6 @@ import {
   faSignOut,
   faBox,
 } from "@fortawesome/free-solid-svg-icons";
-import { reqConversationChats } from "@/utils/reqConversationChats";
-import { useState } from "react";
 
 const RightDrawer: React.FC = () => {
   const { push } = useRouter();
@@ -71,10 +71,10 @@ const RightDrawer: React.FC = () => {
     setChats(chats);
   };
 
-  const newConversation = () => {
+  const newConversation = useCallback(() => {
     unselectConversation();
     setChats([]);
-  };
+  }, [unselectConversation, setChats]);
 
   return (
     <>
