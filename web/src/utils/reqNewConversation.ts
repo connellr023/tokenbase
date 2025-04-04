@@ -15,6 +15,7 @@ type NewConversationResponse = {
 export const reqNewConversation = async (
   model: string,
   firstPrompt: string,
+  images: string[],
   jwt: string,
 ) => {
   try {
@@ -27,6 +28,7 @@ export const reqNewConversation = async (
       body: JSON.stringify({
         model,
         firstPrompt,
+        images,
       } as NewConversationRequest),
     });
 

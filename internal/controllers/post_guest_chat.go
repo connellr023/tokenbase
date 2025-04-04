@@ -14,8 +14,9 @@ import (
 )
 
 type postGuestChatRequest struct {
-	Prompt string `json:"prompt"`
-	Model  string `json:"model"`
+	Prompt string   `json:"prompt"`
+	Images []string `json:"images"`
+	Model  string   `json:"model"`
 }
 
 // Endpoint for sending a prompt on a guest chat.
@@ -57,7 +58,7 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 	// Construct request to Ollama API.
 	ollamaReq := models.OllamaChatRequest{
 		Model:    req.Model,
-		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
+		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, req.Images, prevChatRecords),
 		Stream:   true,
 	}
 
@@ -108,15 +109,11 @@ func (i *Injection) PostGuestChat(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Images for now.
-	// TODO.
-	promptImages := []string{}
-
 	// Cache chat in Redis.
 	record := models.ClientChatRecord{
 		CreatedAt:    creationTime,
 		Prompt:       req.Prompt,
-		PromptImages: promptImages,
+		PromptImages: req.Images,
 		Reply:        replyBuilder.String(),
 	}
 

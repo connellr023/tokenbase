@@ -21,8 +21,10 @@ class RootApp extends App<RootAppProps> {
   static async getInitialProps(appContext: AppContext) {
     const appProps = await App.getInitialProps(appContext);
 
+    // Only fetch available models on the home page
     return {
-      availableModels: await getAvailableModels(),
+      availableModels:
+        appContext.router.pathname === "/" ? await getAvailableModels() : [],
       ...appProps,
     };
   }

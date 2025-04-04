@@ -12,7 +12,7 @@ import "tokenbase/internal/models"
 //
 // Returns:
 // - A list of Ollama compatible chat messages.
-func BuildOllamaMessages(systemPrompt string, newPrompt string, records []models.ClientChatRecord) []models.OllamaChatMessage {
+func BuildOllamaMessages(systemPrompt string, newPrompt string, newImages []string, records []models.ClientChatRecord) []models.OllamaChatMessage {
 	// Allocate enough space for the messages.
 	// 2 messages per record + 2 messages for the system prompt and the new prompt.
 	n := (len(records) * 2) + 2
@@ -39,6 +39,7 @@ func BuildOllamaMessages(systemPrompt string, newPrompt string, records []models
 		newMessage := models.OllamaChatMessage{
 			Role:    models.UserRole,
 			Content: newPrompt,
+			Images:  newImages,
 		}
 
 		messages = append(messages, newMessage)

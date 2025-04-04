@@ -17,9 +17,10 @@ import (
 )
 
 type postConversationChatRequest struct {
-	Prompt         string `json:"prompt"`
-	Model          string `json:"model"`
-	ConversationID string `json:"conversationId"`
+	Prompt         string   `json:"prompt"`
+	Images         []string `json:"images"`
+	Model          string   `json:"model"`
+	ConversationID string   `json:"conversationId"`
 }
 
 func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +60,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	// Construct request to Ollama API
 	ollamaReq := models.OllamaChatRequest{
 		Model:    req.Model,
-		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, prevChatRecords),
+		Messages: utils.BuildOllamaMessages(systemPrompt, req.Prompt, req.Images, prevChatRecords),
 		Stream:   true,
 	}
 
@@ -110,10 +111,6 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	// Images for now
-	// TODO
-	promptImages := []string{}
-
 	// Aggregate saving the chat record in the database and cache
 	wg := sync.WaitGroup{}
 	wg.Add(2)
@@ -123,7 +120,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 	go func() {
 		defer wg.Done()
 
-		if _, err := db.SaveChatRecord(i.Sdb, req.Prompt, promptImages, replyBuilder.String(), creationTime, user.ID, req.ConversationID); err != nil {
+		if _, err := db.SaveChatRecord(i.Sdb, req.Prompt, req.Images, replyBuilder.String(), creationTime, user.ID, req.ConversationID); err != nil {
 			errorChan <- err
 		}
 	}()
@@ -135,7 +132,7 @@ func (i *Injection) PostConversationChat(w http.ResponseWriter, r *http.Request)
 		record := models.ClientChatRecord{
 			CreatedAt:    creationTime,
 			Prompt:       req.Prompt,
-			PromptImages: promptImages,
+			PromptImages: req.Images,
 			Reply:        replyBuilder.String(),
 		}
 

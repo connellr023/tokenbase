@@ -23,7 +23,10 @@ type ChatContainerProps = {
   promptEndpoint: string;
   deleteEndpoint: string;
   suggestions: string[];
-  constructPromptRequest: (prompt: string) => Promise<Result<HttpChatReq>>;
+  constructPromptRequest: (
+    prompt: string,
+    promptImages: string[],
+  ) => Promise<Result<HttpChatReq>>;
   constructDeleteRequest: (createdAt: number) => Promise<Result<HttpChatReq>>;
 };
 
@@ -43,13 +46,14 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
   const loadingIndicatorRef = useRef<HTMLDivElement | null>(null);
 
   const onPromptSend = useCallback(
-    async (prompt: string) => {
+    async (prompt: string, promptImages: string[]) => {
       // Clear any previous error
       setError(null);
 
       // Initialize a new chat entry
       let newChat: ChatRecord = {
-        prompt: prompt,
+        prompt,
+        promptImages,
         reply: "",
       };
 
@@ -58,7 +62,11 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
       setStreamingChat(newChat);
 
       // Construct the request using the provided callback
-      const { ok, error } = await constructPromptRequest(prompt);
+
+      const { ok, error } = await constructPromptRequest(
+        prompt,
+        promptImages.map((img) => img.substring(img.search(/,/) + 1)),
+      );
 
       if (error) {
         setError(error);
@@ -197,7 +205,10 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
           <div className={styles.suggestionsContainer}>
             {/* Render some random chat suggestions */}
             {suggestions?.map((suggestion, i) => (
-              <StandardButton key={i} onClick={() => onPromptSend(suggestion)}>
+              <StandardButton
+                key={i}
+                onClick={() => onPromptSend(suggestion, [])}
+              >
                 {suggestion}
               </StandardButton>
             ))}
@@ -212,6 +223,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
                 key={i}
                 createdAt={chat.createdAt ?? -1}
                 prompt={chat.prompt}
+                images={chat.promptImages ?? []}
                 reply={chat.reply}
                 isComplete={true}
                 onDelete={onChatDelete}
@@ -223,6 +235,7 @@ const ChatContainer: React.FC<ChatContainerProps> = ({
               <Chat
                 createdAt={streamingChat.createdAt ?? -1}
                 prompt={streamingChat.prompt}
+                images={streamingChat.promptImages ?? []}
                 reply={streamingChat.reply}
                 isComplete={false}
               />
