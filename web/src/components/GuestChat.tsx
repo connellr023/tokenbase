@@ -5,9 +5,9 @@ import StandardButton from "@/components/StandardButton";
 import router from "next/router";
 import { backendEndpoint } from "@/utils/constants";
 import { reqNewGuestSession } from "@/utils/reqNewGuestSession";
-import { useHomeModalContext } from "@/contexts/HomeModalContext";
 import { useBearerContext } from "@/contexts/BearerContext";
 import { useModelsContext } from "@/contexts/ModelsContext";
+import { useState } from "react";
 import {
   faArrowRight,
   faBolt,
@@ -22,9 +22,9 @@ type GuestChatProps = {
 };
 
 const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
-  const { isOpen, close } = useHomeModalContext();
   const { bearer, setBearer } = useBearerContext();
   const { availableModels, selectedModelIndex } = useModelsContext();
+  const [isOpen, setIsOpen] = useState(true);
 
   const constructGuestPromptRequest = async (
     prompt: string,
@@ -91,7 +91,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
 
   return (
     <>
-      <Modal isOpen={isOpen} onClickOutside={close}>
+      <Modal isOpen={isOpen} onClickOutside={() => setIsOpen(false)}>
         <h1 className={styles.modalTitle}>Welcome.</h1>
         <div className={styles.modalButtonContainer}>
           <StandardButton icon={faSignIn} onClick={() => router.push("/login")}>
@@ -103,7 +103,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ chatSuggestions }) => {
           >
             Register
           </StandardButton>
-          <StandardButton icon={faArrowRight} onClick={close}>
+          <StandardButton icon={faArrowRight} onClick={() => setIsOpen(false)}>
             Continue as guest
           </StandardButton>
         </div>

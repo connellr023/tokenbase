@@ -161,26 +161,6 @@ Run:
 
 Within the `surrealdb` container.
 
-## Running Backend Tests
-
-Run:
-
-```sh
-go -v test ./test/...
-```
-
-In order to run all tests in the `test` directory.
-
-## Running Frontend Tests
-
-Run:
-
-```sh
-npm test
-```
-
-In the `web` directory to run all frontend tests.
-
 ## Production
 
 To run the optimized production environment, use the production `docker-compose` file:

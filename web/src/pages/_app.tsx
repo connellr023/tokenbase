@@ -5,7 +5,6 @@ import ModelInfo from "@/models/ModelInfo";
 import RightDrawer from "@/components/RightDrawer";
 import App, { AppContext, AppProps } from "next/app";
 import { merriweather400 } from "@/utils/fonts";
-import { HomeModalProvider } from "@/contexts/HomeModalContext";
 import { BearerProvider } from "@/contexts/BearerContext";
 import { ChatRecordsProvider } from "@/contexts/ChatRecordsContext";
 import { ModelsProvider } from "@/contexts/ModelsContext";
@@ -45,19 +44,17 @@ class RootApp extends App<RootAppProps> {
         </Head>
         <ModelsProvider availableModels={availableModels}>
           <BearerProvider>
-            <HomeModalProvider>
-              <ConversationRecordsProvider>
-                <ChatRecordsProvider>
-                  <RightDrawerProvider>
-                    <NavBar />
-                    <RightDrawer />
-                    <main className={merriweather400.className}>
-                      <Component {...pageProps} />
-                    </main>
-                  </RightDrawerProvider>
-                </ChatRecordsProvider>
-              </ConversationRecordsProvider>
-            </HomeModalProvider>
+            <ConversationRecordsProvider>
+              <ChatRecordsProvider>
+                <RightDrawerProvider>
+                  <NavBar />
+                  <RightDrawer />
+                  <main className={merriweather400.className}>
+                    <Component {...pageProps} />
+                  </main>
+                </RightDrawerProvider>
+              </ChatRecordsProvider>
+            </ConversationRecordsProvider>
           </BearerProvider>
         </ModelsProvider>
       </>
