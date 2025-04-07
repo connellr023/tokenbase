@@ -4,6 +4,9 @@
 
 > A modular, AI-powered assistant platform that provides real-time chat, role-based access, and conversation tracking, designed for self-hosted or small organizational deployments.
 
+> [!NOTE]
+> Built for **SENG 513** at the **Univerity of Calgary** in **2025**.
+
 ![Next JS](https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 ![SCSS](https://img.shields.io/badge/SCSS-hotpink.svg?style=for-the-badge&logo=SASS&logoColor=white)
@@ -21,7 +24,6 @@
 ## CI Status
 
 ![Backend CI](https://github.com/connellr023/tokenbase/actions/workflows/backend-ci.yaml/badge.svg)
-![Frontend CI](https://github.com/connellr023/tokenbase/actions/workflows/frontend-ci.yaml/badge.svg)
 ![Formatter CI](https://github.com/connellr023/tokenbase/actions/workflows/formatter-ci.yaml/badge.svg)
 ![Linter CI](https://github.com/connellr023/tokenbase/actions/workflows/linter-ci.yaml/badge.svg)
 
