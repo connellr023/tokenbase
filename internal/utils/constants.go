@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"os"
+)
+
 const BackendEndpoint = ":8090"
 
 // Account constraints.
@@ -17,17 +21,26 @@ const (
 )
 
 // SurrealDB connection details.
-const (
+var (
 	SdbDockerEndpoint = "ws://surrealdb:8000"
 	SdbNamespace      = "tokenbaseNS"
 	SdbName           = "tokenbaseDB"
-	SdbUsername       = "root" // Hardcoded for now.
-	SdbPassword       = "root" // Hardcoded for now.
 )
 
+func GetSdbUsername() string {
+    return os.Getenv("SDB_USERNAME")
+}
+
+func GetSdbPassword() string {
+    return os.Getenv("SDB_PASSWORD")
+}
+
 // Redis connection details.
-const (
+var (
 	RdbDockerEndpoint = "redis:6379"
 	RdbDatabase       = 0
-	RdbPassword       = "password" // Hardcoded for now.
 )
+
+func GetRdbPassword() string {
+	return os.Getenv("RDB_PASSWORD")
+}
