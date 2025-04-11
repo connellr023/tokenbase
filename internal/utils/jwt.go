@@ -9,8 +9,7 @@ import (
 )
 
 const (
-	jwtLifetime  = time.Hour * 24
-	jwtSecretKey = "supersecretkey" // Hardcoded for now.
+	jwtLifetime = time.Hour * 24
 )
 
 // Generates a JWT for a user.
@@ -29,7 +28,7 @@ func GenerateJwt(user models.ClientUser) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	key := []byte(jwtSecretKey)
+	key := []byte(GetJwtSecret())
 
 	return token.SignedString(key)
 }
@@ -44,7 +43,7 @@ func GenerateJwt(user models.ClientUser) (string, error) {
 // - Any error that occurred.
 func ValidateJwt(tokenStr string) (models.ClientUser, error) {
 	token, err := jwt.Parse(tokenStr, func(_ *jwt.Token) (any, error) {
-		return []byte(jwtSecretKey), nil
+		return []byte(GetJwtSecret()), nil
 	})
 
 	if err != nil {

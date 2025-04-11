@@ -11,6 +11,10 @@ RUN go mod download
 # Copy the rest of the application source code into the container
 COPY . .
 
+# Copy the .env file into the container
+COPY .env .env
+
+
 # Build the Go application
 RUN CGO_ENABLED=0 GOOS=linux go build -o /app/tokenbase ./cmd/tokenbase
 

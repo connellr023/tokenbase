@@ -10,6 +10,7 @@ import (
 	"tokenbase/internal/utils"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"github.com/surrealdb/surrealdb.go"
 )
@@ -34,8 +35,8 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 
 	// Authenticate.
 	token, err := sdb.SignIn(&surrealdb.Auth{
-		Username: utils.SdbUsername,
-		Password: utils.SdbPassword,
+		Username: utils.GetSdbUsername(),
+		Password: utils.GetSdbPassword(),
 	})
 
 	if err != nil {
@@ -65,7 +66,7 @@ func AuthSurrealDb() (*surrealdb.DB, func(), error) {
 func AuthRedis() (*redis.Client, error) {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     utils.RdbDockerEndpoint,
-		Password: utils.RdbPassword,
+		Password: utils.GetRdbPassword(),
 		DB:       utils.RdbDatabase,
 	})
 
@@ -82,6 +83,13 @@ func AuthRedis() (*redis.Client, error) {
 func main() {
 	// Sleep to wait for Docker containers to start.
 	time.Sleep(5 * time.Second)
+
+	// Load in environment variables.
+	err := godotenv.Load(".env")
+
+	if err != nil {
+		panic("failed to load environment variables")
+	}
 
 	// Connect to SurrealDB over the Docker network.
 	println("Connecting to SurrealDB...")
