@@ -28,11 +28,11 @@ var (
 )
 
 func GetSdbUsername() string {
-    return os.Getenv("SDB_USERNAME")
+	return os.Getenv("SDB_USERNAME")
 }
 
 func GetSdbPassword() string {
-    return os.Getenv("SDB_PASSWORD")
+	return os.Getenv("SDB_PASSWORD")
 }
 
 // Redis connection details.

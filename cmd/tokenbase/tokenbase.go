@@ -10,9 +10,9 @@ import (
 	"tokenbase/internal/utils"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 	"github.com/redis/go-redis/v9"
 	"github.com/surrealdb/surrealdb.go"
-	"github.com/joho/godotenv"
 )
 
 // Authenticate with SurrealDB.
