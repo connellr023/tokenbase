@@ -17,14 +17,14 @@ const (
 )
 
 // SurrealDB connection details.
-var (
+const (
 	SdbDockerEndpoint = "ws://surrealdb:8000"
 	SdbNamespace      = "tokenbaseNS"
 	SdbName           = "tokenbaseDB"
 )
 
 // Redis connection details.
-var (
+const (
 	RdbDockerEndpoint = "redis:6379"
 	RdbDatabase       = 0
 )
