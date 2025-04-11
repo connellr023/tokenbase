@@ -11,13 +11,13 @@ import (
 func TestGetChatSuggestionsGetsCorrectly(t *testing.T) {
 	injection := &controllers.Injection{}
 
-	req, err := http.NewRequest("GET", "/chate-suggestions", nil)
+	req, err := http.NewRequest(http.MethodGet, "/chat-suggestions", nil)
+
 	if err != nil {
 		t.Fatalf("Failed to create request: %v", err)
 	}
 
 	rr := httptest.NewRecorder()
-
 	handler := http.HandlerFunc(injection.GetChatSuggestions)
 	handler.ServeHTTP(rr, req)
 
@@ -26,6 +26,7 @@ func TestGetChatSuggestionsGetsCorrectly(t *testing.T) {
 	}
 
 	var suggestions []string
+
 	if err := json.Unmarshal(rr.Body.Bytes(), &suggestions); err != nil {
 		t.Fatalf("Failed to deserialize response body: %v", err)
 	}
@@ -35,10 +36,12 @@ func TestGetChatSuggestionsGetsCorrectly(t *testing.T) {
 	}
 
 	suggestionSet := make(map[string]bool)
+
 	for _, suggestion := range suggestions {
 		if suggestionSet[suggestion] {
 			t.Errorf("Duplicate suggestion found: %s", suggestion)
 		}
+
 		suggestionSet[suggestion] = true
 	}
 }
