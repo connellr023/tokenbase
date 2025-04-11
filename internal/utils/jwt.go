@@ -6,12 +6,11 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/mitchellh/mapstructure"
-	"os"
 )
 
 var (
 	jwtLifetime  = time.Hour * 24
-	jwtSecretKey = []byte(os.Getenv("JWT_SECRET"))
+	jwtSecretKey = []byte(GetJwtSecret())
 )
 
 // Generates a JWT for a user.

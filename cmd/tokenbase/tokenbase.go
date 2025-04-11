@@ -84,10 +84,11 @@ func main() {
 	// Sleep to wait for Docker containers to start.
 	time.Sleep(5 * time.Second)
 
-	// Load in env variables from .env file.
+	// Load in environment variables.
 	err := godotenv.Load(".env")
+
 	if err != nil {
-		panic("Failed to load .env file")
+		panic("failed to load environment variables")
 	}
 
 	// Connect to SurrealDB over the Docker network.

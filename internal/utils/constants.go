@@ -1,9 +1,5 @@
 package utils
 
-import (
-	"os"
-)
-
 const BackendEndpoint = ":8090"
 
 // Account constraints.
@@ -27,20 +23,8 @@ var (
 	SdbName           = "tokenbaseDB"
 )
 
-func GetSdbUsername() string {
-	return os.Getenv("SDB_USERNAME")
-}
-
-func GetSdbPassword() string {
-	return os.Getenv("SDB_PASSWORD")
-}
-
 // Redis connection details.
 var (
 	RdbDockerEndpoint = "redis:6379"
 	RdbDatabase       = 0
 )
-
-func GetRdbPassword() string {
-	return os.Getenv("RDB_PASSWORD")
-}

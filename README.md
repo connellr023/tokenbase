@@ -44,7 +44,12 @@ If these formatters are not used, the CI pipeline will create a commit with the 
 
 ### Code Linting
 
-The `frontend` for this project uses [ESLint](https://eslint.org/) for linting. The `backend` uses [GolangCI](https://golangci-lint.run/) for linting.
+The following code linters are required for this project:
+
+- [ESLint](https://eslint.org/) for all frontend code
+- [GolangCI](https://golangci-lint.run/) for all backend code
+
+If these linters are not used, the CI pipeline will fail if linting errors are found.
 
 ## Structure
 
@@ -87,7 +92,7 @@ First, install the **NVIDIA Container Toolkit** by following the instructions [h
 
 First, install GPU support. On Windows it is only available in Docker Desktop via **WSL 2** backend Paravirtualization, to enable it, follow the instructions [here](https://docs.docker.com/desktop/features/gpu/)
 
-#### Starting
+### Starting
 
 Then, run:
 
@@ -137,6 +142,15 @@ To stop all services, run:
 
 ```sh
 docker-compose -f docker-compose-cpu.yaml down
+```
+
+### Sample `.env` file
+
+```env
+JWT_SECRET=dev_secret
+SURREALDB_USERNAME=root
+SURREALDB_PASSWORD=root
+REDIS_PASSWORD=password
 ```
 
 ### Starting the frontend service
